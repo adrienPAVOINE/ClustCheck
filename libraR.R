@@ -1,3 +1,7 @@
 getyest  <- function(){
-  return(Sys.date()-1)
+  x <- (as.character(Sys.Date()-1))
+  return(x)
 }
+
+
+getyest()
