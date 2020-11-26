@@ -19,12 +19,12 @@ etude_quali <- function(data,varqual1, vargroupe){
   if (!ok){
     stop("Ce n'est pas un data frame")
   }
-  tableau <- table(data[[varqual1]],data[[vargroupe]])
+  tableau <- table(data[[vargroupe]],data[[varqual1]])
   nli = nrow(tableau)
   nco = ncol(tableau)
   eff = addmargins(tableau)
   pourc = addmargins(prop.table(addmargins(tableau,1),1),2)
-  tab_vtest <- table(data[[varqual1]],data[[vargroupe]])
+  tab_vtest <- table(data[[vargroupe]],data[[varqual1]])
   for (i in 1:nli){
     for (j in 1:nco){
       v = (sqrt(eff[nli+1,j]))*((pourc[i,j] - pourc[nli+1,j])/(sqrt(((eff[nli+1,nco+1]-eff[nli+1,j])/(eff[nli+1,nco+1] - 1))*pourc[nli+1,j]* (1-pourc[nli+1,j]))))
@@ -33,7 +33,8 @@ etude_quali <- function(data,varqual1, vargroupe){
   }
   print("ci dessous tableau des valeurs tests")
   print(tab_vtest)
-  tab_taille <- table(data[[varqual1]],data[[vargroupe]])
+
+  tab_taille <- table(data[[vargroupe]],data[[varqual1]])
   for (i in 1:nli){
     for (j in 1:nco){
       taille = eff[i,j]/eff[i,nco+1]
