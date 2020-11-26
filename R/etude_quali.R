@@ -6,7 +6,11 @@
 #'
 #' @return a matrice
 #' @export
-#' @importFrom stats addmargins
+#' @importFrom stats addmargins chisq.test
+#' @importFrom graphics  barplot mosaicplot
+#' @import questionr
+#' @import FactoMineR
+#' @import factoextra
 #' @examples
 
 etude_quali <- function(data,varqual1, vargroupe){
@@ -42,19 +46,19 @@ etude_quali <- function(data,varqual1, vargroupe){
   print(" ci dessous le tableau des tailles")
   print(tab_taille)
   #r?alisation des profils ligne et colonne
-  #lprop(tableau, digits=1)#la distribution de la r?gion parmis ceux heureux || 4 profils lignes
+  lprop(tableau, digits=1)#la distribution de la r?gion parmis ceux heureux || 4 profils lignes
   #ensemnle = profil moyen
-  #cprop(tableau, digits=2)
+  cprop(tableau, digits=2)
   #on s'uppose la d?pendance car les profils sont distincts
   # on test l'ind?pendance
-  #chisq = chisq.test(tableau)
-  #print(chisq)
+  chisq = chisq.test(tableau)
+  print(chisq)
   #aphiques
-  #colors <- c("chartreuse4", "chartreuse1", "orange","green")
-  #barplot(tableau, col=colors, main = "heureux par libert? sur internet", ylab="nombre ")
-  #mosaicplot(tableau, col = colors)
-  #res.ca <- CA(tableau, graph = TRUE)
-  #print(res.ca)
+  colors <- c("chartreuse4", "chartreuse1", "orange","green")
+  barplot(tableau, col=colors, main = "heureux par libert? sur internet", ylab="nombre ")
+  mosaicplot(tableau, col = colors)
+  res.ca <- CA(tableau, graph = TRUE)
+  print(res.ca)
 
 
 }
