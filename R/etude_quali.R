@@ -14,7 +14,6 @@
 #' @examples
 
 etude_quali <- function(data,varqual1, vargroupe){
-
   #contr?le - data.frame
   ok <- is.data.frame(data)
   if (!ok){
@@ -28,7 +27,7 @@ etude_quali <- function(data,varqual1, vargroupe){
   tab_vtest <- table(data[[varqual1]],data[[vargroupe]])
   for (i in 1:nli){
     for (j in 1:nco){
-      v = (sqrt(eff[i,nco+1]))*((pourc[i,j] - pourc[nli+1,j])/(sqrt(((eff[nli+1,nco+1]-eff[i,nco+1])/(eff[nli+1,nco+1] - 1))*pourc[i,j]* (1-pourc[i,j]))))
+      v = (sqrt(eff[nli+1,j]))*((pourc[i,j] - pourc[nli+1,j])/(sqrt(((eff[nli+1,nco+1]-eff[nli+1,j])/(eff[nli+1,nco+1] - 1))*pourc[nli+1,j]* (1-pourc[nli+1,j]))))
       tab_vtest[i,j] <- v
     }
   }
@@ -42,7 +41,6 @@ etude_quali <- function(data,varqual1, vargroupe){
     }
 
   }
-
   print(" ci dessous le tableau des tailles")
   print(tab_taille)
   #r?alisation des profils ligne et colonne
@@ -58,8 +56,7 @@ etude_quali <- function(data,varqual1, vargroupe){
   barplot(tableau, col=colors, main = "heureux par libert? sur internet", ylab="nombre ")
   mosaicplot(tableau, col = colors)
   res.ca <- CA(tableau, graph = TRUE)
-  print(res.ca)
-
+  #print(res.ca)
 
 }
 
