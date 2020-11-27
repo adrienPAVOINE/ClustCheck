@@ -17,4 +17,5 @@ Imports:
     stats,
     questionr,
     FactoMineR,
-    factoextra
+    factoextra,
+    ggplot2

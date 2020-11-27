@@ -4,5 +4,5 @@ devtools::install_github("r-lib/testthat")
 usethis::use_package("questionr")
 usethis::use_package("FactoMineR")
 usethis::use_package("factoextra")
-
+usethis::use_package("ggplot2")
 
