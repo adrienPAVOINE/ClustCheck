@@ -1,0 +1,5 @@
+La base « bank_customer » décrit les clients d’une banque. Les variables actives sont relatives à la
+situation du client : âge, ancienneté auprès de la banque, profession, logarithme du revenu, niveau
+d’épargne, détention d’une carte bleue, détention d’un PEA (plan épargne en action). La variable
+illustrative SCORE correspond à une note attribué par le conseiller clientèle pour évaluer l’intérêt d’un
+client. 
