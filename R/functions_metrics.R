@@ -32,3 +32,42 @@ silhouette <- function(data, clusters) {
   s <- (b - a)/pmax(a,b) # silhouette formula 
   return(mean(s))
 }
+
+
+# ------------------------------------------------------------------------- #
+# Davies-Bouldin Index
+# ------------------------------------------------------------------------- #
+
+# s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
+# d_centroids : the distance between cluster centroids
+
+davies_bouldin <- function(data, clusters) {
+  k <- length(unique(clusters))
+  p <- ncol(data)
+  centroids <- matrix(nrow=k, ncol=p)
+  d <- matrix(nrow=k, ncol=k)
+  s <- matrix(nrow=1, ncol=k)
+  R <- matrix(nrow=k, ncol=k)
+  maxR <- matrix(nrow=1, ncol=k)
+  # Centroids calculation 
+  i=1
+  for (g in unique(clusters)){
+    k_data <- data[which(clusters==g),]  
+    centroids[i,] <- sapply(k_data, mean, na.rm=T) 
+    s[i] <- sqrt(mean(rowSums(apply(k_data, 2, function(y) (y - mean(y))^2))))
+    i = i+1
+  }
+  # R and d calculation
+  for (i in 1:k){
+    for (j in 1:k){
+      d[i,j] <- sqrt(sum((centroids[i,] - centroids[j,])^2))
+      R[i,j] <- (s[i]+s[j])/d[i,j]
+    }
+  }  
+  # Index calculation
+  for (i in 1:k){
+    maxR[i] <- max(R[i,][is.finite(R[i,])])
+  }
+  DB <- sum(maxR)/k
+  return(DB) 
+}
