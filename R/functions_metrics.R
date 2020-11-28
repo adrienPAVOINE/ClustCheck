@@ -39,7 +39,7 @@ silhouette <- function(data, clusters) {
 # ------------------------------------------------------------------------- #
 
 # s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
-# d_centroids : the distance between cluster centroids
+# d : the distance between cluster centroids
 
 davies_bouldin <- function(data, clusters) {
   k <- length(unique(clusters))
@@ -70,4 +70,45 @@ davies_bouldin <- function(data, clusters) {
   }
   DB <- sum(maxR)/k
   return(DB) 
+}
+
+
+# ------------------------------------------------------------------------- #
+# Dunn Index
+# ------------------------------------------------------------------------- #
+#
+# Calculated using the following:
+# d1 : distance of samples to their centroids
+# d2 : distance betwewen centroids
+# Dunn Index is the ratio between the d2 min and the d1 max
+
+
+dunn_index <- function(data, clusters) {
+  k <- length(unique(clusters))
+  p <- ncol(data)
+  centroids <- matrix(nrow=k, ncol=p)
+  d1 <- matrix(nrow=1, ncol=k)
+  d2 <- matrix(nrow=k, ncol=k)
+  # Centroids calculation 
+  i=1
+  for (g in unique(clusters)){
+    k_data <- data[which(clusters==g),]  
+    centroids[i,] <- sapply(k_data, mean, na.rm=T) 
+    i = i+1
+  }
+  # d2 calculation
+  for (i in 1:k){
+    for (j in 1:k){
+      d2[i,j] <- sqrt(sum((centroids[i,] - centroids[j,])^2))
+    }
+  }
+  # d1 calculation
+  i=1
+  for (g in unique(clusters)){
+    k_data <- data[which(clusters==g),]  
+    d1[i] <- sqrt(mean(rowSums(apply(k_data, 2, function(y) (y - mean(y))^2))))
+    i = i+1
+  }
+  DI <- min(d2[d2>0])/max(d1)
+  return(DI)
 }
