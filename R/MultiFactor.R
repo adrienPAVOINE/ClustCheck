@@ -28,7 +28,7 @@ MultiFactorConstr <- function(data,vargroupe){
   class(instance) <- "MultiFactor"
   return(instance)
 }
-obj = MultiFactorConstr(data,"groupe")
+
 
 #' Vcramer.UnivFactor
 #'
