@@ -7,7 +7,7 @@
 Vcramer.UnivFactor(object)
 }
 \arguments{
-\item{object}{an UnivFator object}
+\item{object}{an UnivFactor object}
 }
 \value{
 
