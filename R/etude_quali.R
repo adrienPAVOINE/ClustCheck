@@ -24,13 +24,14 @@ UnivConst <- function(data,varqual1,vargroupe){
   instance$nco = ncol(instance$tableau)
   instance$eff = addmargins(instance$tableau)
   instance$pourc = addmargins(prop.table(addmargins(instance$tableau,1),1),2)
+  instance$vcramer <- Vcramer.UnivFactor(instance)
   class(instance) <- "UnivFactor"
   return(instance)
 }
 
 #' Vcramer.UnivFactor
 #'
-#' @param object an UnivFator object
+#' @param object an UnivFactor object
 #'
 #' @return
 #' @export
@@ -39,7 +40,7 @@ UnivConst <- function(data,varqual1,vargroupe){
 Vcramer.UnivFactor <- function(object){
   khi2 = chisq.test(object$tableau)$statistic
   khi2
-  cramer = sqrt((khi2)/(nrow(obj$data)*(min((object$nco-1),(object$nli-1)))))
+  cramer = sqrt((khi2)/(nrow(object$data)*(min((object$nco-1),(object$nli-1)))))
   cramer
 }
 
