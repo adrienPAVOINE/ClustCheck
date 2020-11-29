@@ -49,7 +49,6 @@ TValueTable.NumDataset <-function(object){
 }
 
 
-#TValueTable.NumDataset <-function(object){
 EffectSizeTable.NumDataset <- function(data){
   n <- object$n
   var_names <- object$var.quanti.names
