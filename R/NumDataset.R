@@ -1,13 +1,19 @@
 
-
 NumDataset <- function(data,clusters_data){
   if (! is.data.frame(data) | ! is.data.frame(clusters_data) ){
-    stop("Les données doivent être sous forme de data frame")
+    stop("Data must be a dataframe")
   }
+  
+  if (is.data.frame(clusters_data)){
+    clus_names<- unique(clusters_data[[1]])
+  }else{
+    clus_names<- unique(clusters_data)
+  }
+  
   ind.quanti = sapply(data,function(x)is.numeric(x))
   nb_quanti <- sum(ind.quanti)
   if (nb_quanti < 1 ){
-    stop("Il n'y a pas de variables quantitatives dans votre dataset")
+    stop("There are no quantitative variables in your dataset")
   }
   data.quanti<- data[ ,ind.quanti]
   instance <- list()
@@ -18,13 +24,65 @@ NumDataset <- function(data,clusters_data){
   instance$p.quanti <- ncol(data.quanti)
   instance$var.quanti.names <- names(data.quanti)
   instance$clusters_data <- clusters_data
-  instance$cluster_names <- unique(clusters_data[[1]])
+  instance$cluster_names <- clus_names
   class(instance) <- "NumDataset"
   return(instance)
 }
 
 
+Corr_ratios.NumDataset <-function(object){
+  classes <- object$clusters_data
+  cl <- object$cluster_names
+  n_clusters <- length(cl) 
+  
+  #SCT------------
+  sct_f<- function(x){
+    m<-mean(x)
+    sct<-0
+    for (i in 1:length(x)){#check if x or data
+      sct<-(x[i]- m)**2 + sct
+    }
+    return(sct)
+  }
+  sct_l<-sapply(object$data.quanti,sct_f)
+  
+  #SCE-----------
+  sce_f<- function(x){
+    m <- mean(x)
+    sce <- 0
+    for (i in cl){
+      ind_g<-which(classes==i)
+      ng<-length(ind_g)
+      sce<-sce + (ng*(mean(x[ind_g])-m)**2)
+    }
+    return(sce)
+  }  
+  sce_l<-sapply(object$data.quanti,sce_f)
+  
+  #SCR------------
+  scr_f<- function(x){
+    m<-mean(x)
+    scr<-0
+    for (i in cl){
+      ind_g <- which(classes==i)
+      ng <- length(ind_g)
+      for (j in ind_g){
+        scr<-scr+ (x[j]-mean(x[ind_g]))**2
+      }
+    }
+    return(scr)
+  }  
+  scr_l<-sapply(object$data.quanti,scr_f)
+  
+  corr <- sce_l/sct_l
+  print("Correlation matrix")
+  print(corr)
+}
+
+
 TValueTable.NumDataset <-function(object){
+  data <- object$data.quanti
+  classes <- object$clusters_data
   n <- object$n
   var_names <- object$var.quanti.names
   len_col<- object$p.quanti
@@ -44,12 +102,14 @@ TValueTable.NumDataset <-function(object){
       tvalue_table[x_col,i]<- vt_val
     }
   }
-  print("Tableau des valeurs tests")
+  print("t-value table")
   print(tvalue_table)
 }
 
 
-EffectSizeTable.NumDataset <- function(data){
+EffectSizeTable.NumDataset <-function(object){
+  data <- object$data.quanti
+  classes <- object$clusters_data
   n <- object$n
   var_names <- object$var.quanti.names
   len_col<- object$p.quanti
@@ -77,6 +137,6 @@ EffectSizeTable.NumDataset <- function(data){
       effect_size_table[x_col,i]<- effect_size
     }
   }
-  print("Tableau des tailles d'effet")
+  print("Effect size table")
   print(effect_size_table)
 }
