@@ -59,7 +59,7 @@ Corr_ratios <- function(data,classes){
 }
 
 
-# Corr_ratios
+# Tvalue_table_fct
 # data a data frame
 # classes dataframe
 # returns  matrix
@@ -88,4 +88,42 @@ Tvalue_table_fct <- function(data,classes){
     }
   }
   return(tvalue_table)
+}
+
+# taille_effet_table
+# data a data frame
+# classes dataframe
+# returns  matrix
+
+taille_effet_table <- function(data,classes){
+  if (! is.data.frame(data) | ! is.data.frame(classes) ){
+    stop("Les données doivent être sous forme d'un data frame")
+  }
+  n<-nrow(data)
+  var_names<-colnames(data)
+  len_col<-length(var_names)
+  cl<-unique(classes[[1]])
+  ng<-length(cl)
+  effect_size_table<-matrix(nrow = length(var_names), ncol = ng,dimnames = list(colnames(data),cl))
+  for (x_col in colnames(data)){
+    x<-data[[x_col]]
+    var_x<-var(x)
+    m<-mean(x)
+    for(i in cl){
+      ind_g<-which(classes==i)
+      ind_a<-which(classes!=i)
+      ng<-length(ind_g)
+      na<-length(ind_a)
+      
+      mean_g<-mean(x[ind_g])
+      mean_a<-mean(x[ind_a])
+      
+      sg2<-var(x[ind_g])
+      sa2<-var(x[ind_a])
+      
+      effect_size<-(mean_g - mean_a)*sqrt((ng+na)/( (ng-1)*sg2 +(na-1)*sa2 ))
+      effect_size_table[x_col,i]<- effect_size
+    }
+  }
+  return(effect_size_table)
 }
