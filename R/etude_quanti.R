@@ -81,7 +81,7 @@ Tvalue_table_fct <- function(data,classes){
     for(i in cl){
       ind_g<-which(classes==i)
       ng<-length(ind_g)
-      mean_g<-mean(ind_g)
+      mean_g<-mean(x[ind_g])
       var_x<-var(x)
       vt_val<-(mean_g - m) / sqrt(((n-ng)*var_x)/((n-1)*ng))
       tvalue_table[x_col,i]<- vt_val
