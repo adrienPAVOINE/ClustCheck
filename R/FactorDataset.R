@@ -1,9 +1,9 @@
 #' FactoDataset
 #'
-#' @param data a dataset
-#' @param vargroupe a string
+#' @param data a dataset with factor variables
+#' @param vargroupe the variable's name of the cluster
 #'
-#' @return a object
+#' @return a Factordataset object
 #' @export
 #' @importFrom grDevices rainbow
 #' @importFrom stats dist reshape
@@ -13,7 +13,7 @@
 #' @import ggplot2
 #' @examples
 FactoDataset <- function(data,vargroupe){
-  #contr?le - data.frame
+  #controle - data.frame
   ok <- is.data.frame(data)
   if (!ok){
     stop("Ce n'est pas un data frame")
@@ -26,24 +26,22 @@ FactoDataset <- function(data,vargroupe){
   }
   data.qual <- data.qual1[ , !(names(data.qual1) %in% vargroupe)]
   instance <- list()
+  instance$data <- data
   instance$p <- ncol(data)
+  instance$n <- nrow(data)
   instance$p.qual <- ncol(data.qual)
   instance$all.var.qual <- data.qual1
   instance$var.qual.names <- names(data.qual)
-  instance$data = data
   instance$data.qual = data.qual
   instance$vargroupe = vargroupe
   instance$vcramer <- Vcramer.FactorDataset(instance)
   class(instance) <- "FactorDataset"
   return(instance)
 }
-
-
-
 #' Vcramer.FactorDataset
 #'
 #' @param object a object
-#' @param var if you just want the Cramer for one var
+#' @param var if you just want the Cramer for one varible
 #'
 #' @return
 #' @export
@@ -60,7 +58,11 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
       cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
       l <- c(l,cramer)
     }
-    print(matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer")))
+    matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
+    print(matrice)
+    #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
+    #print(ind)
+    #rownames(matrice)[ind]
   }else{
     tableau <- table(object$data[[var]],object$data[[object$vargroupe]])
     nli <- nrow(tableau)
@@ -70,7 +72,6 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
     cat("cramer entre la var groupe et ", var," = ", cramer)
   }
 }
-
 #' PhiValueTable.FactorDataset
 #'
 #' @param object a object
@@ -99,7 +100,6 @@ PhiValueTable.FactorDataset <- function(object, nomvarqual){
   }
   print(tab_phi)
 }
-
 #' TValueTable.FactorDataset
 #'
 #' @param object a object
@@ -126,8 +126,6 @@ TValueTable.FactorDataset <-function(object, nomvarqual){
   print(tab_vtest)
 
 }
-
-
 #' VisualisationACM.FactorDataset
 #'
 #' @param object a object
@@ -143,8 +141,6 @@ VisualisationACM.FactorDataset <- function(object){
   res.mca <- MCA(object$all.var.qual ,graph = FALSE)
   fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib", ggtheme= theme_minimal())
 }
-
-
 
 #' VisualisationAC.FactorDataset
 #'

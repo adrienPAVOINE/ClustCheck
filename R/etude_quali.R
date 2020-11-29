@@ -39,7 +39,7 @@ UnivConst <- function(data,varqual1,vargroupe){
 Vcramer.UnivFactor <- function(object){
   khi2 = chisq.test(object$tableau)$statistic
   khi2
-  cramer = sqrt((khi2)/(nrow(obj$data)*(min((object$nco-1),(object$nli-1)))))
+  cramer = sqrt((khi2)/(nrow(object$data)*(min((object$nco-1),(object$nli-1)))))
   cramer
 }
 
