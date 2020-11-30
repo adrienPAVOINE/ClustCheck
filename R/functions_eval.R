@@ -82,23 +82,24 @@ plotcorr <- function(obj){
     geom_col() +
     labs(title = "Correlations") +
     xlab("Variables") +
-    ylab("Value") 
+    ylab("Value")
 }
 
 # ------------------------------------------------------------------------- #
 # Plot of t-values (numeric variables)
 # ------------------------------------------------------------------------- #
 
-#' plottvaluefactor
+
+# a voir comment merger les 2 fonctions plot t values
+#' Title
 #'
-#' @param obj an object of class FactorDataset
+#' @param obj a data object
+#' @param var a variable name
 #'
 #' @return
 #' @export
-#' @import ggplot2
+#'
 #' @examples
-#library(ggplot2)
-# a voir comment merger les 2 fonctions plot t values
 plottvaluefactor <- function(obj, var){
   table <- TValueTable.FactorDataset(obj, var)
   m <- ncol(table)
@@ -142,23 +143,24 @@ plotVCramer <- function(obj){
   ggplot(VCramer, aes(x=reorder(rownames(VCramer), -values), y=values)) + geom_col() +
     labs(title = "Cramer's V values") +
     xlab("Variables") +
-    ylab("Value")  
-} 
+    ylab("Value")
+}
 
 
 # ------------------------------------------------------------------------- #
 # Plot of Phi values (categorical variables) (à terminer)
 # ------------------------------------------------------------------------- #
 
-#' plotphi
+
+#' Title
 #'
-#' @param obj an object of class FactorDataset
+#' @param obj an data object
+#' @param var a variable name
 #'
 #' @return
 #' @export
-#' @import ggplot2
+#'
 #' @examples
-#library(ggplot2)
 plotphi <- function(obj, var){
   table <- PhiValueTable.FactorDataset(obj, var)
   m <- ncol(table)
@@ -171,8 +173,8 @@ plotphi <- function(obj, var){
     geom_col() +
     coord_flip() +
     facet_wrap(vars(clusters)) +
-    labs(title = "phi-values") 
-}  
+    labs(title = "phi-values")
+}
 
 
 
