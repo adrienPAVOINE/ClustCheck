@@ -98,10 +98,18 @@ plotVCramer <- function(obj){
   table <- Vcramer.FactorDataset(obj)
   p <- min(12,length(table))
   print(p)
-  VCramer <- as.data.frame(table[1:p])
+  VCramer <- as.data.frame(table[1:p,])
   colnames(VCramer) <- "values"
   # Visualisation
-  ggplot(VCramer, aes(x=reorder(rownames(VCramer), -values), y=values)) + geom_col()
+  if (p>12){
+    title2=cat("Cramer's V values - Top 12 out of",p," variables")
+  }
+  else
+    title2="Cramer's V values"
+  ggplot(VCramer, aes(x=reorder(rownames(VCramer), -values), y=values)) + geom_col() +
+    labs(title = "Cramer's V values") +
+    xlab("Variables") +
+    ylab("Value")  
 }  
 
 
