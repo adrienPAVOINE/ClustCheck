@@ -8,7 +8,7 @@
 #' @importFrom stats var
 #' @examples
 NumDataset <- function(data,clusters_data){
-  if (! is.data.frame(data) | ! is.data.frame(clusters_data) ){
+  if (! is.data.frame(data)){
     stop("Data must be a dataframe")
   }
 
