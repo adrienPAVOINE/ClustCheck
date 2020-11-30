@@ -7,20 +7,20 @@
 # Plot of t-values
 # ------------------------------------------------------------------------- #
 
-#' plotvalue
+#' plottvalue
 #'
-#' @param Tvalue_table a Table of test value
+#' @param obj an object of class NumDataset
 #'
 #' @return
 #' @export
 #' @import ggplot2
 #' @examples
-
-plotvalue <- function(Tvalue_table){ # devra appeler un objet de la classe plutot - sera à modifier
-  p <- ncol(Tvalue_table)
-  print(p)
-  variables <- rownames(Tvalue_table)
-  Tvalue_table <- stack(as.data.frame(Tvalue_table))
+#library(ggplot2)
+plottvalue <- function(obj){ # devra appeler un objet de la classe plutot - sera à modifier
+  table <- TValueTable.NumDataset(obj)
+  p <- ncol(table)
+  variables <- rownames(table)
+  Tvalue_table <- stack(as.data.frame(table))
   Tvalue_table$variables <- rep(variables,p)
   # Visualisation
   ggplot2::ggplot(Tvalue_table, aes(x=variables, y=values)) +
