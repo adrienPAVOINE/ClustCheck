@@ -60,8 +60,10 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
     }
     matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
     print(matrice)
+    #listemax <- c()
     #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
-    #print(ind)
+    #listemax <- c(listemax, ind)
+    #print(listemax)
     #rownames(matrice)[ind]
   }else{
     tableau <- table(object$data[[var]],object$data[[object$vargroupe]])
