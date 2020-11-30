@@ -101,7 +101,8 @@ PhiValueTable.FactorDataset <- function(object, nomvarqual){
       tab_phi[i,j] <- round(sign(taille-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4)
     }
   }
-  print(tab_phi)
+  #print(tab_phi)
+  return(tab_phi)
 }
 #' TValueTable.FactorDataset
 #'
@@ -126,7 +127,8 @@ TValueTable.FactorDataset <-function(object, nomvarqual){
     }
   }
   print("ci dessous tableau des valeurs tests")
-  print(tab_vtest)
+  #print(tab_vtest)
+  return(tab_vtest)
 
 }
 #' VisualisationACM.FactorDataset
