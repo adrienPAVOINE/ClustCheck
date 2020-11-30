@@ -1,15 +1,23 @@
-
+#' NumDataset
+#'
+#' @param data a dataset
+#' @param clusters_data a Numdataset object
+#'
+#' @return
+#' @export
+#' @importFrom stats var
+#' @examples
 NumDataset <- function(data,clusters_data){
   if (! is.data.frame(data) | ! is.data.frame(clusters_data) ){
     stop("Data must be a dataframe")
   }
-  
+
   if (is.data.frame(clusters_data)){
     clus_names<- unique(clusters_data[[1]])
   }else{
     clus_names<- unique(clusters_data)
   }
-  
+
   ind.quanti = sapply(data,function(x)is.numeric(x))
   nb_quanti <- sum(ind.quanti)
   if (nb_quanti < 1 ){
@@ -30,11 +38,19 @@ NumDataset <- function(data,clusters_data){
 }
 
 
+#' Corr_ratios.NumDataset
+#'
+#' @param object a NumDataset object
+#'
+#' @return
+#' @export
+#'
+#' @examples
 Corr_ratios.NumDataset <-function(object){
   classes <- object$clusters_data
   cl <- object$cluster_names
-  n_clusters <- length(cl) 
-  
+  n_clusters <- length(cl)
+
   #SCT------------
   sct_f<- function(x){
     m<-mean(x)
@@ -45,7 +61,7 @@ Corr_ratios.NumDataset <-function(object){
     return(sct)
   }
   sct_l<-sapply(object$data.quanti,sct_f)
-  
+
   #SCE-----------
   sce_f<- function(x){
     m <- mean(x)
@@ -56,9 +72,9 @@ Corr_ratios.NumDataset <-function(object){
       sce<-sce + (ng*(mean(x[ind_g])-m)**2)
     }
     return(sce)
-  }  
+  }
   sce_l<-sapply(object$data.quanti,sce_f)
-  
+
   #SCR------------
   scr_f<- function(x){
     m<-mean(x)
@@ -71,9 +87,9 @@ Corr_ratios.NumDataset <-function(object){
       }
     }
     return(scr)
-  }  
+  }
   scr_l<-sapply(object$data.quanti,scr_f)
-  
+
   corr <- sce_l/sct_l
   print("Correlation matrix")
   print(corr)
@@ -115,7 +131,7 @@ EffectSizeTable.NumDataset <-function(object){
   len_col<- object$p.quanti
   cl <- object$cluster_names
   n_clusters <- length(cl)
-  
+
   effect_size_table<-matrix(nrow = length(var_names), ncol = n_clusters,dimnames = list(colnames(data),cl))
   for (x_col in var_names){
     x<-data[[x_col]]
@@ -126,13 +142,13 @@ EffectSizeTable.NumDataset <-function(object){
       ind_a<-which(classes!=i)
       ng<-length(ind_g)
       na<-length(ind_a)
-      
+
       mean_g<-mean(x[ind_g])
       mean_a<-mean(x[ind_a])
-      
+
       sg2<-var(x[ind_g])
       sa2<-var(x[ind_a])
-      
+
       effect_size<-(mean_g - mean_a)*sqrt((ng+na)/( (ng-1)*sg2 +(na-1)*sa2 ))
       effect_size_table[x_col,i]<- effect_size
     }
