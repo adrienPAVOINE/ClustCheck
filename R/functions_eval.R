@@ -80,3 +80,31 @@ plotcorr <- function(obj){
   ggplot(corr, aes(x=reorder(rownames(corr), -values), y=values)) + geom_col()
 }
 
+
+# ------------------------------------------------------------------------- #
+# Plot of Cramer's V
+# ------------------------------------------------------------------------- #
+
+#' plotVCramer
+#'
+#' @param obj an object of class FactorDataset
+#'
+#' @return
+#' @export
+#' @import ggplot2
+#' @examples
+#library(ggplot2)
+plotVCramer <- function(obj){
+  table <- Vcramer.FactorDataset(obj)
+  p <- min(12,length(table))
+  print(p)
+  VCramer <- as.data.frame(table[1:p])
+  colnames(VCramer) <- "values"
+  # Visualisation
+  ggplot(VCramer, aes(x=reorder(rownames(VCramer), -values), y=values)) + geom_col()
+}  
+
+
+
+
+
