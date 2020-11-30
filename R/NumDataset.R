@@ -93,7 +93,10 @@ Corr_ratios.NumDataset <-function(object){
   corr <- sce_l/sct_l
   print("Correlation matrix")
   print(corr)
+  return(corr)
 }
+
+
 
 
 #' TValueTable.NumDataset
@@ -128,6 +131,7 @@ TValueTable.NumDataset <-function(object){
   }
   print("t-value table")
   print(tvalue_table)
+  return(tvalue_table)
 }
 
 #' EffectSizeTable.NumDataset
@@ -170,4 +174,5 @@ EffectSizeTable.NumDataset <-function(object){
   }
   print("Effect size table")
   print(effect_size_table)
+  return(effect_size_table)
 }
