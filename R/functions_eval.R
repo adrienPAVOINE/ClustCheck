@@ -4,10 +4,10 @@
 # ------------------------------------------------------------------------- #
 
 # ------------------------------------------------------------------------- #
-# Plot of t-values
+# Plot of t-values (numeric variables)
 # ------------------------------------------------------------------------- #
 
-#' plottvalue
+#' plottvaluenum
 #'
 #' @param obj an object of class NumDataset
 #'
@@ -16,7 +16,7 @@
 #' @import ggplot2
 #' @examples
 #library(ggplot2)
-plottvalue <- function(obj){
+plottvaluenum <- function(obj){
   table <- TValueTable.NumDataset(obj)
   p <- ncol(table)
   variables <- rownames(table)
@@ -28,11 +28,12 @@ plottvalue <- function(obj){
     geom_hline(yintercept = -2, linetype="dashed", size=0.5, color="red") +
     geom_hline(yintercept = 2, linetype="dashed", size=0.5, color="red") +
     coord_flip() +
-    facet_wrap(vars(ind))
+    facet_wrap(vars(ind)) +
+    labs(title = "t-values")
 }
 
 # ------------------------------------------------------------------------- #
-# Plot of size effect
+# Plot of size effect (numeric variables)
 # ------------------------------------------------------------------------- #
 
 #' plotsizeeff
@@ -54,11 +55,12 @@ plotsizeeff <- function(obj){
   ggplot2::ggplot(SE_table, aes(x=variables, y=values)) +
     geom_col() +
     coord_flip() +
-    facet_wrap(vars(ind))
+    facet_wrap(vars(ind)) +
+    labs(title = "Size effect")
 }
 
 # ------------------------------------------------------------------------- #
-# Plot of correlations
+# Plot of correlations (numeric variables)
 # ------------------------------------------------------------------------- #
 
 #' plotcorr
@@ -72,17 +74,48 @@ plotsizeeff <- function(obj){
 #library(ggplot2)
 plotcorr <- function(obj){
   table <- sort(Corr_ratios.NumDataset(obj), decreasing=T)
-  p <- min(12,ncol(table))
-  print(p)
+  p <- min(12,length(table))
   corr <- as.data.frame(table[1:p])
   colnames(corr) <- "values"
   # Visualisation
-  ggplot(corr, aes(x=reorder(rownames(corr), -values), y=values)) + geom_col()
+  ggplot(corr, aes(x=reorder(rownames(corr), -values), y=values)) +
+    geom_col() +
+    labs(title = "Correlations") +
+    xlab("Variables") +
+    ylab("Value") 
 }
 
+# ------------------------------------------------------------------------- #
+# Plot of t-values (numeric variables)
+# ------------------------------------------------------------------------- #
+
+#' plottvaluefactor
+#'
+#' @param obj an object of class FactorDataset
+#'
+#' @return
+#' @export
+#' @import ggplot2
+#' @examples
+#library(ggplot2)
+# a voir comment merger les 2 fonctions plot t values
+plottvaluefactor <- function(obj, nomvarqual){
+  table <- TValueTable.FactorDataset(obj, nomvarqual)
+  m <- ncol(table)
+  levels <- colnames(table)
+  Tvalue_table <- as.data.frame(table)
+  Tvalue_table$Freq
+  colnames(Tvalue_table) <- c('clusters','levels','values')
+  # Visualisation
+  ggplot2::ggplot(Tvalue_table, aes(x=levels, y=values)) +
+    geom_col() +
+    coord_flip() +
+    facet_wrap(vars(clusters)) +
+    labs(title = "t-values")
+}
 
 # ------------------------------------------------------------------------- #
-# Plot of Cramer's V
+# Plot of Cramer's V (categorical variables)
 # ------------------------------------------------------------------------- #
 
 #' plotVCramer
