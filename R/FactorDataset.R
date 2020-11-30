@@ -1,4 +1,4 @@
-#' FactoDataset
+#' FactorDataset
 #'
 #' @param data a dataset with factor variables
 #' @param vargroupe the variable's name of the cluster
@@ -12,7 +12,7 @@
 #' @import factoextra
 #' @import ggplot2
 #' @examples
-FactoDataset <- function(data,vargroupe){
+FactorDataset <- function(data,vargroupe){
   #controle - data.frame
   ok <- is.data.frame(data)
   if (!ok){
@@ -59,7 +59,7 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
       l <- c(l,cramer)
     }
     matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
-    print(matrice)
+    #print(matrice)
     #listemax <- c()
     #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
     #listemax <- c(listemax, ind)
@@ -73,6 +73,7 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
     cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
     cat("cramer entre la var groupe et ", var," = ", cramer)
   }
+  return(matrice)
 }
 #' PhiValueTable.FactorDataset
 #'
