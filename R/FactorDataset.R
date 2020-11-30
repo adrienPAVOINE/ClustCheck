@@ -45,7 +45,7 @@ FactoDataset <- function(data,vargroupe){
 #'
 #' @return
 #' @export
-#'
+#' @importFrom stats addmargins chisq.test
 #' @examples
 Vcramer.FactorDataset <- function(object, var = FALSE){
   if(var == FALSE){
@@ -81,7 +81,7 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
 #'
 #' @return
 #' @export
-#'
+#' @importFrom stats addmargins chisq.test
 #' @examples
 PhiValueTable.FactorDataset <- function(object, nomvarqual){
   tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
@@ -109,7 +109,7 @@ PhiValueTable.FactorDataset <- function(object, nomvarqual){
 #'
 #' @return
 #' @export
-#'
+#' @importFrom stats addmargins chisq.test
 #' @examples
 TValueTable.FactorDataset <-function(object, nomvarqual){
   tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
@@ -138,6 +138,8 @@ TValueTable.FactorDataset <-function(object, nomvarqual){
 #' @import FactoMineR
 #' @import factoextra
 #' @import ggplot2
+#' @importFrom graphics  barplot mosaicplot
+#' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationACM.FactorDataset <- function(object){
   res.mca <- MCA(object$all.var.qual ,graph = FALSE)
@@ -155,6 +157,8 @@ VisualisationACM.FactorDataset <- function(object){
 #' @import FactoMineR
 #' @import factoextra
 #' @import ggplot2
+#' @importFrom graphics  barplot mosaicplot
+#' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationAC.FactorDataset <-function(object, nomvarqual){
   tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
