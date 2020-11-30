@@ -96,6 +96,14 @@ Corr_ratios.NumDataset <-function(object){
 }
 
 
+#' TValueTable.NumDataset
+#'
+#' @param object a object NumData
+#'
+#' @return
+#' @export
+#'
+#' @examples
 TValueTable.NumDataset <-function(object){
   data <- object$data.quanti
   classes <- object$clusters_data
@@ -122,7 +130,14 @@ TValueTable.NumDataset <-function(object){
   print(tvalue_table)
 }
 
-
+#' EffectSizeTable.NumDataset
+#'
+#' @param object a NumDataset object
+#'
+#' @return
+#' @export
+#'
+#' @examples
 EffectSizeTable.NumDataset <-function(object){
   data <- object$data.quanti
   classes <- object$clusters_data

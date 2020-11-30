@@ -2,16 +2,16 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotvalue}
 \alias{plotvalue}
-\title{plot.t}
+\title{plotvalue}
 \usage{
-plotvalue(tvalue)
+plotvalue(Tvalue_table)
 }
 \arguments{
-\item{tvalue}{a Table of test value}
+\item{Tvalue_table}{a Table of test value}
 }
 \value{
 
 }
 \description{
-plot.t
+plotvalue
 }
