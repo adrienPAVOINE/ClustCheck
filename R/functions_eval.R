@@ -94,7 +94,7 @@ plotcorr <- function(obj){
 #' Title
 #'
 #' @param obj an object of class FactorDataset
-#' @param car name of variable of interest to plot t-values
+#' @param var name of variable of interest to plot t-values
 #' 
 #' @return
 #' @export
@@ -155,7 +155,7 @@ plotVCramer <- function(obj){
 #' Title
 #'
 #' @param obj an object of class FactorDataset
-#' @param car name of variable of interest to plot phi-values
+#' @param var name of variable of interest to plot phi-values
 #' 
 #' @return
 #' @export
