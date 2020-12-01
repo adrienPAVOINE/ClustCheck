@@ -1,44 +1,5 @@
-#' NumDataset
-#'
-#' @param data a dataset
-#' @param clusters_data a Numdataset object
-#'
-#' @return
-#' @export
-#' @importFrom stats var
-#' @examples
-NumDataset <- function(data,clusters_data){
-  if (! is.data.frame(data)){
-    stop("Data must be a dataframe")
-  }
 
-  if (is.data.frame(clusters_data)){
-    clus_names<- unique(clusters_data[[1]])
-  }else{
-    clus_names<- unique(clusters_data)
-  }
-
-  ind.quanti = sapply(data,function(x)is.numeric(x))
-  nb_quanti <- sum(ind.quanti)
-  if (nb_quanti < 1 ){
-    stop("There are no quantitative variables in your dataset")
-  }
-  data.quanti<- data[ ,ind.quanti]
-  instance <- list()
-  instance$data <- data
-  instance$p <- ncol(data)
-  instance$n <- nrow(data)
-  instance$data.quanti <- data.quanti
-  instance$p.quanti <- ncol(data.quanti)
-  instance$var.quanti.names <- names(data.quanti)
-  instance$clusters_data <- clusters_data
-  instance$cluster_names <- clus_names
-  class(instance) <- "NumDataset"
-  return(instance)
-}
-
-
-#' Corr_ratios.NumDataset
+#' Corr_ratios.Data
 #'
 #' @param object a NumDataset object
 #'
@@ -46,7 +7,7 @@ NumDataset <- function(data,clusters_data){
 #' @export
 #'
 #' @examples
-Corr_ratios.NumDataset <-function(object){
+Corr_ratios.Data <-function(object){
   classes <- object$clusters_data
   cl <- object$cluster_names
   n_clusters <- length(cl)
@@ -101,7 +62,7 @@ Corr_ratios.NumDataset <-function(object){
 
 #' TValueTable.NumDataset
 #'
-#' @param object a object NumData
+#' @param object a object object
 #'
 #' @return
 #' @export
@@ -142,7 +103,7 @@ TValueTable.NumDataset <-function(object){
 #' @export
 #'
 #' @examples
-EffectSizeTable.NumDataset <-function(object){
+EffectSizeTable.Data <-function(object){
   data <- object$data.quanti
   classes <- object$clusters_data
   n <- object$n

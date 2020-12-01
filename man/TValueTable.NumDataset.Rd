@@ -7,7 +7,7 @@
 TValueTable.NumDataset(object)
 }
 \arguments{
-\item{object}{a object NumData}
+\item{object}{a object object}
 }
 \value{
 

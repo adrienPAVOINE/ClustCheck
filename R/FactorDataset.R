@@ -1,44 +1,23 @@
-#' FactorDataset
+#' CalcTable.Data
 #'
-#' @param data a dataset with factor variables
-#' @param vargroupe the variable's name of the cluster
+#' @param object a object
+#' @param varqual the other variable to cross
 #'
-#' @return a Factordataset object
+#' @return
 #' @export
-#' @importFrom grDevices rainbow
-#' @importFrom stats dist reshape
-#' @import questionr
-#' @import FactoMineR
-#' @import factoextra
-#' @import ggplot2
+#' @importFrom stats addmargins
 #' @examples
-FactorDataset <- function(data,vargroupe){
-  #controle - data.frame
-  ok <- is.data.frame(data)
-  if (!ok){
-    stop("Ce n'est pas un data frame")
-  }
-  ind.qual = sapply(data,function(x)is.factor(x)|is.character(x))
-  data.qual1 <- data[ ,ind.qual]
-  nb_ok <- sum(ind.qual)
-  if (nb_ok <= 1 ){
-    stop("vous n'avez pas de variables qualitatives autre que ", vargroupe, " dans votre dataset")
-  }
-  data.qual <- data.qual1[ , !(names(data.qual1) %in% vargroupe)]
-  instance <- list()
-  instance$data <- data
-  instance$p <- ncol(data)
-  instance$n <- nrow(data)
-  instance$p.qual <- ncol(data.qual)
-  instance$all.var.qual <- data.qual1
-  instance$var.qual.names <- names(data.qual)
-  instance$data.qual = data.qual
-  instance$vargroupe = vargroupe
-  instance$vcramer <- Vcramer.FactorDataset(instance)
-  class(instance) <- "FactorDataset"
-  return(instance)
+CalcTable.Data <- function(object, varqual){
+  tableau <- table(object$data[[object$vargroupe]],object$data[[varqual]])
+  nli <- nrow(tableau)
+  nco <- ncol(tableau)
+  eff <- addmargins(tableau)
+  pourc <- addmargins(prop.table(addmargins(tableau,1),1),2)
+  return(list(tableau, eff, pourc, nco, nli))
 }
-#' Vcramer.FactorDataset
+
+
+#' Vcramer.Data
 #'
 #' @param object a object
 #' @param var if you just want the Cramer for one varible
@@ -47,19 +26,20 @@ FactorDataset <- function(data,vargroupe){
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
-Vcramer.FactorDataset <- function(object, var = FALSE){
+Vcramer.Data <- function(object, var = FALSE){
   if(var == FALSE){
     l<-c()
     for (i in object$var.qual.names){
-      tableau <- table(object$data[[i]],object$data[[object$vargroupe]])
-      nli <- nrow(tableau)
-      nco <- ncol(tableau)
-      khi2 = chisq.test(tableau)$statistic
+      table <- CalcTable.Data(object, i)
+      tableau <- table[[1]]
+      nli <- table[[5]]
+      nco <- table[[4]]
+      suppressWarnings(khi2 = chisq.test(tableau)$statistic)
       cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
       l <- c(l,cramer)
     }
     matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
-    #print(matrice)
+    print(matrice)
     #listemax <- c()
     #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
     #listemax <- c(listemax, ind)
@@ -69,13 +49,13 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
     tableau <- table(object$data[[var]],object$data[[object$vargroupe]])
     nli <- nrow(tableau)
     nco <- ncol(tableau)
-    khi2 = chisq.test(tableau)$statistic
+    suppressWarnings(khi2 = chisq.test(tableau)$statistic)
     cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
     cat("cramer entre la var groupe et ", var," = ", cramer)
   }
   return(matrice)
 }
-#' PhiValueTable.FactorDataset
+#' PhiValueTable.Data
 #'
 #' @param object a object
 #' @param nomvarqual a string
@@ -84,19 +64,20 @@ Vcramer.FactorDataset <- function(object, var = FALSE){
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
-PhiValueTable.FactorDataset <- function(object, nomvarqual){
-  tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
-  nli <- nrow(tableau)
-  nco = ncol(tableau)
-  eff = addmargins(tableau)
-  pourc = addmargins(prop.table(addmargins(tableau,1),1),2)
+PhiValueTable.Data <- function(object, nomvarqual){
+  table <- CalcTable.Data(object, nomvarqual)
+  tableau <- table[[1]]
+  nli <- table[[5]]
+  nco <- table[[4]]
+  eff = table[[2]]
+  pourc = table[[3]]
   tab_phi <- tableau
   for (i in 1:nli){
     for (j in 1:nco){
       taille = eff[i,j]/eff[i,nco+1]
       liste <- c(eff[i,j],(eff[nli+1,j]-eff[i,j]), (eff[i,nco+1]-eff[i,j]),eff[nli+1,nco+1]-(eff[i,j]+(eff[nli+1]-eff[i,j])+(eff[i,nco+1]-eff[i,j])) )
       matri <- matrix(liste,2,2)
-      khi2 <- chisq.test(matri)
+      suppressWarnings(khi2 <- chisq.test(matri))
       pla = (matri[2,1])/(matri[2,1]+matri[2,2])
       tab_phi[i,j] <- round(sign(taille-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4)
     }
@@ -104,21 +85,25 @@ PhiValueTable.FactorDataset <- function(object, nomvarqual){
   #print(tab_phi)
   return(tab_phi)
 }
-#' TValueTable.FactorDataset
+
+
+
+#' TValueTable.Data
 #'
-#' @param object a object
-#' @param nomvarqual name of var
+#' @param object a data object
+#' @param nomvarqual string of the variable
 #'
 #' @return
 #' @export
-#' @importFrom stats addmargins chisq.test
+#'
 #' @examples
-TValueTable.FactorDataset <-function(object, nomvarqual){
-  tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
-  nli <- nrow(tableau)
-  nco = ncol(tableau)
-  eff = addmargins(tableau)
-  pourc = addmargins(prop.table(addmargins(tableau,1),1),2)
+TValueTable.Data <-function(object, nomvarqual){
+  table <- CalcTable.Data(object, nomvarqual)
+  tableau <- table[[1]]
+  nli <- table[[5]]
+  nco <- table[[4]]
+  eff = table[[2]]
+  pourc = table[[3]]
   tab_vtest <- tableau
   for (i in 1:nli){
     for (j in 1:nco){
@@ -131,7 +116,7 @@ TValueTable.FactorDataset <-function(object, nomvarqual){
   return(tab_vtest)
 
 }
-#' VisualisationACM.FactorDataset
+#' VisualisationACM.Data
 #'
 #' @param object a object
 #'
@@ -144,12 +129,12 @@ TValueTable.FactorDataset <-function(object, nomvarqual){
 #' @importFrom graphics  barplot mosaicplot
 #' @importFrom stats addmargins chisq.test
 #' @examples
-VisualisationACM.FactorDataset <- function(object){
+VisualisationACM.Data <- function(object){
   res.mca <- MCA(object$all.var.qual ,graph = FALSE)
   fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib", ggtheme= theme_minimal())
 }
 
-#' VisualisationAC.FactorDataset
+#' VisualisationAC.Data
 #'
 #' @param object a object
 #' @param nomvarqual a string
@@ -163,7 +148,7 @@ VisualisationACM.FactorDataset <- function(object){
 #' @importFrom graphics  barplot mosaicplot
 #' @importFrom stats addmargins chisq.test
 #' @examples
-VisualisationAC.FactorDataset <-function(object, nomvarqual){
+VisualisationAC.Data <-function(object, nomvarqual){
   tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
   lprop(tableau, digits=1)
   cprop(tableau, digits=2)
