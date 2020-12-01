@@ -1,3 +1,46 @@
+
+#' Transformdata.Data
+#'
+#' @param object a data object
+#'
+#' @return
+#' @export
+#'
+#' @examples
+Transformdata.Data <- function(object){
+  #fonction pour centrage-réduction
+  CR <- function(x){
+    n <- length(x)
+    m <- mean(x)
+    v <- (n-1)/n*var(x)
+    return((x-m)/sqrt(v))
+  }
+  #appliquer la fonction sur les variables continues
+  varcont <- data.frame(lapply(subset(object$data,select=object$ind.quanti),CR))
+  #codage disjonctif complet
+  #library(ade4)
+  varquali <- acm.disjonctif(subset(data,select=object$ind.qual))
+  #fonction pour pondération des indicatrices
+  PF <- function(x){
+    m <- mean(x)
+    return(x/sqrt(m))
+  }
+  #appliquer la pondération sur les indicatrices
+  varquali.pond <- data.frame(lapply(varquali,PF))
+  #données transformées envoyées ?l'ACP
+  data.pour.acp <- cbind(varcont,varquali.pond)
+  nbcol.tot <- ncol(data.pour.acp)
+  rownames(data.pour.acp) <- rownames(object$data)
+
+  acp.data <- dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
+  coordind = round(acp.data$li[,])
+  ind <-cbind(coordind, object$data[[object$vargroupe]])
+  return(ind)
+
+}
+
+
+
 # ------------------------------------------------------------------------- #
 # CLUSTCHECK
 # Functions for clustering evalation metrics
@@ -6,6 +49,9 @@
 # ------------------------------------------------------------------------- #
 # Silhouette
 # ------------------------------------------------------------------------- #
+
+
+
 
 silhouette <- function(data, clusters) {
   # a: The mean distance between a sample and all other points in the same class.
@@ -16,9 +62,9 @@ silhouette <- function(data, clusters) {
   d <- as.matrix(dist(data))
   n <- ncol(d)
   a <- NULL; b <- NULL
-  for (col in 1:n){ 
+  for (col in 1:n){
     cluster <- clusters[col]
-    # calculation for a 
+    # calculation for a
     same_class <- which(clusters==cluster) # identification of the class samples
     same_class_wo_sample <- same_class[which(same_class!=col)] # we remove the sample here
     a <- c(a,mean(d[same_class_wo_sample,col]))
@@ -29,7 +75,16 @@ silhouette <- function(data, clusters) {
     different_class <- which(clusters==nearest_cluster)
     b <- c(b,mean(d[different_class,col]))
   }
-  s <- (b - a)/pmax(a,b) # silhouette formula 
+  s <- (b - a)/pmax(a,b) # silhouette formula
+
+
+  for (k in (unique(clusters))){
+    ind = which(clusters == k)
+    nbk <- sum(clusters == k)
+    sk <- 1/nbk * (sum(s[ind]))
+    cat("Silhouette du groupe" , k )
+    print(sk)
+  }
   return(mean(s))
 }
 
@@ -49,11 +104,11 @@ davies_bouldin <- function(data, clusters) {
   s <- matrix(nrow=1, ncol=k)
   R <- matrix(nrow=k, ncol=k)
   maxR <- matrix(nrow=1, ncol=k)
-  # Centroids calculation 
+  # Centroids calculation
   i=1
   for (g in unique(clusters)){
-    k_data <- data[which(clusters==g),]  
-    centroids[i,] <- sapply(k_data, mean, na.rm=T) 
+    k_data <- data[which(clusters==g),]
+    centroids[i,] <- sapply(k_data, mean, na.rm=T)
     s[i] <- sqrt(mean(rowSums(apply(k_data, 2, function(y) (y - mean(y))^2))))
     i = i+1
   }
@@ -63,13 +118,13 @@ davies_bouldin <- function(data, clusters) {
       d[i,j] <- sqrt(sum((centroids[i,] - centroids[j,])^2))
       R[i,j] <- (s[i]+s[j])/d[i,j]
     }
-  }  
+  }
   # Index calculation
   for (i in 1:k){
     maxR[i] <- max(R[i,][is.finite(R[i,])])
   }
   DB <- sum(maxR)/k
-  return(DB) 
+  return(DB)
 }
 
 
@@ -89,11 +144,11 @@ dunn_index <- function(data, clusters) {
   centroids <- matrix(nrow=k, ncol=p)
   d1 <- matrix(nrow=1, ncol=k)
   d2 <- matrix(nrow=k, ncol=k)
-  # Centroids calculation 
+  # Centroids calculation
   i=1
   for (g in unique(clusters)){
-    k_data <- data[which(clusters==g),]  
-    centroids[i,] <- sapply(k_data, mean, na.rm=T) 
+    k_data <- data[which(clusters==g),]
+    centroids[i,] <- sapply(k_data, mean, na.rm=T)
     i = i+1
   }
   # d2 calculation
@@ -105,7 +160,7 @@ dunn_index <- function(data, clusters) {
   # d1 calculation
   i=1
   for (g in unique(clusters)){
-    k_data <- data[which(clusters==g),]  
+    k_data <- data[which(clusters==g),]
     d1[i] <- sqrt(mean(rowSums(apply(k_data, 2, function(y) (y - mean(y))^2))))
     i = i+1
   }

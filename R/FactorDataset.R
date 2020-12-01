@@ -34,7 +34,7 @@ Vcramer.Data <- function(object, var = FALSE){
       tableau <- table[[1]]
       nli <- table[[5]]
       nco <- table[[4]]
-      suppressWarnings(khi2 = chisq.test(tableau)$statistic)
+      khi2 = chisq.test(tableau)$statistic
       cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
       l <- c(l,cramer)
     }
@@ -49,7 +49,7 @@ Vcramer.Data <- function(object, var = FALSE){
     tableau <- table(object$data[[var]],object$data[[object$vargroupe]])
     nli <- nrow(tableau)
     nco <- ncol(tableau)
-    suppressWarnings(khi2 = chisq.test(tableau)$statistic)
+    khi2 = chisq.test(tableau)$statistic
     cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
     cat("cramer entre la var groupe et ", var," = ", cramer)
   }

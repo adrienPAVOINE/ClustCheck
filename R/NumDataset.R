@@ -137,3 +137,4 @@ EffectSizeTable.Data <-function(object){
   print(effect_size_table)
   return(effect_size_table)
 }
+

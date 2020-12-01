@@ -13,6 +13,8 @@
 #' @import ggplot2
 #' @examples
 Dataset <- function(data,vargroupe){
+  idc <- which(names(data)==vargroupe)
+  dataexp <- data[,-idc]
   instance <- list()
   instance$vargroupe = vargroupe
   instance$data <- data
@@ -26,17 +28,19 @@ Dataset <- function(data,vargroupe){
   if (!ok){
     stop("Ce n'est pas un data frame")
   }
-  ind.qual = sapply(data,function(x)is.factor(x)|is.character(x))
-  data.qual1 <- data[ ,ind.qual]
+  ind.qual = sapply(dataexp,function(x)is.factor(x)|is.character(x))
   nb_ok <- sum(ind.qual)
+  ind.qual1 = sapply(data,function(x)is.factor(x)|is.character(x))
+  data.qual1 <- data[ ,ind.qual1]
   if (nb_ok <= 1 ){
     print("vous n'avez pas de variables qualitatives autre que  dans votre dataset")
   }else{
-    data.qual <- data.qual1[ , !(names(data.qual1) %in% vargroupe)]
+    data.qual <- dataexp[ ,ind.qual]
     instance$p.qual <- ncol(data.qual)
     instance$all.var.qual <- data.qual1
     instance$var.qual.names <- names(data.qual)
     instance$data.qual = data.qual
+    instance$ind.qual = ind.qual
     instance$vcramer <- Vcramer.Data(instance)
   }
   ind.quanti = sapply(data,function(x)is.numeric(x))
@@ -48,6 +52,7 @@ Dataset <- function(data,vargroupe){
     instance$data.quanti <- data.quanti
     instance$p.quanti <- ncol(data.quanti)
     instance$var.quanti.names <- names(data.quanti)
+    instance$ind.quanti = ind.quanti
     instance$corr.ratio <- Corr_ratios.Data(instance)
   }
 
@@ -56,4 +61,6 @@ Dataset <- function(data,vargroupe){
   class(instance) <- "Data"
   return(instance)
 }
+
+
 
