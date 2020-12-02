@@ -16,6 +16,8 @@ RoxygenNote: 7.1.1
 Imports: 
     stats,
     questionr,
+    ade4,
     FactoMineR,
     factoextra,
-    ggplot2
+    ggplot2,
+    dplyr

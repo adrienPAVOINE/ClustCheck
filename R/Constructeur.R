@@ -8,7 +8,6 @@
 #' @importFrom grDevices rainbow
 #' @importFrom stats dist reshape
 #' @import questionr
-#' @import FactoMineR
 #' @import factoextra
 #' @import ggplot2
 #' @examples
@@ -32,8 +31,12 @@ Dataset <- function(data,vargroupe){
   nb_ok <- sum(ind.qual)
   ind.qual1 = sapply(data,function(x)is.factor(x)|is.character(x))
   data.qual1 <- data[ ,ind.qual1]
-  if (nb_ok <= 1 ){
-    print("vous n'avez pas de variables qualitatives autre que  dans votre dataset")
+  CheckVarQual <- TRUE
+
+  if (nb_ok < 1 ){
+    print("vous n'avez pas de variables qualitatives")
+    CheckVarQual <- FALSE
+
   }else{
     data.qual <- dataexp[ ,ind.qual]
     instance$p.qual <- ncol(data.qual)
@@ -56,8 +59,7 @@ Dataset <- function(data,vargroupe){
     instance$corr.ratio <- Corr_ratios.Data(instance)
   }
 
-
-
+  instance$CheckVarQual <- CheckVarQual
   class(instance) <- "Data"
   return(instance)
 }

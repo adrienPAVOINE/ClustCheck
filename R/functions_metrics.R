@@ -19,7 +19,7 @@ Transformdata.Data <- function(object){
   varcont <- data.frame(lapply(subset(object$data,select=object$ind.quanti),CR))
   #codage disjonctif complet
   #library(ade4)
-  varquali <- acm.disjonctif(subset(data,select=object$ind.qual))
+  varquali <- ade4::acm.disjonctif(subset(data,select=object$ind.qual))
   #fonction pour pondération des indicatrices
   PF <- function(x){
     m <- mean(x)
@@ -32,9 +32,9 @@ Transformdata.Data <- function(object){
   nbcol.tot <- ncol(data.pour.acp)
   rownames(data.pour.acp) <- rownames(object$data)
 
-  acp.data <- dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
+  acp.data <- ade4::dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
   coordind = round(acp.data$li[,])
-  ind <-cbind(coordind, object$data[[object$vargroupe]])
+  ind <-cbind(coordind, cluster = object$data[[object$vargroupe]])
   return(ind)
 
 }
@@ -51,42 +51,59 @@ Transformdata.Data <- function(object){
 # ------------------------------------------------------------------------- #
 
 
-
-
-silhouette <- function(data, clusters) {
+#' silhouette.Data
+#'
+#' @param object a Dataset object
+#'
+#' @return
+#' @export
+#'
+#' @examples
+silhouette.Data <- function(object) {
+  print(object$CheckVarQual)
+  if(object$CheckVarQual== TRUE){
+    data <- Transformdata.Data(object)
+    clusters_data <- data$cluster
+  }else{
+    data <- object$data
+    clusters_data <- object$clusters_data
+  }
   # a: The mean distance between a sample and all other points in the same class.
   # b: The mean distance between a sample and all other points in the next nearest cluster.
-  if (nrow(data)!=length(clusters)){
+  if (nrow(data)!=length(object$clusters_data)){
     stop("Feature data and cluster data don't have the same length")
   }
   d <- as.matrix(dist(data))
   n <- ncol(d)
   a <- NULL; b <- NULL
   for (col in 1:n){
-    cluster <- clusters[col]
+    cluster <- clusters_data[col]
     # calculation for a
-    same_class <- which(clusters==cluster) # identification of the class samples
+    same_class <- which(clusters_data==cluster) # identification of the class samples
     same_class_wo_sample <- same_class[which(same_class!=col)] # we remove the sample here
     a <- c(a,mean(d[same_class_wo_sample,col]))
     # calculation for b
-    all_different_class <- which(clusters!=cluster) # identification of all the other samples
+    all_different_class <- which(clusters_data!=cluster) # identification of all the other samples
     w <- as.integer(names(which.min(d[all_different_class,col]))) # identification of the closest sample in an other sample
-    nearest_cluster <- clusters[w] # identification of the next nearest cluster
-    different_class <- which(clusters==nearest_cluster)
+    nearest_cluster <- clusters_data[w] # identification of the next nearest cluster
+    different_class <- which(clusters_data==nearest_cluster)
     b <- c(b,mean(d[different_class,col]))
   }
   s <- (b - a)/pmax(a,b) # silhouette formula
 
 
-  for (k in (unique(clusters))){
-    ind = which(clusters == k)
-    nbk <- sum(clusters == k)
+  for (k in object$cluster_names){
+    ind = which(clusters_data == k)
+    nbk <- sum(clusters_data == k)
     sk <- 1/nbk * (sum(s[ind]))
     cat("Silhouette du groupe" , k )
     print(sk)
   }
   return(mean(s))
 }
+
+
+
 
 
 # ------------------------------------------------------------------------- #
@@ -167,3 +184,62 @@ dunn_index <- function(data, clusters) {
   DI <- min(d2[d2>0])/max(d1)
   return(DI)
 }
+
+
+
+
+
+
+
+# TestStatistique.Data <- function(object, varexp){
+#   k <- length(object$cluster_names)
+#   if(is.numeric(object$data[[varexp]])){
+#     if (k == 1){
+#       stop("Vous n'avez qu'un seul groupe")
+#     }else if(k == 2){
+#       groupe <- unique(object$clusters_data)
+#       cluster1 <- data[object$clusters_data==groupe[1],]
+#       moy1 <- mean(cluster1[[varexp]])
+#       cluster2 <- data[object$clusters_data==groupe[2],]
+#       moy2 <- mean(cluster2[[varexp]])
+#       if (moy1>moy2){
+#         test <- t.test(cluster1[[varexp]], cluster2[[varexp]], alternative = "greater")
+#         if (test$p.value < 0.05){
+#           cat("Le moyenne du", varexp, "est supérieur chez le groupe", groupe[1], "que chez le groupe", groupe[2])
+#         }else{
+#           test <- t.test(cluster1[[varexp]], cluster2[[varexp]])
+#           if (test$p.value < 0.05){
+#             cat("Le moyenne du", varexp, "est significativement différente entre les deux groupes")
+#           }}
+#       }else{
+#         test <- t.test(cluster2[[varexp]], cluster1[[varexp]], alternative = "greater")
+#         if (test$p.value < 0.05){
+#           cat("Le moyenne du", varexp, "est supérieur chez le groupe", groupe[2], "que chez le groupe", groupe[])
+#         }else{
+#           test <- t.test(cluster1[[varexp]], cluster2[[varexp]])
+#           if (test$p.value < 0.05){
+#             cat("Le moyenne du", varexp, "est significativement différente entre les deux groupes")
+#           }
+#         }
+#       }
+#
+#     }else{
+#       boxplot(object$data[[varexp]]~object$clusters_data)
+#       mod=aov(object$data[[varexp]]~object$clusters_data)
+#       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
+#       if (p_value < 0.05){
+#         cat("Le groupe à un lien significatif sur", varexp)
+#       }else{
+#         cat("il n'y a pas de lien significatif entre groupe et", varexp)
+#       }
+#
+#     }
+#   }else{
+#     khi2 <- chisq.test(table(object$clusters_data, object$data[[varexp]]))
+#     if (khi2$p.value < 0.05){
+#       cat("Les groupes n'ont pas la/le même", varexp)
+#     }else
+#       cat("Il n'y a pas de lien significatif entre le groupe et", varexp)
+#   }
+# }
+#

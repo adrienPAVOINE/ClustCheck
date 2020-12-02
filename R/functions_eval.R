@@ -71,7 +71,7 @@ plotsizeeff <- function(obj){
 #' @export
 #' @import ggplot2
 #' @examples
-#library(ggplot2)
+
 plotcorr <- function(obj){
   table <- sort(Corr_ratios.NumDataset(obj), decreasing=T)
   p <- min(12,length(table))
@@ -95,7 +95,7 @@ plotcorr <- function(obj){
 #'
 #' @param obj an object of class FactorDataset
 #' @param var name of variable of interest to plot t-values
-#' 
+#'
 #' @return
 #' @export
 #'
@@ -156,7 +156,7 @@ plotVCramer <- function(obj){
 #'
 #' @param obj an object of class FactorDataset
 #' @param var name of variable of interest to plot phi-values
-#' 
+#'
 #' @return
 #' @export
 #'

@@ -130,7 +130,7 @@ TValueTable.Data <-function(object, nomvarqual){
 #' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationACM.Data <- function(object){
-  res.mca <- MCA(object$all.var.qual ,graph = FALSE)
+  res.mca <- FactoMineR::MCA(object$all.var.qual ,graph = FALSE)
   fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib", ggtheme= theme_minimal())
 }
 
@@ -145,17 +145,19 @@ VisualisationACM.Data <- function(object){
 #' @import FactoMineR
 #' @import factoextra
 #' @import ggplot2
+#' @import dplyr
 #' @importFrom graphics  barplot mosaicplot
 #' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationAC.Data <-function(object, nomvarqual){
   tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
-  lprop(tableau, digits=1)
-  cprop(tableau, digits=2)
-  colors <- c("chartreuse4", "chartreuse1", "orange","green")
-  barplot(tableau, col=colors, main = "heureux par libert? sur internet", ylab="nombre ")
-  mosaicplot(tableau, col = colors)
-  res.ca <- CA(tableau, graph = TRUE)
+  questionr::lprop(tableau, digits=1)
+  questionr::cprop(tableau, digits=2)
+  mydf <- as.data.frame(tableau)
+  ggplot2::ggplot(mydf, ggplot2::aes(fill=Var2, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
+  #data$groupe = factor(data$groupe)
+  #ggplot2::ggplot(data = data) + geom_mosaic(aes(x = product(groupe, région), fill=groupe), na.rm=TRUE) +
+   # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')
+  res.ca <- FactoMineR::CA(tableau, graph = TRUE)
 }
-
 
