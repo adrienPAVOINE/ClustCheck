@@ -7,9 +7,9 @@
 Vcramer.Data(object, var = FALSE)
 }
 \arguments{
-\item{object}{a object}
+\item{object}{a dataset object}
 
-\item{var}{if you just want the Cramer for one varible}
+\item{var}{If you want the cramer value of an unique category variable}
 }
 \value{
 

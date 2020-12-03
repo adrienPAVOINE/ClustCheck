@@ -7,4 +7,5 @@ usethis::use_package("FactoMineR")
 usethis::use_package("factoextra")
 usethis::use_package("ggplot2")
 usethis::use_package("dplyr")
-
+usethis::use_package("stats")
+usethis::use_package("utils")

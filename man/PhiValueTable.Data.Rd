@@ -7,9 +7,9 @@
 PhiValueTable.Data(object, nomvarqual)
 }
 \arguments{
-\item{object}{a object}
+\item{object}{a dataset object}
 
-\item{nomvarqual}{a string}
+\item{nomvarqual}{vector of a category variable}
 }
 \value{
 

@@ -20,4 +20,5 @@ Imports:
     FactoMineR,
     factoextra,
     ggplot2,
-    dplyr
+    dplyr,
+    utils

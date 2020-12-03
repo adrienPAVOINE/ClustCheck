@@ -7,7 +7,7 @@
 CalcTable.Data(object, varqual)
 }
 \arguments{
-\item{object}{a object}
+\item{object}{a Dataset object}
 
 \item{varqual}{the other variable to cross}
 }

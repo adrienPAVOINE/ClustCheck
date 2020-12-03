@@ -4,10 +4,12 @@
 \alias{silhouette.Data}
 \title{silhouette.Data}
 \usage{
-silhouette.Data(object)
+silhouette.Data(object, Clusters)
 }
 \arguments{
-\item{object}{a Dataset object}
+\item{object}{a datset object}
+
+\item{Clusters}{a vector cluster}
 }
 \value{
 
