@@ -8,7 +8,7 @@
 #' @importFrom stats addmargins
 #' @examples
 CalcTable.Data <- function(object, varqual){
-  tableau <- table(object$data[[object$vargroupe]],object$data[[varqual]])
+  tableau <- table(object$clusters_data,varqual)
   nli <- nrow(tableau)
   nco <- ncol(tableau)
   eff <- addmargins(tableau)
@@ -27,33 +27,36 @@ CalcTable.Data <- function(object, varqual){
 #' @importFrom stats addmargins chisq.test
 #' @examples
 Vcramer.Data <- function(object, var = FALSE){
-  if(var == FALSE){
+  nameVar <- deparse(substitute(var))
+  if(nameVar == FALSE){
     l<-c()
     for (i in object$var.qual.names){
-      table <- CalcTable.Data(object, i)
-      tableau <- table[[1]]
-      nli <- table[[5]]
-      nco <- table[[4]]
+      tableau <- table(object$clusters_data,object$data[[i]])
+      nli <- nrow(tableau)
+      nco <- ncol(tableau)
       khi2 = chisq.test(tableau)$statistic
       cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
       l <- c(l,cramer)
     }
     matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
-    print(matrice)
+    #print(matrice)
+    return(matrice)
     #listemax <- c()
     #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
     #listemax <- c(listemax, ind)
     #print(listemax)
     #rownames(matrice)[ind]
   }else{
-    tableau <- table(object$data[[var]],object$data[[object$vargroupe]])
-    nli <- nrow(tableau)
-    nco <- ncol(tableau)
+    table <- CalcTable.Data(object, var)
+    tableau <- table[[1]]
+    nli <- table[[5]]
+    nco <- table[[4]]
     khi2 = chisq.test(tableau)$statistic
     cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
-    cat("cramer entre la var groupe et ", var," = ", cramer)
+    cat("cramer entre la var groupe",deparse(substitute(var))," et  = ", cramer)
+
   }
-  return(matrice)
+
 }
 #' PhiValueTable.Data
 #'
@@ -131,7 +134,7 @@ TValueTable.Data <-function(object, nomvarqual){
 #' @examples
 VisualisationACM.Data <- function(object){
   res.mca <- FactoMineR::MCA(object$all.var.qual ,graph = FALSE)
-  fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib", ggtheme= theme_minimal())
+  factoextra::fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib")
 }
 
 #' VisualisationAC.Data
@@ -150,11 +153,11 @@ VisualisationACM.Data <- function(object){
 #' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationAC.Data <-function(object, nomvarqual){
-  tableau <- table(object$data[[object$vargroupe]],object$data[[nomvarqual]])
+  tableau <- table(object$clusters_data,nomvarqual)
   questionr::lprop(tableau, digits=1)
   questionr::cprop(tableau, digits=2)
   mydf <- as.data.frame(tableau)
-  ggplot2::ggplot(mydf, ggplot2::aes(fill=Var2, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
+  ggplot2::ggplot(mydf, ggplot2::aes(fill=nomvarqual, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
   #data$groupe = factor(data$groupe)
   #ggplot2::ggplot(data = data) + geom_mosaic(aes(x = product(groupe, région), fill=groupe), na.rm=TRUE) +
    # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')

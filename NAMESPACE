@@ -2,7 +2,7 @@
 
 export(CalcTable.Data)
 export(Corr_ratios.Data)
-export(Dataset)
+export(Dataseti)
 export(EffectSizeTable.Data)
 export(PhiValueTable.Data)
 export(TValueTable.Data)

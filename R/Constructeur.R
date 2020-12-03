@@ -11,16 +11,20 @@
 #' @import factoextra
 #' @import ggplot2
 #' @examples
-Dataset <- function(data,vargroupe){
-  idc <- which(names(data)==vargroupe)
-  dataexp <- data[,-idc]
+Dataseti <- function(data,vargroupe){
+  vargroupe <- factor(vargroupe)
+  #concate the vector and the data
+  allData <- cbind(groupe = vargroupe, data)
+  #if the vector is already in the data, we remove it
+  data = data.frame(allData[,colnames(unique(as.matrix(allData), MARGIN=2))])
+  #exctract all the explain variables (1 is always the cluster group)
+  dataexp <- data[,-1]
   instance <- list()
-  instance$vargroupe = vargroupe
+  instance$clusters_data = vargroupe
   instance$data <- data
   instance$p <- ncol(data)
   instance$n <- nrow(data)
-  instance$clusters_data <- data[[vargroupe]]
-  clus_names<- unique(data[[vargroupe]])
+  clus_names<- unique(vargroupe)
   instance$cluster_names <- clus_names
   #controle - data.frame
   ok <- is.data.frame(data)
@@ -44,9 +48,9 @@ Dataset <- function(data,vargroupe){
     instance$var.qual.names <- names(data.qual)
     instance$data.qual = data.qual
     instance$ind.qual = ind.qual
-    instance$vcramer <- Vcramer.Data(instance)
+    #instance$vcramer <- Vcramer.Data(instance)
   }
-  ind.quanti = sapply(data,function(x)is.numeric(x))
+  ind.quanti = sapply(data,function(x)is.numeric(x)|is.double(x))
   nb_quanti <- sum(ind.quanti)
   if (nb_quanti < 1 ){
     print("There are no quantitative variables in your dataset")
@@ -56,7 +60,7 @@ Dataset <- function(data,vargroupe){
     instance$p.quanti <- ncol(data.quanti)
     instance$var.quanti.names <- names(data.quanti)
     instance$ind.quanti = ind.quanti
-    instance$corr.ratio <- Corr_ratios.Data(instance)
+    #instance$corr.ratio <- Corr_ratios.Data(instance)
   }
 
   instance$CheckVarQual <- CheckVarQual

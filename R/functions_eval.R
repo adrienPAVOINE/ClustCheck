@@ -101,7 +101,7 @@ plotcorr <- function(obj){
 #'
 #' @examples
 plottvaluefactor <- function(obj, var){
-  table <- TValueTable.FactorDataset(obj, var)
+  table <- TValueTable.Data(obj, var)
   m <- ncol(table)
   levels <- colnames(table)
   Tvalue_table <- as.data.frame(table)
@@ -129,7 +129,7 @@ plottvaluefactor <- function(obj, var){
 #' @examples
 #library(ggplot2)
 plotVCramer <- function(obj){
-  table <- Vcramer.FactorDataset(obj)
+  table <- Vcramer.Data(obj)
   p <- min(12,length(table))
   print(p)
   VCramer <- as.data.frame(table[1:p,])
@@ -140,10 +140,8 @@ plotVCramer <- function(obj){
   }
   else
     title2="Cramer's V values"
-  ggplot(VCramer, aes(x=reorder(rownames(VCramer), -values), y=values)) + geom_col() +
-    labs(title = "Cramer's V values") +
-    xlab("Variables") +
-    ylab("Value")
+  ggplot2::ggplot(VCramer, ggplot2::aes(x=reorder(rownames(VCramer), -values), y=values)) + ggplot2::geom_col() +
+    ggplot2::labs(title = "Cramer's V values") +xlab("Variables") +ylab("Value")
 }
 
 
@@ -162,7 +160,7 @@ plotVCramer <- function(obj){
 #'
 #' @examples
 plotphi <- function(obj, var){
-  table <- PhiValueTable.FactorDataset(obj, var)
+  table <- PhiValueTable.Data(obj, var)
   m <- ncol(table)
   levels <- colnames(table)
   phivalue_table <- as.data.frame(table)

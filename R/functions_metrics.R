@@ -19,7 +19,7 @@ Transformdata.Data <- function(object){
   varcont <- data.frame(lapply(subset(object$data,select=object$ind.quanti),CR))
   #codage disjonctif complet
   #library(ade4)
-  varquali <- ade4::acm.disjonctif(subset(data,select=object$ind.qual))
+  varquali <- ade4::acm.disjonctif(subset(object$data,select=object$ind.qual))
   #fonction pour pondération des indicatrices
   PF <- function(x){
     m <- mean(x)
@@ -34,7 +34,7 @@ Transformdata.Data <- function(object){
 
   acp.data <- ade4::dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
   coordind = round(acp.data$li[,])
-  ind <-cbind(coordind, cluster = object$data[[object$vargroupe]])
+  ind <-cbind(coordind, cluster = object$clusters_data)
   return(ind)
 
 }
@@ -68,6 +68,7 @@ silhouette.Data <- function(object) {
     data <- object$data
     clusters_data <- object$clusters_data
   }
+  print(data)
   # a: The mean distance between a sample and all other points in the same class.
   # b: The mean distance between a sample and all other points in the next nearest cluster.
   if (nrow(data)!=length(object$clusters_data)){
