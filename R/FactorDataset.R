@@ -34,7 +34,7 @@ Vcramer.Data <- function(object, var = FALSE){
       tableau <- table[[1]]
       nli <- table[[5]]
       nco <- table[[4]]
-      khi2 = chisq.test(tableau)$statistic #we use chisq.test to get the khi2 statistic
+      khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #we use chisq.test to get the khi2 statistic
       cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1))))) #calcul of Vcramer
       l <- c(l,cramer) #put the cramer value into the list
     }

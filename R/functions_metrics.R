@@ -64,8 +64,8 @@ Transformdata.Data <- function(object){
 #'
 #' @examples
 silhouette.Data <- function(object, Clusters) {
-  print(object$CheckVarQual)
-  if(object$CheckVarQual== TRUE){
+  print(object$Vartype)
+  if(object$Vartype== "CAT"){
     data <- Transformdata.Data(object)
   }else{
     data <- object$dataexp
