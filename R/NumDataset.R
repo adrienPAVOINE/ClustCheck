@@ -20,7 +20,7 @@ Corr_ratios.Data <-function(object){
     }
     return(sct)
   }
-  sct_l<-sapply(object$data.quanti,sct_f)
+  sct_l<-sapply(object$num_data,sct_f)
 
   #SCE-----------
   sce_f<- function(x){
@@ -33,7 +33,7 @@ Corr_ratios.Data <-function(object){
     }
     return(sce)
   }
-  sce_l<-sapply(object$data.quanti,sce_f)
+  sce_l<-sapply(object$num_data,sce_f)
 
   #SCR------------
   scr_f<- function(x){
@@ -48,7 +48,7 @@ Corr_ratios.Data <-function(object){
     }
     return(scr)
   }
-  scr_l<-sapply(object$data.quanti,scr_f)
+  scr_l<-sapply(object$num_data,scr_f)
 
   corr <- sce_l/sct_l
   print("Correlation matrix")
@@ -68,11 +68,11 @@ Corr_ratios.Data <-function(object){
 #'
 #' @examples
 TValueTable.NumDataset <-function(object){
-  data <- object$data.quanti
+  data <- object$num_data
   classes <- object$clusters_data
   n <- object$n
-  var_names <- object$var.quanti.names
-  len_col<- object$p.quanti
+  var_names <- object$num_var_names
+  len_col<- object$num_p
   cl <- object$cluster_names
   n_clusters <- length(cl)
   tvalue_table <- matrix(nrow = length(var_names), ncol = n_clusters, dimnames = list(var_names,cl))
@@ -103,11 +103,11 @@ TValueTable.NumDataset <-function(object){
 #'
 #' @examples
 EffectSizeTable.Data <-function(object){
-  data <- object$data.quanti
+  data <- object$num_data
   classes <- object$clusters_data
   n <- object$n
-  var_names <- object$var.quanti.names
-  len_col<- object$p.quanti
+  var_names <- object$num_var_names
+  len_col<- object$num_p
   cl <- object$cluster_names
   n_clusters <- length(cl)
 
@@ -154,7 +154,7 @@ EffectSizeTable.Data <-function(object){
 #' @import ggpubr
 #' @examples
 Get_PCA.Data<- function(object,index_names){
-  data.quanti <-object$data.quanti
+  num_data <-object$num_data
   varname_classes <- "Clusters"
   classes <- object$clusters_data
 
@@ -164,15 +164,15 @@ Get_PCA.Data<- function(object,index_names){
   # if(missing(index_names)) {
   #   label_to_show<-"var"
   # } else {
-  #   rownames(data.quanti) <- index_names
+  #   rownames(num_data) <- index_names
   #   label_to_show<-"all"
   # }
 
   #Variable correlation
-  correlation_chart <- PerformanceAnalytics::chart.Correlation(data.quanti, histogram=FALSE, pch=19)
+  correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
 
   #PCA
-  res.pca <- FactoMineR::PCA(data.quanti, graph = FALSE)
+  res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
 
   eig.val <- factoextra::get_eigenvalue(res.pca)
   eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
@@ -239,7 +239,7 @@ Get_PCA.Data<- function(object,index_names){
 #' @import ggpubr
 #' @examples
 Get_PCA.Data<- function(object,index_names){
-  data.quanti <-object$data.quanti
+  num_data <-object$num_data
   varname_classes <- "Clusters"
   classes <- object$clusters_data
 
@@ -249,15 +249,15 @@ Get_PCA.Data<- function(object,index_names){
   # if(missing(index_names)) {
   #   label_to_show<-"var"
   # } else {
-  #   rownames(data.quanti) <- index_names
+  #   rownames(num_data) <- index_names
   #   label_to_show<-"all"
   # }
 
   #Variable correlation
-  correlation_chart <- PerformanceAnalytics::chart.Correlation(data.quanti, histogram=FALSE, pch=19)
+  correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
 
   #PCA
-  res.pca <- FactoMineR::PCA(data.quanti, graph = FALSE)
+  res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
 
   eig.val <- factoextra::get_eigenvalue(res.pca)
   eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))

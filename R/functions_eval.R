@@ -16,9 +16,9 @@
 #' @export
 #' @import ggplot2
 #' @examples
-library(ggplot2)
+#library(ggplot2)
 plottvalue <- function(obj, var=NULL){
-  if(obj$Vartype== "NUM"){
+  if(obj$vartype== "NUM"){
     table <- TValueTable.NumDataset(obj)
     p <- ncol(table)
     variables <- rownames(table)
@@ -33,7 +33,7 @@ plottvalue <- function(obj, var=NULL){
       facet_wrap(vars(ind)) +
       labs(title = "t-values")
   }
-  if(obj$Vartype== "CAT"){
+  if(obj$vartype== "CAT"){
     table <- TValueTable.Data(obj, var)
     m <- ncol(table)
     levels <- colnames(table)
@@ -63,7 +63,7 @@ plottvalue <- function(obj, var=NULL){
 #' @examples
 #library(ggplot2)
 plotsizeeff <- function(obj){
-  if(obj$Vartype== "NUM"){
+  if(obj$vartype== "NUM"){
     table <- EffectSizeTable.Data(obj)
     p <- ncol(table)
     variables <- rownames(table)
@@ -95,7 +95,7 @@ plotsizeeff <- function(obj){
 #' @examples
 
 plotcorr <- function(obj){
-  if(obj$Vartype== "NUM"){
+  if(obj$vartype== "NUM"){
     table <- sort(Corr_ratios.Data(obj), decreasing=T)
   p <- min(12,length(table))
   corr <- as.data.frame(table[1:p])
@@ -128,7 +128,7 @@ plotcorr <- function(obj){
 #' @examples
 #library(ggplot2)
 plotVCramer <- function(obj, limit=10){
-  if(obj$Vartype== "CAT"){
+  if(obj$vartype== "CAT"){
     table <- Vcramer.Data(obj)
     p <- length(table)
     if (limit<p){
@@ -164,7 +164,7 @@ plotVCramer <- function(obj, limit=10){
 #'
 #' @examples
 plotphi <- function(obj, var){
-  if(obj$Vartype== "CAT"){
+  if(obj$vartype== "CAT"){
     table <- PhiValueTable.Data(obj, var)
     m <- ncol(table)
     levels <- colnames(table)

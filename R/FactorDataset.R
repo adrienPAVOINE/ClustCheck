@@ -29,18 +29,18 @@ Vcramer.Data <- function(object, var = FALSE){
   nameVar <- deparse(substitute(var)) #to get the name of the vector
   if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
     l<-c() #a list to the futur cramer values
-    for (i in object$var.qual.names){
+    for (i in object$cat_var_names){
       print(i)
-      table <- CalcTable.Data(object, object$data[[i]]) #call the CalcTable function to get the cross table
+      table <- CalcTable.Data(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
       tableau <- table[[1]]
       nli <- table[[5]]
       nco <- table[[4]]
       khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #we use chisq.test to get the khi2 statistic
-      cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1))))) #calcul of Vcramer
+      cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1))))) #calcul of Vcramer
       l <- c(l,cramer) #put the cramer value into the list
     }
     #use of a matrix to print the variable name and the Vcramer
-    matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(object$var.qual.names,"Cramer"))
+    matrice = matrix(l,nrow=object$cat_p,ncol=1, dimnames = list(object$cat_var_names,"Cramer"))
     print(matrice)
     return(matrice)
     #listemax <- c()
@@ -54,7 +54,7 @@ Vcramer.Data <- function(object, var = FALSE){
     nli <- table[[5]]
     nco <- table[[4]]
     khi2 = chisq.test(tableau)$statistic #same things for the khi2 value
-    cramer = sqrt((khi2)/(nrow(object$data)*(min((nco-1),(nli-1)))))
+    cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1)))))
     cat("cramer entre la var groupe",deparse(substitute(var))," et  = ", cramer)#we only print a clause
 
   }
@@ -136,7 +136,7 @@ TValueTable.Data <-function(object, varqual){
 #' @importFrom stats addmargins chisq.test
 #' @examples
 VisualisationACM.Data <- function(object){
-  res.mca <- FactoMineR::MCA(object$all.var.qual ,graph = FALSE)
+  res.mca <- FactoMineR::MCA(object$cat_data_cl ,graph = FALSE)
   factoextra::fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib")
 }
 #' VisualisationAC.Data
@@ -165,6 +165,7 @@ VisualisationAC.Data <-function(object, nomvarqual){
   #ggplot2::ggplot(data = data) + geom_mosaic(aes(x = product(groupe, région), fill=groupe), na.rm=TRUE) +
    # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')
   res.ca <- FactoMineR::CA(tableau, graph = TRUE)
+  return(res.ca)
 }
 
 
@@ -185,7 +186,7 @@ VisualisationAC.Data <-function(object, nomvarqual){
 #' @import ggpubr
 #' @examples
 Get_MCA.Data<- function(object,index_names){
-  data.quali <-object$data.qual
+  data.quali <-object$cat_data
   varname_classes <- "Clusters"
   classes <- object$clusters_data
 
@@ -254,17 +255,17 @@ Get_MCA.Data<- function(object,index_names){
 Get_AFDM.Data<- function(object){
   #loop to concate name of variable + modality (to avoid error in the AFDM)
   nb = 0
-  for(i in object$data.qual) {
+  for(i in object$cat_data) {
     nb = nb+1
-    names = object$var.qual.names[nb]
+    names = object$cat_var_names[nb]
     i <- paste(names,i)
-    object$data.qual[nb] <- i
+    object$cat_data[nb] <- i
 
   }
   #first data with new exp variables
-  data <- cbind(object$data.quanti, object$data.qual)
+  data <- cbind(object$num_data, object$cat_data)
   #data with active var and cluster
-  all.data <- cbind(object$clusters_data,object$data.quanti, object$data.qual)
+  all.data <- cbind(object$clusters_data,object$num_data, object$cat_data)
   #creation on the FAMD
   res.famd <- FactoMineR::FAMD(data, graph = FALSE)
   #to get variable

@@ -17,10 +17,10 @@ Transformdata.Data <- function(object){
   #   return((x-m)/sqrt(v))
   # }
   # #appliquer la fonction sur les variables continues
-  # varcont <- data.frame(lapply(subset(object$dataexp,select=object$ind.quanti),CR))
+  # varcont <- data.frame(lapply(subset(object$active_data,select=object$num_ind),CR))
   # #codage disjonctif complet
   # #library(ade4)
-  # varquali <- ade4::acm.disjonctif(subset(object$dataexp,select=object$ind.qual))
+  # varquali <- ade4::acm.disjonctif(subset(object$active_data,select=object$cat_ind))
   # #fonction pour pondération des indicatrices
   # PF <- function(x){
   #   m <- mean(x)
@@ -32,8 +32,8 @@ Transformdata.Data <- function(object){
   # data.pour.acp <- cbind(varcont,varquali.pond)
   # nbcol.tot <- ncol(data.pour.acp)
   # print(nbcol.tot)
-  # rownames(data.pour.acp) <- rownames(object$data)
-  res.famd <- FactoMineR::FAMD(object$dataexp, graph = FALSE)
+  # rownames(data.pour.acp) <- rownames(object$all_data)
+  res.famd <- FactoMineR::FAMD(object$active_data, graph = FALSE)
   ind <- factoextra::get_famd_ind(res.famd)
   return(ind$coord)
 
@@ -58,19 +58,19 @@ Transformdata.Data <- function(object){
 # ------------------------------------------------------------------------- #
 #' silhouette.Data
 #'
-#' @param object a datset object
-#' @param Clusters a vector cluster
+#' @param object an object of class Data
+#' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
 #' @export
 #'
 #' @examples
-silhouette.Data <- function(object, Clusters) {
-  print(object$Vartype)
-  if(object$Vartype== "CAT" | object$Vartype == "MIX"){
-    data <- Transformdata.Data(object)
+silhouette.data <- function(data, clusters) {
+  print(data$vartype)
+  if(data$vartype== "CAT" | data$vartype == "MIX"){
+    data <- Transformdata.Data(data)
   }else{
-    data <- object$dataexp
+    data <- data$active_data
   }
   print(data)
   # a: The mean distance between a sample and all other points in the same class.
@@ -114,6 +114,15 @@ silhouette.Data <- function(object, Clusters) {
 # ------------------------------------------------------------------------- #
 # Davies-Bouldin Index
 # ------------------------------------------------------------------------- #
+#' davies_bouldin
+#'
+#' @param data an object of class Data
+#' @param clusters a vector corresponding to the dataset clustering results
+#'
+#' @return
+#' @export
+#'
+#' @examples
 
 # s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
 # d : the distance between cluster centroids
@@ -153,7 +162,16 @@ davies_bouldin <- function(data, clusters) {
 # ------------------------------------------------------------------------- #
 # Dunn Index
 # ------------------------------------------------------------------------- #
-#
+#' dunn_index
+#'
+#' @param data an object of class Data
+#' @param clusters a vector corresponding to the dataset clustering results
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
 # Calculated using the following:
 # d1 : distance of samples to their centroids
 # d2 : distance betwewen centroids
@@ -190,7 +208,9 @@ dunn_index <- function(data, clusters) {
   return(DI)
 }
 
-
+# ------------------------------------------------------------------------- #
+# Validation
+# ------------------------------------------------------------------------- #
 #' Validation.Data
 #'
 #' @param object a dataset object
@@ -234,6 +254,9 @@ Validation.Data <-function(object){
   }
 }
 
+# ------------------------------------------------------------------------- #
+# Statistical Test
+# ------------------------------------------------------------------------- #
 #' TestStatistique.Data
 #'
 #' @param object a data object
@@ -245,7 +268,7 @@ Validation.Data <-function(object){
 #' @examples
 TestStatistique.Data <- function(object, varexp){
   k <- length(object$cluster_names)
-  if(is.numeric(object$data[[varexp]])){
+  if(is.numeric(object$all_data[[varexp]])){
     if (k == 1){
       stop("Vous n'avez qu'un seul groupe")
     }else if(k == 2){
@@ -276,8 +299,8 @@ TestStatistique.Data <- function(object, varexp){
       }
 
     }else{
-      boxplot(object$data[[varexp]]~object$clusters_data)
-      mod=aov(object$data[[varexp]]~object$clusters_data)
+      boxplot(object$all_data[[varexp]]~object$clusters_data)
+      mod=aov(object$all_data[[varexp]]~object$clusters_data)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
         cat("Le groupe a un lien significatif sur", varexp)
@@ -287,7 +310,7 @@ TestStatistique.Data <- function(object, varexp){
 
     }
   }else{
-    khi2 <- chisq.test(table(object$clusters_data, object$data[[varexp]]))
+    khi2 <- chisq.test(table(object$clusters_data, object$all_data[[varexp]]))
     if (khi2$p.value < 0.05){
       #cat("Les groupes n'ont significativement pas la ou le meme", varexp)
     }else
