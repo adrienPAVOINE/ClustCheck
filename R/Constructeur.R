@@ -12,6 +12,7 @@
 #' @import ggplot2
 #' @examples
 Dataset <- function(data,vargroupe,TrueCluster=FALSE){
+  instance <- list()
   #If the Cluster vector is not a factor
   vargroupe <- factor(vargroupe)
   #concatenate the vector and the data
@@ -29,8 +30,9 @@ Dataset <- function(data,vargroupe,TrueCluster=FALSE){
     dataexp <- data.frame(allDataexp[,colnames(unique(as.matrix(allDataexp), MARGIN=2))])
     #extract all the active variables (1 is always the cluster group)
     dataexp <- dataexp[,-1]
+    instance$TrueCluster <- TrueCluster
   }
-  instance <- list()
+
   instance$dataexp <- dataexp  #data of all the active variables
   instance$clusters_data = vargroupe #data of the cluster vector
   instance$data <- data #all the data

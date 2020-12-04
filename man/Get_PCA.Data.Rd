@@ -5,6 +5,8 @@
 \title{Get_PCA.Data}
 \usage{
 Get_PCA.Data(object, index_names)
+
+Get_PCA.Data(object, index_names)
 }
 \arguments{
 \item{object}{a data object}
@@ -13,7 +15,11 @@ Get_PCA.Data(object, index_names)
 }
 \value{
 
+
+
 }
 \description{
+Get_PCA.Data
+
 Get_PCA.Data
 }

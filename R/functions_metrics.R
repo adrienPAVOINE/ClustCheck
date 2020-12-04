@@ -191,10 +191,48 @@ dunn_index <- function(data, clusters) {
 }
 
 
+#' Validation.Data
+#'
+#' @param object a dataset object
+#'
+#' @return
+#' @export
+#'
+#' @examples
+Validation.Data <-function(object){
+  table <- CalcTable.Data(object, object$TrueCluster)
+  tab <- table[[1]]
+  ConfMat <- table[[2]]
+  nli <- table[[5]]
+  nco <- table[[4]]
+  n <- object$n
+  if(nli != nco){
+    stop("Vous n'avez pas le meme nombre de groupes dans les deux classes")
+  }else{
+    if(nli ==2){
+    Errorrate <- 1-((ConfMat[1,2]+ConfMat[2,1])/n)
+    Recall <- ConfMat[1,1]/(ConfMat[1,3])
+    Precision <- ConfMat[1,1]/ConfMat[3,1]
+    matrix = matrix(Errorrate,Recall,Precision, nrow=3,ncol=1, dimnames = list(c("Errorrate","Recall","Precision"), c("Valeurs")))
+    print(matrix)
+    }else if(nli>2){
+      print(ConfMat)
+      Errorrate <- 1-((sum(diag(tab)))/n)
+      print(sum(diag(tab)))
+      cat("Error Rate :", Errorrate,"\n")
+      print(nli)
+      for(i in 1:nli){
+        group <- obje$cluster_names[i]
+        cat("cluster:", group,"\n")
+        Recall <- ConfMat[i,i]/ConfMat[i,nli+1]
+        Precision <- ConfMat[i,i]/ConfMat[nli+1,i]
+        matrix = matrix(c(Recall,Precision), nrow=2,ncol=1, dimnames = list(c("Recall","Precision"), c( "Valeurs")))
+        print(matrix)
+      }
+    }
 
-
-
-
+  }
+}
 
 #' TestStatistique.Data
 #'
