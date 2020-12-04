@@ -30,6 +30,7 @@ Vcramer.Data <- function(object, var = FALSE){
   if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
     l<-c() #a list to the futur cramer values
     for (i in object$var.qual.names){
+      print(i)
       table <- CalcTable.Data(object, object$data[[i]]) #call the CalcTable function to get the cross table
       tableau <- table[[1]]
       nli <- table[[5]]
@@ -39,7 +40,7 @@ Vcramer.Data <- function(object, var = FALSE){
       l <- c(l,cramer) #put the cramer value into the list
     }
     #use of a matrix to print the variable name and the Vcramer
-    matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
+    matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(object$var.qual.names,"Cramer"))
     print(matrice)
     return(matrice)
     #listemax <- c()

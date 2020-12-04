@@ -11,7 +11,7 @@
 #' @import factoextra
 #' @import ggplot2
 #' @examples
-Dataset <- function(data,vargroupe){
+Dataset <- function(data,vargroupe,TrueCluster=FALSE){
   #If the Cluster vector is not a factor
   vargroupe <- factor(vargroupe)
   #concatenate the vector and the data
@@ -20,6 +20,16 @@ Dataset <- function(data,vargroupe){
   data <- data.frame(allData[,colnames(unique(as.matrix(allData), MARGIN=2))])
   #extract all the active variables (1 is always the cluster group)
   dataexp <- data[,-1]
+  if (deparse(substitute(TrueCluster)) != FALSE){
+    #If the Cluster vector is not a factor
+    TrueCluster <- factor(TrueCluster)
+    #concatenate the vector and the data
+    allDataexp <- cbind(TrueCluster = TrueCluster, dataexp)
+    #if the vector is already in the data, we remove it
+    dataexp <- data.frame(allDataexp[,colnames(unique(as.matrix(allDataexp), MARGIN=2))])
+    #extract all the active variables (1 is always the cluster group)
+    dataexp <- dataexp[,-1]
+  }
   instance <- list()
   instance$dataexp <- dataexp  #data of all the active variables
   instance$clusters_data = vargroupe #data of the cluster vector
@@ -38,14 +48,15 @@ Dataset <- function(data,vargroupe){
   data.qual1 <- data[ ,ind.qual1]
   #CheckVarQual <- TRUE
   #To know if there is categorical variable (for the metrics functions)
+
   if (nb_qual < 1 ){
     #print("There are no categorical variables in your dataset")
     #CheckVarQual <- FALSE
   }else{
     data.qual <- dataexp[ ,ind.qual] #the data of the categorical variables
-    instance$p.qual <- ncol(data.qual) #number of categorical variables
+    instance$p.qual <- nb_qual #number of categorical variables
     instance$all.var.qual <- data.qual1 #the data of the categorical variables including the vector of cluster data
-    instance$var.qual.names <- names(data.qual) #names of the categorical variables
+    instance$var.qual.names <- names(which(ind.qual == TRUE)) #names of the categorical variables
     instance$data.qual <- data.qual
     instance$ind.qual <- ind.qual
     instance$vcramer <- Vcramer.Data(instance) #return the cramer V value for all the category variables
@@ -57,7 +68,7 @@ Dataset <- function(data,vargroupe){
   }else{
     data.quanti <- dataexp[ ,ind.quanti]#the data of the numerical variables
     instance$data.quanti <- data.quanti
-    instance$p.quanti <- ncol(data.quanti) #number of numerical variables
+    instance$p.quanti <- nb_quanti #number of numerical variables
     instance$var.quanti.names <- names(data.quanti) #names of the numerical variables
     instance$ind.quanti <- ind.quanti #index of the numerical variables
     instance$corr.ratio <- Corr_ratios.Data(instance)#return the corr ratio values for all the numerical variables

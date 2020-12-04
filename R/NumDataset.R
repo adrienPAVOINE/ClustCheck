@@ -1,4 +1,3 @@
-
 #' Corr_ratios.Data
 #'
 #' @param object a NumDataset object
