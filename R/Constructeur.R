@@ -34,7 +34,7 @@ Dataset <- function(data,vargroupe,TrueCluster=FALSE){
   instance$dataexp <- dataexp  #data of all the active variables
   instance$clusters_data = vargroupe #data of the cluster vector
   instance$data <- data #all the data
-  instance$p <- ncol(dataexp) #number of variables
+  instance$p <- ncol(data) #number of variables
   instance$n <- nrow(data) #number of samples-
   instance$cluster_names <- unique(vargroupe) #group names in the cluster vector
   #controle - data.frame
