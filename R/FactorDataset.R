@@ -262,9 +262,9 @@ Get_AFDM.Data<- function(object){
 
   }
   #first data with new exp variables
-  data <- cbind(obj$data.quanti, obj$data.qual)
+  data <- cbind(object$data.quanti, object$data.qual)
   #data with active var and cluster
-  all.data <- cbind(obj$clusters_data,obj$data.quanti, obj$data.qual)
+  all.data <- cbind(object$clusters_data,object$data.quanti, object$data.qual)
   #creation on the FAMD
   res.famd <- FactoMineR::FAMD(data, graph = FALSE)
   #to get variable
