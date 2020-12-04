@@ -7,7 +7,7 @@
 plotphi(obj, var)
 }
 \arguments{
-\item{obj}{an object of class FactorDataset}
+\item{obj}{an object of class Data}
 
 \item{var}{name of variable of interest to plot phi-values}
 }

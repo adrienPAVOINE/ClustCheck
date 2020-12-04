@@ -4,6 +4,8 @@
 #'
 #' @return
 #' @export
+#' @import FactoMineR
+#' @import factoextra
 #'
 #' @examples
 Transformdata.Data <- function(object){
@@ -31,8 +33,8 @@ Transformdata.Data <- function(object){
   # nbcol.tot <- ncol(data.pour.acp)
   # print(nbcol.tot)
   # rownames(data.pour.acp) <- rownames(object$data)
-  res.famd <- FAMD(object$dataexp, graph = FALSE)
-  ind <- get_famd_ind(res.famd)
+  res.famd <- FactoMineR::FAMD(object$dataexp, graph = FALSE)
+  ind <- factoextra::get_famd_ind(res.famd)
   return(ind$coord)
 
   #
@@ -65,7 +67,7 @@ Transformdata.Data <- function(object){
 #' @examples
 silhouette.Data <- function(object, Clusters) {
   print(object$Vartype)
-  if(object$Vartype== "CAT"){
+  if(object$Vartype== "CAT" | object$Vartype == "MIX"){
     data <- Transformdata.Data(object)
   }else{
     data <- object$dataexp

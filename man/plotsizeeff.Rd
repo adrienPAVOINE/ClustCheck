@@ -7,7 +7,7 @@
 plotsizeeff(obj)
 }
 \arguments{
-\item{obj}{an object of class NumDataset}
+\item{obj}{an object of class Data}
 }
 \value{
 

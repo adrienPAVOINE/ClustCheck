@@ -40,7 +40,7 @@ Vcramer.Data <- function(object, var = FALSE){
     }
     #use of a matrix to print the variable name and the Vcramer
     matrice = matrix(l,nrow=object$p.qual,ncol=1, dimnames = list(colnames(object$data.qual),"Cramer"))
-    #print(matrice)
+    print(matrice)
     return(matrice)
     #listemax <- c()
     #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
@@ -95,14 +95,14 @@ PhiValueTable.Data <- function(object, nomvarqual){
 #' TValueTable.Data
 #'
 #' @param object a data object
-#' @param nomvarqual string of the variable
+#' @param varqual vector of the cluster
 #'
 #' @return
 #' @export
 #'
 #' @examples
-TValueTable.Data <-function(object, nomvarqual){
-  table <- CalcTable.Data(object, nomvarqual) #call the CalcTable to get the info of the cross table
+TValueTable.Data <-function(object, varqual){
+  table <- CalcTable.Data(object, varqual) #call the CalcTable to get the info of the cross table
   tableau <- table[[1]]
   nli <- table[[5]]
   nco <- table[[4]]

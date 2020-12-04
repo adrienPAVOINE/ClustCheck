@@ -25,7 +25,7 @@ Dataset <- function(data,vargroupe){
   instance$clusters_data = vargroupe #data of the cluster vector
   instance$data <- data #all the data
   instance$p <- ncol(data) #number of variables
-  instance$n <- nrow(data) #number of samples- 
+  instance$n <- nrow(data) #number of samples-
   instance$cluster_names <- unique(vargroupe) #group names in the cluster vector
   #controle - data.frame
   ok <- is.data.frame(data) #check if the dataset is a dataframe

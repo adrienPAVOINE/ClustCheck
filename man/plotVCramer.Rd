@@ -4,10 +4,12 @@
 \alias{plotVCramer}
 \title{plotVCramer}
 \usage{
-plotVCramer(obj)
+plotVCramer(obj, limit = 10)
 }
 \arguments{
-\item{obj}{an object of class FactorDataset}
+\item{obj}{an object of class Data}
+
+\item{limit}{number of categorical variables to display by descending value (default=10)}
 }
 \value{
 

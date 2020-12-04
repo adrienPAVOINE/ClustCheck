@@ -2,18 +2,18 @@
 % Please edit documentation in R/Constructeur.R
 \name{Dataset}
 \alias{Dataset}
-\title{Constructeur}
+\title{Constructor}
 \usage{
 Dataset(data, vargroupe)
 }
 \arguments{
-\item{data}{a dataset (with all your active variables)}
+\item{data}{a dataset that contains all the active variables}
 
-\item{vargroupe}{the vector of your cluster}
+\item{vargroupe}{a vector corresponding to the dataset clustering results}
 }
 \value{
-an object which return a list of active data, category and numeric data, number of samples, etc.
+an object returning a list of active data (categorical and numerical data), number of samples, etc.
 }
 \description{
-Constructeur
+Constructor
 }
