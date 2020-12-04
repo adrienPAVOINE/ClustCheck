@@ -138,3 +138,86 @@ EffectSizeTable.Data <-function(object){
   return(effect_size_table)
 }
 
+
+
+#' Get_PCA.Data
+#'
+#' @param object a data object
+#' @param index_names optional vector of the index to use
+#'
+#' @return
+#' @export
+#' @import PerformanceAnalytics
+#' @import FactoMineR
+#' @import factoextra
+#' @import ggplot2
+#' @import corrplot
+#' @import ggpubr
+#' @examples
+Get_PCA.Data<- function(object,index_names){
+  data.quanti <-object$data.quanti
+  varname_classes <- "Clusters"
+  classes <- object$clusters_data
+  
+  
+  label_to_show<-"var"
+  # #if index specified, use index for labels in plots
+  # if(missing(index_names)) {
+  #   label_to_show<-"var"
+  # } else {
+  #   rownames(data.quanti) <- index_names 
+  #   label_to_show<-"all"
+  # }
+  
+  #Variable correlation
+  correlation_chart <- PerformanceAnalytics::chart.Correlation(data.quanti, histogram=FALSE, pch=19)
+  
+  #PCA
+  res.pca <- FactoMineR::PCA(data.quanti, graph = FALSE)
+  
+  eig.val <- factoextra::get_eigenvalue(res.pca)
+  eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+  
+  #keep values where eigenvalue > 1
+  # dims<-which(eig.val[,1]>1)
+  # n_dim <- length(dims)
+  # eig.val.kept <- eig.val[dims,]
+  
+  #keep values explaining 85% of total variance
+  dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+  n_dim <- length(dims)
+  eig.val.kept <- eig.val[dims,]
+  
+  #keep values where eigenvalue > 1
+  if(n_dim==1){
+    n_dim<-2
+  }
+  
+  for (i in seq(1,n_dim, by=2)){
+    if(i==n_dim){
+      dim_axes<-c(i-1,i)
+    }else{
+      dim_axes<-c(i,i+1)
+    }
+    
+    #correlation circle
+    corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
+                                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                                repel = TRUE)
+    
+    #biplot simple des individus et des variables selon les clusters
+    biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
+                               col.ind = classes, palette = "jco",
+                               addEllipses = TRUE,
+                               label = label_to_show,
+                               ellipse.type = "convex",
+                               #ellipse.type = "confidence",
+                               col.var = "black", repel = TRUE,
+                               legend.title = varname_classes, mean.point = FALSE)
+    
+    
+    plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
+    
+    print(plt)
+  }
+}
