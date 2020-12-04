@@ -21,4 +21,7 @@ Imports:
     factoextra,
     ggplot2,
     dplyr,
-    utils
+    utils,
+    PerformanceAnalytics,
+    corrplot,
+    ggpubr

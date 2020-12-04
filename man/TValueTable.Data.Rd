@@ -4,12 +4,12 @@
 \alias{TValueTable.Data}
 \title{TValueTable.Data}
 \usage{
-TValueTable.Data(object, nomvarqual)
+TValueTable.Data(object, varqual)
 }
 \arguments{
 \item{object}{a data object}
 
-\item{nomvarqual}{string of the variable}
+\item{varqual}{vector of the cluster}
 }
 \value{
 
