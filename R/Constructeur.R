@@ -2,7 +2,7 @@
 #'
 #' @param data a dataset that contains all the active variables
 #' @param vargroupe a vector corresponding to the dataset clustering results
-#'
+#' @param TrueCluster if you have the true cluster groups
 #' @return an object returning a list of active data (categorical and numerical data), number of samples, etc.
 #' @export
 #' @importFrom grDevices rainbow

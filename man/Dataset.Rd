@@ -4,12 +4,14 @@
 \alias{Dataset}
 \title{Constructor}
 \usage{
-Dataset(data, vargroupe)
+Dataset(data, vargroupe, TrueCluster = FALSE)
 }
 \arguments{
 \item{data}{a dataset that contains all the active variables}
 
 \item{vargroupe}{a vector corresponding to the dataset clustering results}
+
+\item{TrueCluster}{if you have the true cluster groups}
 }
 \value{
 an object returning a list of active data (categorical and numerical data), number of samples, etc.
