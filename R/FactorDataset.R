@@ -166,3 +166,138 @@ VisualisationAC.Data <-function(object, nomvarqual){
    # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')
   res.ca <- FactoMineR::CA(tableau, graph = TRUE)
 }
+
+
+
+
+#' Get_MCA.Data
+#'
+#' @param object a data object
+#' @param index_names optional vector of the index to use
+#'
+#' @return
+#' @export
+#' @import ExPosition
+#' @import FactoMineR
+#' @import factoextra
+#' @import ggplot2
+#' @import corrplot
+#' @import ggpubr
+#' @examples
+Get_MCA.Data<- function(object,index_names){
+  data.quali <-object$data.qual
+  varname_classes <- "Clusters"
+  classes <- object$clusters_data
+
+
+  label_to_show<-"var"
+
+  #MCA
+  #We use the Benzecri correction
+  res.mca = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
+
+  eig.val <- factoextra::get_eigenvalue(res.mca)
+
+  eig_plot <- factoextra::fviz_eig(res.mca, addlabels = TRUE, ylim = c(0, 50))
+
+
+  #keep values explaining 85% of total variance
+  dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+  n_dim <- length(dims)
+  eig.val.kept <- eig.val[dims,]
+
+  #keep values where eigenvalue > 1
+  if(n_dim==1){
+    n_dim<-2
+  }
+
+  for (i in seq(1,n_dim, by=2)){
+    if(i==n_dim){
+      dim_axes<-c(i-1,i)
+    }else{
+      dim_axes<-c(i,i+1)
+    }
+
+    #Importance of the variable
+    VarPlot <- factoextra::fviz_mca_var (res.mca,select.var = list(cos2=0.85), repel = TRUE)
+
+    print(dim_axes)
+    #bsimple biplot between sample and active variables
+    biplot <- factoextra::fviz_mca_biplot(res.mca, axes=dim_axes,
+                                           col.ind = classes, palette = "jco",
+                                           addEllipses = TRUE,
+                                           label = label_to_show,
+                                           ellipse.type = "convex",
+                                           #ellipse.type = "confidence",
+                                           col.var = "black", repel = TRUE,
+                                           legend.title = varname_classes, mean.point = FALSE)
+
+
+    plt <- ggpubr::ggarrange(VarPlot, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
+
+    print(plt)
+  }
+}
+
+#' Get_AFDM.Data
+#'
+#' @param object a dataset object
+#'
+#' @return
+#' @export
+#' @import FactoMineR
+#' @import factoextra
+#' @import ggplot2
+#' @import corrplot
+#' @import ggpubr
+#' @examples
+Get_AFDM.Data<- function(object){
+  #loop to concate name of variable + modality (to avoid error in the AFDM)
+  nb = 0
+  for(i in object$data.qual) {
+    nb = nb+1
+    names = object$var.qual.names[nb]
+    i <- paste(names,i)
+    object$data.qual[nb] <- i
+
+  }
+  #first data with new exp variables
+  data <- cbind(obj$data.quanti, obj$data.qual)
+  #data with active var and cluster
+  all.data <- cbind(obj$clusters_data,obj$data.quanti, obj$data.qual)
+  #creation on the FAMD
+  res.famd <- FactoMineR::FAMD(data, graph = FALSE)
+  #to get variable
+  var <- factoextra::get_famd_var(res.famd)
+
+  #Contrib of the category variables
+  qual <- factoextra::fviz_famd_var(res.famd, "quali.var", col.var = "contrib",
+                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+  )
+
+  #contrib of the numeric variables
+  quanti <- factoextra::fviz_famd_var(res.famd, "quanti.var", col.var = "contrib",
+                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                            repel = TRUE)
+  #the ind plot with color by cluster group, we only use the two firsts axes
+  ind<- factoextra::fviz_famd_ind(
+    res.famd,
+    axes = c(1, 2),
+    repel = FALSE,
+    habillage = all.data[,1],
+    palette = NULL,
+    addEllipses = TRUE,
+    col.ind = "blue",
+    col.ind.sup = "darkblue",
+    col.quali.var = "black",
+    select.ind = list(name = NULL, cos2 = NULL, contrib = NULL),
+    gradient.cols = NULL
+  )
+  #split of the screen
+    plt <- ggpubr::ggarrange(ind,         # First row with ind plot
+        ggpubr::ggarrange(qual, quanti, ncol = 2, labels = c("B", "C")), # Second row with var quanti and qual plot
+        nrow = 2,
+        labels = "A"       # Labels of the ind plot
+    )
+    print(plt)
+}
