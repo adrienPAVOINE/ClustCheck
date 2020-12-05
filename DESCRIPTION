@@ -1,5 +1,5 @@
 Package: ClustCheck
-Title: Interpretation de classe
+Title: Clustering check and interpretation
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "First",
