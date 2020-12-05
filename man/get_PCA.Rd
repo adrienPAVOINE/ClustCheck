@@ -2,18 +2,23 @@
 % Please edit documentation in R/NumDataset.R
 \name{get_PCA}
 \alias{get_PCA}
-\title{get_PCA}
+\title{PCA visualisation}
 \usage{
-get_PCA(object, index_names = NULL)
+get_PCA(object)
 }
 \arguments{
 \item{object}{an object of class ccdata}
-
-\item{index_names}{optional vector of the index to use}
 }
 \value{
-
+Display three graphs to illustrate allows a synthetic view of the data, ideally in a two
+First: Represents the correlation chart between all the variables
+Second: Is split into two graphs. On the right; the correlation circle and on the right; the biplot of the individuals and variables grouped by their clusters
 }
 \description{
-get_PCA
+Applying a principal component analysis (PCA) to the data variables
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+get_PCA(obj)
 }

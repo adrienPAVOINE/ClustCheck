@@ -2,7 +2,7 @@
 % Please edit documentation in R/NumDataset.R
 \name{corr_ratios}
 \alias{corr_ratios}
-\title{corr_ratios}
+\title{Correlation ratios}
 \usage{
 corr_ratios(object)
 }
@@ -10,8 +10,14 @@ corr_ratios(object)
 \item{object}{an object of class ccdata}
 }
 \value{
-
+A matrix of correlations. Each column value represents the square of the correlation ratio η² for each variable (individually) with the characterizing variable (the entered clustering).
+η² corresponds to the proportion of the variance explained.
 }
 \description{
-corr_ratios
+Calculate the correlation ratios,taken individually, in the construction of the clustering structure
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+corr_ratios(obj)
 }

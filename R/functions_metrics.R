@@ -36,8 +36,8 @@ transformdata <- function(object){
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' silhouette(obj)
-silhouette <- function(object, clusters=object$pred_clusters) {
+#' silhouetteC(obj)
+silhouetteC <- function(object, clusters=object$pred_clusters) {
   if(object$vartype!= "NUM"){
     data <- transformdata(object)
   }else{
@@ -88,8 +88,8 @@ silhouette <- function(object, clusters=object$pred_clusters) {
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' davies_bouldin(obj)
-davies_bouldin <- function(object, clusters=object$pred_clusters) {
+#' davies_bouldinC(obj)
+davies_bouldinC <- function(object, clusters=object$pred_clusters) {
   # s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
   # d : the distance between cluster centroids
   if(object$vartype!= "NUM"){
@@ -137,8 +137,8 @@ davies_bouldin <- function(object, clusters=object$pred_clusters) {
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' dunn_index(obj)
-dunn_index <- function(object, clusters=object$pred_clusters) {
+#' dunn_indexC(obj)
+dunn_indexC <- function(object, clusters=object$pred_clusters) {
   # Calculated using the following:
   # d1 : distance of samples to their centroids
   # d2 : distance betwewen centroids

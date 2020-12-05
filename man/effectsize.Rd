@@ -2,7 +2,7 @@
 % Please edit documentation in R/NumDataset.R
 \name{effectsize}
 \alias{effectsize}
-\title{effectsize}
+\title{Effect Size for numerical variables}
 \usage{
 effectsize(object)
 }
@@ -10,8 +10,15 @@ effectsize(object)
 \item{object}{an object of class ccdata}
 }
 \value{
-
+An effect size table
+matrix representing the effect size of every variable for each cluster.
+The rows represent the variables. The columns represent the clusters.
 }
 \description{
-effectsize
+Effect Size for numerical variables
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+effectsize(obj)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/NumDataset.R
 \name{tvalue_num}
 \alias{tvalue_num}
-\title{tvalue_num}
+\title{Test Value for numerical variables}
 \usage{
 tvalue_num(object)
 }
@@ -10,8 +10,14 @@ tvalue_num(object)
 \item{object}{an object of class ccdata}
 }
 \value{
-
+A matrix representing the value test of every variable for each cluster.
+The rows represent the variables. The columns represent the clusters.
 }
 \description{
-tvalue_num
+Calculates the test value table for each variable per cluster
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+tvalue_num(obj)
 }

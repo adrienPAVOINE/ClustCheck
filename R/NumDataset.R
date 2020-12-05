@@ -2,11 +2,6 @@
 # CLUSTCHECK
 # Functions for numerical variables
 # ------------------------------------------------------------------------- #
-
-# ------------------------------------------------------------------------- #
-# Correlations ratios
-# ------------------------------------------------------------------------- #
-
 #' Correlation ratios
 #'
 #' Calculate the correlation ratios,taken individually, in the construction of the clustering structure
@@ -70,11 +65,6 @@ corr_ratios <-function(object){
   print(corr)
   return(corr)
 }
-
-# ------------------------------------------------------------------------- #
-# t-values for numerical variables
-# ------------------------------------------------------------------------- #
-
 #' Test Value for numerical variables
 #'
 #' Calculates the test value table for each variable per cluster
@@ -115,11 +105,6 @@ tvalue_num <-function(object){
   print(tvalue_table)
   return(tvalue_table)
 }
-
-# ------------------------------------------------------------------------- #
-# effect size
-# ------------------------------------------------------------------------- #
-
 #' Effect Size for numerical variables
 #'
 #' @param object an object of class ccdata
@@ -167,12 +152,6 @@ effectsize <-function(object){
   print(effect_size_table)
   return(effect_size_table)
 }
-
-# ------------------------------------------------------------------------- #
-# PCA
-# ------------------------------------------------------------------------- #
-
-
 #' PCA visualisation
 #'
 #' Applying a principal component analysis (PCA) to the data variables
@@ -199,43 +178,33 @@ get_PCA <- function(object){
   varname_classes <- "Clusters"
   classes <- object$pred_clusters
   nb_quanti <- object$num_p
-
   label_to_show<-"var"
-
-
   #Variable correlation
   correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
   correlation_chart
   #PCA
   res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
-
   eig.val <- factoextra::get_eigenvalue(res.pca)
   eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
-
   #Kaiser Rule
   I<- sum(eig.val[1:nb_quanti,1])
   dims<-c(which(eig.val[,1]>(I/nb_quanti)))
   n_dim <- length(dims)
   eig.val.kept <- eig.val[dims,]
-
   #keep values where eigenvalue > 1
   if(n_dim==1){
     n_dim<-2
   }
-
   for (i in seq(1,n_dim, by=2)){
     if(i==n_dim){
       dim_axes<-c(i-1,i)
     }else{
       dim_axes<-c(i,i+1)
     }
-
-
     #correlation circle
     corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
                                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                                 repel = TRUE)
-
     #biplot individuals and variables grouped by clusters
     biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
                                col.ind = classes, palette = "jco",
