@@ -4,18 +4,22 @@
 \alias{Dataset}
 \title{Constructor}
 \usage{
-Dataset(data, vargroupe, TrueCluster = FALSE)
+Dataset(data, pred_clusters, true_clusters = FALSE)
 }
 \arguments{
 \item{data}{a dataset that contains all the active variables}
 
-\item{vargroupe}{a vector corresponding to the dataset clustering results}
+\item{pred_clusters}{a vector of dataset predicted clusters}
 
-\item{TrueCluster}{if you have the true cluster groups}
+\item{true_clusters}{a vector of dataset actual clusters}
 }
 \value{
 an object returning a list of active data (categorical and numerical data), number of samples, etc.
 }
 \description{
 Constructor
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 }

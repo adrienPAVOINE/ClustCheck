@@ -2,20 +2,27 @@
 # CLUSTCHECK
 # Functions for categorical variables
 # ------------------------------------------------------------------------- #
-
-# ------------------------------------------------------------------------- #
-# Contingency table
-# ------------------------------------------------------------------------- #
-
-#' contingency
+#' Contingency table
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#' Create a cross table between a cluster variable and a chosen category variable.
 #'
-#' @return
-#' @export
+#' @param object An object of class ccdata
+#' @param var A data vector of an active category variable
+#'
+#' @return A cross table between the two variables.
+#' The same table with margins and sum
+#' The table with percentage by lines
+#' Number of lines (which means number of cluster)
+#' Number of column (which means number of modalities in the other variables)
+#'
+#'
 #' @importFrom stats addmargins
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' table <- contingency(obj, BankCustomer$profession)
+#' effectiveTable <- table[[2]]
+#' @export
 contingency <- function(object, var){
   #creation of the cross table between the cluster data and an other category variable
   tableau <- table(object$pred_clusters,var)
@@ -25,17 +32,15 @@ contingency <- function(object, var){
   pourc <- addmargins(prop.table(addmargins(tableau,1),1),2) #prop.table to have the percentage by lines
   return(list(tableau, eff, pourc, nco, nli))
 }
-
-# ------------------------------------------------------------------------- #
-# Cramer'V table
-# ------------------------------------------------------------------------- #
-
-#' vcramer
+#' Cramer Values
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#' Calul the cramer values between two category variables
 #'
-#' @return
+#' @param object An object of class ccdata
+#' @param var A data vector of an active category variable
+#'
+#' @return If you choose a specific variable, it's return a short sentence with the cramer value.
+#' If you don't choose a specif variable, it's return a matrix with all the category variables of your dataset in lines with the cramer values in the first column.
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
@@ -44,7 +49,6 @@ vcramer <- function(object, var = FALSE){
   if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
     l<-c() #a list to the futur cramer values
     for (i in object$cat_var_names){
-      print(i)
       table <- contingency(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
       tableau <- table[[1]]
       nli <- table[[5]]
@@ -67,24 +71,20 @@ vcramer <- function(object, var = FALSE){
     tableau <- table[[1]]
     nli <- table[[5]]
     nco <- table[[4]]
-    khi2 = chisq.test(tableau)$statistic #same things for the khi2 value
+    khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #same things for the khi2 value
     cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1)))))
-    cat("cramer entre la var groupe",deparse(substitute(var))," et  = ", cramer)#we only print a clause
+    cat("Cramer value between the cluster vector and  ",deparse(substitute(var))," = ", cramer)#we only print a clause
 
   }
-
 }
-
-# ------------------------------------------------------------------------- #
-# Phi value
-# ------------------------------------------------------------------------- #
-
-#' phivalue
+#' Value Phi
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#'Calcul the Phi value for all cluster*modalities of one chosen variable.
 #'
-#' @return
+#' @param object An object of class ccdata
+#' @param var A data vector of an active category variable
+#'
+#' @return A cross table between the cluster variable and the chosen variable with phi values for all cluster*modality pairs.
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
@@ -112,17 +112,14 @@ phivalue <- function(object, var){
   #print(tab_phi)
   return(tab_phi)
 }
-
-# ------------------------------------------------------------------------- #
-# t-value for categorical variables
-# ------------------------------------------------------------------------- #
-
-#' tvalue_cat
+#' t-value for categorical variables
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#'Calcul the test value for all cluster*modalities of one chosen variable.
 #'
-#' @return
+#' @param object An object of class ccdata
+#' @param var A data vector of an active category variable
+#'
+#' @return A cross table between the cluster variable and the chosen variable with test values for all cluster*modality pairs.
 #' @export
 #'
 #' @examples
@@ -146,39 +143,15 @@ tvalue_cat <-function(object, var){
   #print(tab_vtest)
   return(tab_vtest)
 }
-
-# ------------------------------------------------------------------------- #
-# ACM visualisation
-# ------------------------------------------------------------------------- #
-
-#' vizACM
+#' AFC visualisation
 #'
-#' @param object an object of class ccdata
+#'Two graphs to illustrate the cluster with a specific category chosen variable.
 #'
-#' @return a graph
-#' @export
-#' @import questionr
-#' @import FactoMineR
-#' @import factoextra
-#' @import ggplot2
-#' @importFrom graphics  barplot mosaicplot
-#' @importFrom stats addmargins chisq.test
-#' @examples
-vizACM <- function(object){
-  res.mca <- FactoMineR::MCA(object$cat_data_cl ,graph = FALSE)
-  factoextra::fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib")
-}
-
-# ------------------------------------------------------------------------- #
-# AC visualisation
-# ------------------------------------------------------------------------- #
-
-#' vizAC
+#' @param object An object of class ccdata
+#' @param var A data vector of an active variable
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
-#'
-#' @return
+#' @return A stack barplot with cluster in abscissa and modalities in stack.
+#' A CA factor map which compare the cluster class and the modalities of the chosen variable.
 #' @export
 #' @import questionr
 #' @import FactoMineR
@@ -188,8 +161,9 @@ vizACM <- function(object){
 #' @importFrom graphics  barplot mosaicplot
 #' @importFrom stats addmargins chisq.test
 #' @importFrom utils data stack
+#' @importFrom graphics boxplot
 #' @examples
-vizAC <-function(object, var){
+vizAFC <-function(object, var){
   tableau <- table(object$pred_clusters,var)
   questionr::lprop(tableau, digits=1)
   questionr::cprop(tableau, digits=2)
@@ -201,17 +175,15 @@ vizAC <-function(object, var){
   res.ca <- FactoMineR::CA(tableau, graph = TRUE)
   return(res.ca)
 }
-
-# ------------------------------------------------------------------------- #
-# MCA
-# ------------------------------------------------------------------------- #
-
-#' get_MCA
+#' MCA
 #'
-#' @param object an object of class ccdata
-#' @param index_names optional vector of the index to use
+#' @param object An object of class ccdata
+#' @param index_names Optional vector of the index to use
 #'
-#' @return
+#'Show two graphs to illustrate the cluster with all the category variables of your dataset.
+#'
+#' @return A first plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
+#' A biplot whho illustrate the cluster group with all the modalities of category variables.
 #' @export
 #' @import ExPosition
 #' @import FactoMineR
@@ -224,40 +196,30 @@ get_MCA <- function(object,index_names){
   data.quali <-object$cat_data
   varname_classes <- "Clusters"
   classes <- object$pred_clusters
-
   label_to_show<-"var"
-
   #MCA
   #We use the Benzecri correction
   res.mca = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
-
   eig.val <- factoextra::get_eigenvalue(res.mca)
-
   eig_plot <- factoextra::fviz_eig(res.mca, addlabels = TRUE, ylim = c(0, 50))
-
-
   #keep values explaining 85% of total variance
   dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
   n_dim <- length(dims)
   eig.val.kept <- eig.val[dims,]
-
   #keep values where eigenvalue > 1
   if(n_dim==1){
     n_dim<-2
   }
-
   for (i in seq(1,n_dim, by=2)){
     if(i==n_dim){
       dim_axes<-c(i-1,i)
     }else{
       dim_axes<-c(i,i+1)
     }
-
     #Importance of the variable
     VarPlot <- factoextra::fviz_mca_var (res.mca,select.var = list(cos2=0.85), repel = TRUE)
-
     print(dim_axes)
-    #bsimple biplot between sample and active variables
+    #simple biplot between sample and active variables
     biplot <- factoextra::fviz_mca_biplot(res.mca, axes=dim_axes,
                                            col.ind = classes, palette = "jco",
                                            addEllipses = TRUE,
@@ -266,23 +228,19 @@ get_MCA <- function(object,index_names){
                                            #ellipse.type = "confidence",
                                            col.var = "black", repel = TRUE,
                                            legend.title = varname_classes, mean.point = FALSE)
-
-
     plt <- ggpubr::ggarrange(VarPlot, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
-
     print(plt)
   }
 }
-
-# ------------------------------------------------------------------------- #
-# FAMD
-# ------------------------------------------------------------------------- #
-
-#' get_FAMD
+#' FAMD
 #'
-#' @param object an object of class ccdata
+#' @param object An object of class ccdata
+#'Show three graphs to illustrate the cluster with all the variables of your dataset.
 #'
-#' @return
+#'
+#' @return B. The plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
+#' C. Correlation circle with all the numeric variables
+#' A. Plot with all the individuals colored by their cluster group and illustrate by category and numeric variables
 #' @export
 #' @import FactoMineR
 #' @import factoextra

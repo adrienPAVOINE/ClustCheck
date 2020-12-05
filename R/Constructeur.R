@@ -16,6 +16,8 @@
 #' @import factoextra
 #' @import ggplot2
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 Dataset <- function(data,pred_clusters,true_clusters=FALSE){
   instance <- list()
   #If the Cluster vector is not a factor
@@ -30,11 +32,11 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
     #If the Cluster vector is not a factor
     true_clusters <- factor(true_clusters)
     # #concatenate the vector and the data
-    # allactive_data <- cbind(true_clusters = true_clusters, active_data)
+    allactive_data <- cbind(true_clusters = true_clusters, active_data)
     # #if the vector is already in the data, we remove it
-    # active_data <- data.frame(allactive_data[,colnames(unique(as.matrix(allactive_data), MARGIN=2))])
+    active_data <- data.frame(allactive_data[,colnames(unique(as.matrix(allactive_data), MARGIN=2))])
     # #extract all the active variables (1 is always the cluster group)
-    # active_data <- active_data[,-1]
+    active_data <- active_data[,-1]
     instance$true_clusters <- true_clusters
   }
 
@@ -94,6 +96,4 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
   class(instance) <- "ccdata" #Creation of the ccdata class
   return(instance) #returns all instance parameters
 }
-
-
 

@@ -25,4 +25,7 @@ Imports:
     PerformanceAnalytics,
     corrplot,
     ggpubr,
-    ExPosition
+    ExPosition,
+    graphics
+Depends: 
+    R (>= 2.10)

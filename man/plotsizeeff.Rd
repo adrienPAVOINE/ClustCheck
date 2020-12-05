@@ -4,10 +4,10 @@
 \alias{plotsizeeff}
 \title{plotsizeeff}
 \usage{
-plotsizeeff(obj)
+plotsizeeff(object)
 }
 \arguments{
-\item{obj}{an object of class Data}
+\item{object}{an object of class ccdata}
 }
 \value{
 

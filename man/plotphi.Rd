@@ -4,12 +4,12 @@
 \alias{plotphi}
 \title{Title}
 \usage{
-plotphi(obj, var)
+plotphi(object, var)
 }
 \arguments{
-\item{obj}{an object of class Data}
+\item{object}{an object of class ccdata}
 
-\item{var}{name of variable of interest to plot phi-values}
+\item{var}{a data vector of an active variable}
 }
 \value{
 
