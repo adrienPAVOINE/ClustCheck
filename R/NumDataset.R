@@ -178,7 +178,6 @@ effectsize <-function(object){
 #' Applying a principal component analysis (PCA) to the data variables
 #'
 #' @param object an object of class ccdata
-#' @param index_names optional vector of the index to use
 #'
 #' @return Display three graphs to illustrate allows a synthetic view of the data, ideally in a two
 #' First: Represents the correlation chart between all the variables
@@ -195,20 +194,14 @@ effectsize <-function(object){
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_PCA(obj)
-get_PCA <- function(object,index_names=NULL){
+get_PCA <- function(object){
   num_data <-object$num_data
   varname_classes <- "Clusters"
   classes <- object$pred_clusters
   nb_quanti <- object$num_p
 
   label_to_show<-"var"
-  # #if index specified, use index for labels in plots
-  # if(missing(index_names)) {
-  #   label_to_show<-"var"
-  # } else {
-  #   rownames(num_data) <- index_names
-  #   label_to_show<-"all"
-  # }
+
 
   #Variable correlation
   correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
@@ -218,16 +211,6 @@ get_PCA <- function(object,index_names=NULL){
 
   eig.val <- factoextra::get_eigenvalue(res.pca)
   eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
-
-  #keep values where eigenvalue > 1
-  # dims<-which(eig.val[,1]>1)
-  # n_dim <- length(dims)
-  # eig.val.kept <- eig.val[dims,]
-
-  # #keep values explaining 85% of total variance
-  # dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
-  # n_dim <- length(dims)
-  # eig.val.kept <- eig.val[dims,]
 
   #Kaiser Rule
   I<- sum(eig.val[1:nb_quanti,1])
