@@ -17,6 +17,9 @@
 #' corr_ratios(obj)
 #' @export
 corr_ratios <-function(object){
+  if(object$vartype!="NUM"){
+    stop("Error : Correlations ratios can only be calculated on numerical variables.")
+  }
   classes <- object$pred_clusters
   cl <- object$cluster_names
   n_clusters <- length(cl)
@@ -61,8 +64,8 @@ corr_ratios <-function(object){
   scr_l<-sapply(object$num_data,scr_f)
 
   corr <- sce_l/sct_l
-  print("Correlation matrix")
-  print(corr)
+  #print("Correlation matrix")
+  #print(corr)
   return(corr)
 }
 #' Test Value for numerical variables
@@ -101,8 +104,8 @@ tvalue_num <-function(object){
       tvalue_table[x_col,i]<- vt_val
     }
   }
-  print("t-value table")
-  print(tvalue_table)
+  #print("t-value table")
+  #print(tvalue_table)
   return(tvalue_table)
 }
 #' Effect Size for numerical variables
@@ -148,8 +151,8 @@ effectsize <-function(object){
       effect_size_table[x_col,i]<- effect_size
     }
   }
-  print("Effect size table")
-  print(effect_size_table)
+  #print("Effect size table")
+  #print(effect_size_table)
   return(effect_size_table)
 }
 #' PCA visualisation
@@ -174,50 +177,56 @@ effectsize <-function(object){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_PCA(obj)
 get_PCA <- function(object){
-  num_data <-object$num_data
-  varname_classes <- "Clusters"
-  classes <- object$pred_clusters
-  nb_quanti <- object$num_p
-  label_to_show<-"var"
-  #Variable correlation
-  correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
-  correlation_chart
-  #PCA
-  res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
-  eig.val <- factoextra::get_eigenvalue(res.pca)
-  eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
-  #Kaiser Rule
-  I<- sum(eig.val[1:nb_quanti,1])
-  dims<-c(which(eig.val[,1]>(I/nb_quanti)))
-  n_dim <- length(dims)
-  eig.val.kept <- eig.val[dims,]
-  #keep values where eigenvalue > 1
-  if(n_dim==1){
-    n_dim<-2
-  }
-  for (i in seq(1,n_dim, by=2)){
-    if(i==n_dim){
-      dim_axes<-c(i-1,i)
-    }else{
-      dim_axes<-c(i,i+1)
+  if(object$vartype=="NUM"){
+    num_data <-object$num_data
+    varname_classes <- "Clusters"
+    classes <- object$pred_clusters
+    nb_quanti <- object$num_p
+    label_to_show<-"var"
+    #Variable correlation
+    correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
+    correlation_chart
+    #PCA
+    res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
+    eig.val <- factoextra::get_eigenvalue(res.pca)
+    eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+    #Kaiser Rule
+    I<- sum(eig.val[1:nb_quanti,1])
+    dims<-c(which(eig.val[,1]>(I/nb_quanti)))
+    n_dim <- length(dims)
+    eig.val.kept <- eig.val[dims,]
+    #keep values where eigenvalue > 1
+    if(n_dim==1){
+      n_dim<-2
     }
-    #correlation circle
-    corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
-                                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                                repel = TRUE)
-    #biplot individuals and variables grouped by clusters
-    biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
-                               col.ind = classes, palette = "jco",
-                               addEllipses = TRUE,
-                               label = label_to_show,
-                               ellipse.type = "convex",
-                               #ellipse.type = "confidence",
-                               col.var = "black", repel = TRUE,
-                               legend.title = varname_classes, mean.point = FALSE)
-
-
-    plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
-
-    print(plt)
+    for (i in seq(1,n_dim, by=2)){
+      if(i==n_dim){
+        dim_axes<-c(i-1,i)
+      }else{
+        dim_axes<-c(i,i+1)
+      }
+      #correlation circle
+      corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
+                                  gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                                  repel = TRUE)
+      #biplot individuals and variables grouped by clusters
+      biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
+                                 col.ind = classes, palette = "jco",
+                                 addEllipses = TRUE,
+                                 label = label_to_show,
+                                 ellipse.type = "convex",
+                                 #ellipse.type = "confidence",
+                                 col.var = "black", repel = TRUE,
+                                 legend.title = varname_classes, mean.point = FALSE)
+  
+  
+      plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
+  
+      print(plt)
+    }
   }
+  else {
+    cat("Error : PCA is intended to numerical variables only.")
+  }
+  
 }

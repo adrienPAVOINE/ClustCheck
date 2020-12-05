@@ -17,47 +17,48 @@
 #' plottvalue(obj) #for all the numerical variables
 #' plottvalue(obj, BankCustomer$profession) #for only one categorical variable
 plottvalue <- function(object, var = NULL) {
-  #if(object$vartype== "NUM"){
-  table <- tvalue_num(object)
-  p <- ncol(table)
-  variables <- rownames(table)
-  Tvalue_table <- stack(as.data.frame(table))
-  Tvalue_table$variables <- rep(variables, p)
-  # Visualisation
-  plot <-ggplot2::ggplot(Tvalue_table, aes(x = variables, y = values)) +
-    geom_col() +
-    geom_hline(
-      yintercept = -2,
-      linetype = "dashed",
-      size = 0.5,
-      color = "red"
-    ) +
-    geom_hline(
-      yintercept = 2,
-      linetype = "dashed",
-      size = 0.5,
-      color = "red"
-    ) +
-    coord_flip() +
-    facet_wrap(vars(ind)) +
-    labs(title = "t-values")
-  print(plot)
-  #}
-  #if(object$vartype== "CAT"){
-  if (is.null(var) == FALSE) {
-    if (is.character(var) == TRUE | is.factor(var) == TRUE) {
-      table <- tvalue_cat(object, var)
-      m <- ncol(table)
-      levels <- colnames(table)
-      Tvalue_table <- as.data.frame(table)
-      Tvalue_table$Freq
-      colnames(Tvalue_table) <- c('clusters', 'levels', 'values')
-      # Visualisation
-      ggplot2::ggplot(Tvalue_table, aes(x = levels, y = values)) +
-        geom_col() +
-        coord_flip() +
-        facet_wrap(vars(clusters)) +
-        labs(title = "t-values")
+  if(object$vartype== "NUM"){
+    table <- tvalue_num(object)
+    p <- ncol(table)
+    variables <- rownames(table)
+    Tvalue_table <- stack(as.data.frame(table))
+    Tvalue_table$variables <- rep(variables, p)
+    # Visualisation
+    plot <-ggplot2::ggplot(Tvalue_table, aes(x = variables, y = values)) +
+      geom_col() +
+      geom_hline(
+        yintercept = -2,
+        linetype = "dashed",
+        size = 0.5,
+        color = "red"
+      ) +
+      geom_hline(
+        yintercept = 2,
+        linetype = "dashed",
+        size = 0.5,
+        color = "red"
+      ) +
+      coord_flip() +
+      facet_wrap(vars(ind)) +
+      labs(title = "t-values")
+    print(plot)
+  }
+  if(object$vartype== "CAT"){
+    if (is.null(var) == FALSE) {
+      if (is.character(var) == TRUE | is.factor(var) == TRUE) {
+        table <- tvalue_cat(object, var)
+        m <- ncol(table)
+        levels <- colnames(table)
+        Tvalue_table <- as.data.frame(table)
+        Tvalue_table$Freq
+        colnames(Tvalue_table) <- c('clusters', 'levels', 'values')
+        # Visualisation
+        ggplot2::ggplot(Tvalue_table, aes(x = levels, y = values)) +
+          geom_col() +
+          coord_flip() +
+          facet_wrap(vars(clusters)) +
+          labs(title = "t-values")
+      }
     }
   }
 }
@@ -74,7 +75,7 @@ plottvalue <- function(object, var = NULL) {
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotsizeeff(obj)
 plotsizeeff <- function(object){
-  if(object$num_p > 0){
+  if(object$vartype=="NUM"){
     table <- effectsize(object)
     p <- ncol(table)
     variables <- rownames(table)
@@ -88,7 +89,7 @@ plotsizeeff <- function(object){
       labs(title = "Size effect")
   }
   else {
-    cat("Size effect calculations are for numerical variables only.")
+    cat("Error : Size effect calculations are for numerical variables only.")
   }
 }
 #' Plot of correlations (numerical variables)
@@ -103,7 +104,7 @@ plotsizeeff <- function(object){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotcorr(obj)
 plotcorr <- function(object) {
-  if (object$num_p > 0) {
+  if(object$vartype=="NUM"){
     table <- sort(corr_ratios(object), decreasing = T)
     p <- min(12, length(table))
     corr <- as.data.frame(table[1:p])
@@ -116,7 +117,7 @@ plotcorr <- function(object) {
       ylab("Value")
   }
   else {
-    cat("Correlations calculations are for numerical variables only.")
+    cat("Error : Correlations calculations are for numerical variables only.")
   }
 }
 #' Plot of Cramer's V (categorical variables)
@@ -132,7 +133,7 @@ plotcorr <- function(object) {
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotVCramer(obj)
 plotVCramer <- function(object, limit=10){
-  if (object$cat_p > 0) {
+  if(object$vartype=="CAT"){
     table <- vcramer(object)
     p <- length(table)
     if (limit<p){
@@ -144,11 +145,13 @@ plotVCramer <- function(object, limit=10){
     }
     colnames(VCramer) <- "values"
     # Visualisation
-    ggplot2::ggplot(VCramer, ggplot2::aes(x=reorder(rownames(VCramer), -values), y=values)) + ggplot2::geom_col() +
+    ggplot2::ggplot(VCramer, ggplot2::aes(x=reorder(rownames(VCramer), -values), y=values)) +
+      ggplot2::geom_col() +
+      #ggplot2::geom_text(aes(label=values, position=position_dodge(width=0.9), vjust=0.25)) +
       ggplot2::labs(title = title2) +xlab("Variables") +ylab("Value")
   }
   else {
-    cat("Cramer's V calculations are for categorical variables only.")
+    cat("Error : Cramer's V calculations are for categorical variables only.")
   }
 }
 #' Plot of Phi values (categorical variables)
@@ -179,6 +182,6 @@ plotphi <- function(object, var){
       labs(title = "phi-values")
   }
   else {
-    cat("Phi values calculations are for categorical variables only.")
+    cat("Error : Phi values calculations are for categorical variables only.")
   }
 }

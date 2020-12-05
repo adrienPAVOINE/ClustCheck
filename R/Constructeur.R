@@ -39,7 +39,6 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
     active_data <- active_data[,-1]
     instance$true_clusters <- true_clusters
   }
-
   instance$all_data <- all_data #all the data
   instance$active_data <- active_data  #data of all the active variables
   instance$pred_clusters = pred_clusters #data of the cluster vector
@@ -49,18 +48,13 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
   #controle - data.frame
   ok <- is.data.frame(data) #check if the dataset is a dataframe
   if (!ok){
-    stop("The data is not in a dataframe format")
+    stop("Error : The data is not in a dataframe format")
   }
   cat_ind <- sapply(active_data,function(x)is.factor(x)|is.character(x)) #To get all the categorical variables data
   nb_qual <- sum(cat_ind)
   cat_ind1 <- sapply(data,function(x)is.factor(x)|is.character(x)) #To get all the categorical variables including the vector of cluster data
   cat_data1 <- data[ ,cat_ind1]
-  #CheckVarQual <- TRUE
-  #To know if there is categorical variable (for the metrics functions)
-
   if (nb_qual < 1 ){
-    #print("There are no categorical variables in your dataset")
-    #CheckVarQual <- FALSE
   }else{
     instance$cat_data <- active_data[ ,cat_ind] #the data of the categorical variables
     instance$cat_data_cl <- cat_data1 #the data of the categorical variables including the vector of cluster data
@@ -72,7 +66,6 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
   num_ind = sapply(active_data,function(x)is.numeric(x)|is.double(x))#To get all the numerical variables data
   nb_quanti <- sum(num_ind)
   if (nb_quanti < 1 ){
-    #print("There are no numerical variables in your dataset")
   }else{
     num_data <- active_data[ ,num_ind]#the data of the numerical variables
     instance$num_data <- num_data

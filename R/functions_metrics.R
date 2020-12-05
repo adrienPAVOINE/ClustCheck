@@ -19,7 +19,7 @@
 #' transformdata(obj)
 transformdata <- function(object){
   if(object$vartype=="NUM"){
-    stop("The variables are numerical and don't need factorial transformation")
+    stop("Error : the variables are numerical and don't need factorial transformation")
   }
   res.famd <- FactoMineR::FAMD(object$active_data, graph = FALSE)
   ind <- factoextra::get_famd_ind(res.famd)
@@ -199,7 +199,7 @@ validation <- function(object, true_clusters = object$true_clusters) {
     nco <- table[[4]]
     n <- object$n
     if (nli != nco) {
-      stop("You don't have the same numbers of clustes between predicted and true values")
+      stop("Error : you don't have the same numbers of clusters between predicted and true values")
     } else{
       if (nli == 2) {
         Errorrate <- 1 - ((ConfMat[1, 2] + ConfMat[2, 1]) / n)
@@ -237,7 +237,7 @@ validation <- function(object, true_clusters = object$true_clusters) {
 
     }
   } else{
-    stop("You didn't enter a true cluster vector")
+    stop("Error : you didn't enter a true cluster vector")
   }
 }
 #' Statistical Test
@@ -257,7 +257,7 @@ statistical_test <- function(object, var){
   k <- length(object$cluster_names)
   if(is.numeric(object$all_data[[var]])){
     if (k == 1){
-      stop("You have only one cluster group")
+      stop("Error : you have only one cluster group")
     }else if(k == 2){
       groupe <- unique(object$pred_clusters)
       cluster1 <- data[object$pred_clusters==groupe[1],]

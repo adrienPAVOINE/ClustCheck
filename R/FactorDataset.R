@@ -48,36 +48,39 @@ contingency <- function(object, var){
 #' vcramer(obj) #for all the cramer value by variables
 #' vcramer(obj, BankCustomer$profession) #For one categorical variable
 vcramer <- function(object, var = FALSE){
-  nameVar <- deparse(substitute(var)) #to get the name of the vector
-  if(nameVar == FALSE){ #if we want all the cramer values for all the categorical variables
-    l<-c() #a list to the futur cramer values
-    for (i in object$cat_var_names){
-      table <- contingency(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
+  if(object$vartype=="CAT"){
+    nameVar <- deparse(substitute(var)) #to get the name of the vector
+    if(nameVar == FALSE){ #if we want all the cramer values for all the categorical variables
+      l<-c() #a list to the futur cramer values
+      for (i in object$cat_var_names){
+        table <- contingency(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
+        tableau <- table[[1]]
+        nli <- table[[5]]
+        nco <- table[[4]]
+        khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #we use chisq.test to get the khi2 statistic
+        cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1))))) #calcul of Vcramer
+        l <- c(l,cramer) #put the cramer value into the list
+      }
+      #use of a matrix to print the variable name and the Vcramer
+      matrice = matrix(l,nrow=object$cat_p,ncol=1, dimnames = list(object$cat_var_names,"Cramer"))
+      return(matrice)
+      #listemax <- c()
+      #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
+      #listemax <- c(listemax, ind)
+      #print(listemax)
+      #rownames(matrice)[ind]
+    }else{
+      table <- contingency(object, var) #call the CalcTable function to get cross table
       tableau <- table[[1]]
       nli <- table[[5]]
       nco <- table[[4]]
-      khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #we use chisq.test to get the khi2 statistic
-      cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1))))) #calcul of Vcramer
-      l <- c(l,cramer) #put the cramer value into the list
+      khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #same things for the khi2 value
+      cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1)))))
+      cat("Cramer value between the cluster vector and  ",deparse(substitute(var))," = ", cramer) #we only print a clause
     }
-    #use of a matrix to print the variable name and the Vcramer
-    matrice = matrix(l,nrow=object$cat_p,ncol=1, dimnames = list(object$cat_var_names,"Cramer"))
-    print(matrice)
-    return(matrice)
-    #listemax <- c()
-    #ind = head(sort(matrice[,1], decreasing = TRUE), 3)
-    #listemax <- c(listemax, ind)
-    #print(listemax)
-    #rownames(matrice)[ind]
-  }else{
-    table <- contingency(object, var) #call the CalcTable function to get cross table
-    tableau <- table[[1]]
-    nli <- table[[5]]
-    nco <- table[[4]]
-    khi2 = chisq.test(tableau, simulate.p.value = TRUE)$statistic #same things for the khi2 value
-    cramer = sqrt((khi2)/(nrow(object$all_data)*(min((nco-1),(nli-1)))))
-    cat("Cramer value between the cluster vector and  ",deparse(substitute(var))," = ", cramer)#we only print a clause
-
+  }
+  else {
+    cat("Error : Cramer's V calculations are for categorical variables only.")
   }
 }
 #' Value Phi
@@ -95,28 +98,33 @@ vcramer <- function(object, var = FALSE){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' phivalue(obj, BankCustomer$profession)
 phivalue <- function(object, var){
-  table <- contingency(object, var) #call the CalcTable to get cross table between the two variables
-  tableau <- table[[1]]
-  nli <- table[[5]]
-  nco <- table[[4]] #we get all the information (effective table, nli, nco and the line percentage)
-  eff = table[[2]]
-  pourc = table[[3]]
-  tab_phi <- tableau #creation of the same table where we will put the news informations
-  for (i in 1:nli){
-    for (j in 1:nco){
-      plg = eff[i,j]/eff[i,nco+1] #number of sample in the i cluster and the j modality (of the other variable) / number of total sample in the i cluster
-      #creation of a i*j matrix : matrix to cross all the cluster group by all the modes -> use to calculate the pla (proportion in the others groups)
-      liste <- c(eff[i,j],(eff[nli+1,j]-eff[i,j]), (eff[i,nco+1]-eff[i,j]),eff[nli+1,nco+1]-(eff[i,j]+(eff[nli+1]-eff[i,j])+(eff[i,nco+1]-eff[i,j])) )
-      matri <- matrix(liste,2,2)
-      #for all the group*modalitiy we calcule the Khi2
-      suppressWarnings(khi2 <- chisq.test(matri)) #remove the warnings wich tell us that n is to small
-      pla = (matri[2,1])/(matri[2,1]+matri[2,2]) #pla calculate for all the group*modes (important to see the proportion of the modality in the others cluster group)
-      tab_phi[i,j] <- round(sign(plg-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4) #get all the phi values in one table
-      #get the signed phi value with (plg-pla)
-    }
+  if(object$vartype=="NUM"){
+    table <- contingency(object, var) #call the CalcTable to get cross table between the two variables
+    tableau <- table[[1]]
+    nli <- table[[5]]
+    nco <- table[[4]] #we get all the information (effective table, nli, nco and the line percentage)
+    eff = table[[2]]
+    pourc = table[[3]]
+    tab_phi <- tableau #creation of the same table where we will put the news informations
+    for (i in 1:nli){
+      for (j in 1:nco){
+        plg = eff[i,j]/eff[i,nco+1] #number of sample in the i cluster and the j modality (of the other variable) / number of total sample in the i cluster
+        #creation of a i*j matrix : matrix to cross all the cluster group by all the modes -> use to calculate the pla (proportion in the others groups)
+        liste <- c(eff[i,j],(eff[nli+1,j]-eff[i,j]), (eff[i,nco+1]-eff[i,j]),eff[nli+1,nco+1]-(eff[i,j]+(eff[nli+1]-eff[i,j])+(eff[i,nco+1]-eff[i,j])) )
+        matri <- matrix(liste,2,2)
+        #for all the group*modalitiy we calcule the Khi2
+        suppressWarnings(khi2 <- chisq.test(matri)) #remove the warnings wich tell us that n is to small
+        pla = (matri[2,1])/(matri[2,1]+matri[2,2]) #pla calculate for all the group*modes (important to see the proportion of the modality in the others cluster group)
+        tab_phi[i,j] <- round(sign(plg-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4) #get all the phi values in one table
+        #get the signed phi value with (plg-pla)
+        }
+      }
+    #print(tab_phi)
+    return(tab_phi)
   }
-  #print(tab_phi)
-  return(tab_phi)
+  else {
+    cat("Error : Phi values cannot be calculated on numerical variables.")
+  }
 }
 #' t-value for categorical variables
 #'
@@ -176,7 +184,8 @@ tvalue_cat <-function(object, var){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' vizAFC(obj, BankCustomer$profession)
 vizAFC <- function(object, var) {
-  if(is.factor(var) == TRUE|is.character(var) == TRUE){
+  if(object$vartype=="CAT"){
+    if(is.factor(var) == TRUE|is.character(var) == TRUE){
     tableau <- table(object$pred_clusters, var)
     questionr::lprop(tableau, digits = 1)
     questionr::cprop(tableau, digits = 2)
@@ -196,13 +205,18 @@ vizAFC <- function(object, var) {
         ncol = 2,
         nrow = 1
       )
-    print(plt)
-  } else{
-    print(plotbar)
+      print(plt)
+    } else{
+      print(plotbar)
+    }
+    }else{
+      stop("Error : var must be a categorical variable")
+    }
   }
-  }else{
-    stop("Attention, var must be a categorical variable")
+  else {
+    cat("Error : AFC is intended to categorical variables.")
   }
+  
 }
 #' Multiple Component Analysis
 #' Show two graphs to illustrate the cluster with all the categorical variables of your dataset.
@@ -225,44 +239,50 @@ vizAFC <- function(object, var) {
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_MCA(obj)
 get_MCA <- function(object,index_names){
-  data.quali <-object$cat_data
-  varname_classes <- "Clusters"
-  classes <- object$pred_clusters
-  label_to_show<-"var"
-  #MCA
-  #We use the Benzecri correction
-  res.mca = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
-  eig.val <- factoextra::get_eigenvalue(res.mca)
-  eig_plot <- factoextra::fviz_eig(res.mca, addlabels = TRUE, ylim = c(0, 50))
-  #keep values explaining 85% of total variance
-  dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
-  n_dim <- length(dims)
-  eig.val.kept <- eig.val[dims,]
-  #keep values where eigenvalue > 1
-  if(n_dim==1){
-    n_dim<-2
-  }
-  for (i in seq(1,n_dim, by=2)){
-    if(i==n_dim){
-      dim_axes<-c(i-1,i)
-    }else{
-      dim_axes<-c(i,i+1)
+  if(object$vartype=="CAT"){
+    data.quali <-object$cat_data
+    varname_classes <- "Clusters"
+    classes <- object$pred_clusters
+    label_to_show<-"var"
+    #MCA
+    #We use the Benzecri correction
+    res.mca = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
+    eig.val <- factoextra::get_eigenvalue(res.mca)
+    eig_plot <- factoextra::fviz_eig(res.mca, addlabels = TRUE, ylim = c(0, 50))
+    #keep values explaining 85% of total variance
+    dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+    n_dim <- length(dims)
+    eig.val.kept <- eig.val[dims,]
+    #keep values where eigenvalue > 1
+    if(n_dim==1){
+      n_dim<-2
     }
-    #Importance of the variable
-    VarPlot <- factoextra::fviz_mca_var (res.mca,select.var = list(cos2=0.85), repel = TRUE)
-    print(dim_axes)
-    #simple biplot between sample and active variables
-    biplot <- factoextra::fviz_mca_biplot(res.mca, axes=dim_axes,
-                                           col.ind = classes, palette = "jco",
-                                           addEllipses = TRUE,
-                                           label = label_to_show,
-                                           ellipse.type = "convex",
-                                           #ellipse.type = "confidence",
-                                           col.var = "black", repel = TRUE,
-                                           legend.title = varname_classes, mean.point = FALSE)
-    plt <- ggpubr::ggarrange(VarPlot, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
-    print(plt)
+    for (i in seq(1,n_dim, by=2)){
+      if(i==n_dim){
+        dim_axes<-c(i-1,i)
+      }else{
+        dim_axes<-c(i,i+1)
+      }
+      #Importance of the variable
+      VarPlot <- factoextra::fviz_mca_var (res.mca,select.var = list(cos2=0.85), repel = TRUE)
+      print(dim_axes)
+      #simple biplot between sample and active variables
+      biplot <- factoextra::fviz_mca_biplot(res.mca, axes=dim_axes,
+                                             col.ind = classes, palette = "jco",
+                                             addEllipses = TRUE,
+                                             label = label_to_show,
+                                             ellipse.type = "convex",
+                                             #ellipse.type = "confidence",
+                                             col.var = "black", repel = TRUE,
+                                             legend.title = varname_classes, mean.point = FALSE)
+      plt <- ggpubr::ggarrange(VarPlot, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
+      print(plt)
+    }
   }
+  else {
+    cat("Error : MCA is intended to categorical variables only.")
+  }
+  
 }
 #' Factorial Analysis of Mixed Data
 #'
@@ -284,52 +304,58 @@ get_MCA <- function(object,index_names){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_FAMD(obj)
 get_FAMD <- function(object){
-  #loop to concate name of variable + modality (to avoid error in the AFDM)
-  nb = 0
-  for(i in object$cat_data) {
-    nb = nb+1
-    names = object$cat_var_names[nb]
-    i <- paste(names,i)
-    object$cat_data[nb] <- i
-
-  }
-  #first data with new exp variables
-  data <- cbind(object$num_data, object$cat_data)
-  #data with active var and cluster
-  all.data <- cbind(object$pred_clusters,object$num_data, object$cat_data)
-  #creation on the FAMD
-  res.famd <- FactoMineR::FAMD(data, graph = FALSE)
-  #to get variable
-  var <- factoextra::get_famd_var(res.famd)
-
-  #Contrib of the categorical variables
-  qual <- factoextra::fviz_famd_var(res.famd, "quali.var", col.var = "contrib",
-                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
-  )
-
-  #contrib of the numeric variables
-  quanti <- factoextra::fviz_famd_var(res.famd, "quanti.var", col.var = "contrib",
-                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                            repel = TRUE)
-  #the ind plot with color by cluster group, we only use the two firsts axes
-  ind<- factoextra::fviz_famd_ind(
-    res.famd,
-    axes = c(1, 2),
-    repel = FALSE,
-    habillage = all.data[,1],
-    palette = NULL,
-    addEllipses = TRUE,
-    col.ind = "blue",
-    col.ind.sup = "darkblue",
-    col.quali.var = "black",
-    select.ind = list(name = NULL, cos2 = NULL, contrib = NULL),
-    gradient.cols = NULL
-  )
-  #split of the screen
-    plt <- ggpubr::ggarrange(ind,         # First row with ind plot
-        ggpubr::ggarrange(qual, quanti, ncol = 2, labels = c("B", "C")), # Second row with var quanti and qual plot
-        nrow = 2,
-        labels = "A"       # Labels of the ind plot
+  if(object$vartype=="MIX"){
+    #loop to concate name of variable + modality (to avoid error in the AFDM)
+    nb = 0
+    for(i in object$cat_data) {
+      nb = nb+1
+      names = object$cat_var_names[nb]
+      i <- paste(names,i)
+      object$cat_data[nb] <- i
+  
+    }
+    #first data with new exp variables
+    data <- cbind(object$num_data, object$cat_data)
+    #data with active var and cluster
+    all.data <- cbind(object$pred_clusters,object$num_data, object$cat_data)
+    #creation on the FAMD
+    res.famd <- FactoMineR::FAMD(data, graph = FALSE)
+    #to get variable
+    var <- factoextra::get_famd_var(res.famd)
+  
+    #Contrib of the categorical variables
+    qual <- factoextra::fviz_famd_var(res.famd, "quali.var", col.var = "contrib",
+                              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
     )
-    print(plt)
+  
+    #contrib of the numeric variables
+    quanti <- factoextra::fviz_famd_var(res.famd, "quanti.var", col.var = "contrib",
+                              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                              repel = TRUE)
+    #the ind plot with color by cluster group, we only use the two firsts axes
+    ind<- factoextra::fviz_famd_ind(
+      res.famd,
+      axes = c(1, 2),
+      repel = FALSE,
+      habillage = all.data[,1],
+      palette = NULL,
+      addEllipses = TRUE,
+      col.ind = "blue",
+      col.ind.sup = "darkblue",
+      col.quali.var = "black",
+      select.ind = list(name = NULL, cos2 = NULL, contrib = NULL),
+      gradient.cols = NULL
+    )
+    #split of the screen
+      plt <- ggpubr::ggarrange(ind,         # First row with ind plot
+          ggpubr::ggarrange(qual, quanti, ncol = 2, labels = c("B", "C")), # Second row with var quanti and qual plot
+          nrow = 2,
+          labels = "A"       # Labels of the ind plot
+      )
+      print(plt)
+  }
+  else {
+    cat("Error : this factorial analysis function is intended to mixed data only.")
+  }
+  
 }
