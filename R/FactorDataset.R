@@ -1,37 +1,51 @@
-#' CalcTable.Data
+# ------------------------------------------------------------------------- #
+# CLUSTCHECK
+# Functions for categorical variables
+# ------------------------------------------------------------------------- #
+
+# ------------------------------------------------------------------------- #
+# Contingency table
+# ------------------------------------------------------------------------- #
+
+#' contingency
 #'
-#' @param object a Dataset object
-#' @param varqual the other variable to cross
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #' @importFrom stats addmargins
 #' @examples
-CalcTable.Data <- function(object, varqual){
+contingency <- function(object, var){
   #creation of the cross table between the cluster data and an other category variable
-  tableau <- table(object$clusters_data,varqual)
+  tableau <- table(object$pred_clusters,var)
   nli <- nrow(tableau) #number of cluster
   nco <- ncol(tableau) #number of modality in the other category variable
   eff <- addmargins(tableau) #to add Sum and names of the modalities
   pourc <- addmargins(prop.table(addmargins(tableau,1),1),2) #prop.table to have the percentage by lines
   return(list(tableau, eff, pourc, nco, nli))
 }
-#' Vcramer.Data
+
+# ------------------------------------------------------------------------- #
+# Cramer'V table
+# ------------------------------------------------------------------------- #
+
+#' vcramer
 #'
-#' @param object a dataset object
-#' @param var If you want the cramer value of an unique category variable
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
-Vcramer.Data <- function(object, var = FALSE){
+vcramer <- function(object, var = FALSE){
   nameVar <- deparse(substitute(var)) #to get the name of the vector
   if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
     l<-c() #a list to the futur cramer values
     for (i in object$cat_var_names){
       print(i)
-      table <- CalcTable.Data(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
+      table <- contingency(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
       tableau <- table[[1]]
       nli <- table[[5]]
       nco <- table[[4]]
@@ -49,7 +63,7 @@ Vcramer.Data <- function(object, var = FALSE){
     #print(listemax)
     #rownames(matrice)[ind]
   }else{
-    table <- CalcTable.Data(object, var) #call the CalcTable function to get cross table
+    table <- contingency(object, var) #call the CalcTable function to get cross table
     tableau <- table[[1]]
     nli <- table[[5]]
     nco <- table[[4]]
@@ -60,17 +74,22 @@ Vcramer.Data <- function(object, var = FALSE){
   }
 
 }
-#' PhiValueTable.Data
+
+# ------------------------------------------------------------------------- #
+# Phi value
+# ------------------------------------------------------------------------- #
+
+#' phivalue
 #'
-#' @param object a dataset object
-#' @param nomvarqual vector of a category variable
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
-PhiValueTable.Data <- function(object, nomvarqual){
-  table <- CalcTable.Data(object, nomvarqual) #call the CalcTable to get cross table between the two variables
+phivalue <- function(object, var){
+  table <- contingency(object, var) #call the CalcTable to get cross table between the two variables
   tableau <- table[[1]]
   nli <- table[[5]]
   nco <- table[[4]] #we get all the information (effective table, nli, nco and the line percentage)
@@ -93,17 +112,22 @@ PhiValueTable.Data <- function(object, nomvarqual){
   #print(tab_phi)
   return(tab_phi)
 }
-#' TValueTable.Data
+
+# ------------------------------------------------------------------------- #
+# t-value for categorical variables
+# ------------------------------------------------------------------------- #
+
+#' tvalue_cat
 #'
-#' @param object a data object
-#' @param varqual vector of the cluster
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #'
 #' @examples
-TValueTable.Data <-function(object, varqual){
-  table <- CalcTable.Data(object, varqual) #call the CalcTable to get the info of the cross table
+tvalue_cat <-function(object, var){
+  table <- contingency(object, var) #call the CalcTable to get the info of the cross table
   tableau <- table[[1]]
   nli <- table[[5]]
   nco <- table[[4]]
@@ -118,13 +142,18 @@ TValueTable.Data <-function(object, varqual){
       tab_vtest[i,j] <- v
     }
   }
-  print("ci dessous tableau des valeurs tests")
+  #print("ci dessous tableau des valeurs tests")
   #print(tab_vtest)
   return(tab_vtest)
 }
-#' VisualisationACM.Data
+
+# ------------------------------------------------------------------------- #
+# ACM visualisation
+# ------------------------------------------------------------------------- #
+
+#' vizACM
 #'
-#' @param object a object
+#' @param object an object of class ccdata
 #'
 #' @return a graph
 #' @export
@@ -135,14 +164,19 @@ TValueTable.Data <-function(object, varqual){
 #' @importFrom graphics  barplot mosaicplot
 #' @importFrom stats addmargins chisq.test
 #' @examples
-VisualisationACM.Data <- function(object){
+vizACM <- function(object){
   res.mca <- FactoMineR::MCA(object$cat_data_cl ,graph = FALSE)
   factoextra::fviz_mca_var(res.mca, repel = TRUE,col.var = "contrib")
 }
-#' VisualisationAC.Data
+
+# ------------------------------------------------------------------------- #
+# AC visualisation
+# ------------------------------------------------------------------------- #
+
+#' vizAC
 #'
-#' @param object a object
-#' @param nomvarqual a string
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
@@ -155,12 +189,12 @@ VisualisationACM.Data <- function(object){
 #' @importFrom stats addmargins chisq.test
 #' @importFrom utils data stack
 #' @examples
-VisualisationAC.Data <-function(object, nomvarqual){
-  tableau <- table(object$clusters_data,nomvarqual)
+vizAC <-function(object, var){
+  tableau <- table(object$pred_clusters,var)
   questionr::lprop(tableau, digits=1)
   questionr::cprop(tableau, digits=2)
   mydf <- as.data.frame(tableau)
-  ggplot2::ggplot(mydf, ggplot2::aes(fill=nomvarqual, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
+  ggplot2::ggplot(mydf, ggplot2::aes(fill=var, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
   #data$groupe = factor(data$groupe)
   #ggplot2::ggplot(data = data) + geom_mosaic(aes(x = product(groupe, région), fill=groupe), na.rm=TRUE) +
    # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')
@@ -168,12 +202,13 @@ VisualisationAC.Data <-function(object, nomvarqual){
   return(res.ca)
 }
 
+# ------------------------------------------------------------------------- #
+# MCA
+# ------------------------------------------------------------------------- #
 
-
-
-#' Get_MCA.Data
+#' get_MCA
 #'
-#' @param object a data object
+#' @param object an object of class ccdata
 #' @param index_names optional vector of the index to use
 #'
 #' @return
@@ -185,11 +220,10 @@ VisualisationAC.Data <-function(object, nomvarqual){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
-Get_MCA.Data<- function(object,index_names){
+get_MCA <- function(object,index_names){
   data.quali <-object$cat_data
   varname_classes <- "Clusters"
-  classes <- object$clusters_data
-
+  classes <- object$pred_clusters
 
   label_to_show<-"var"
 
@@ -240,9 +274,13 @@ Get_MCA.Data<- function(object,index_names){
   }
 }
 
-#' Get_AFDM.Data
+# ------------------------------------------------------------------------- #
+# FAMD
+# ------------------------------------------------------------------------- #
+
+#' get_FAMD
 #'
-#' @param object a dataset object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
@@ -252,7 +290,7 @@ Get_MCA.Data<- function(object,index_names){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
-Get_AFDM.Data<- function(object){
+get_FAMD <- function(object){
   #loop to concate name of variable + modality (to avoid error in the AFDM)
   nb = 0
   for(i in object$cat_data) {
@@ -265,7 +303,7 @@ Get_AFDM.Data<- function(object){
   #first data with new exp variables
   data <- cbind(object$num_data, object$cat_data)
   #data with active var and cluster
-  all.data <- cbind(object$clusters_data,object$num_data, object$cat_data)
+  all.data <- cbind(object$pred_clusters,object$num_data, object$cat_data)
   #creation on the FAMD
   res.famd <- FactoMineR::FAMD(data, graph = FALSE)
   #to get variable

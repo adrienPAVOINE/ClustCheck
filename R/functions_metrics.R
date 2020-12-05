@@ -1,6 +1,15 @@
-#' Transformdata.Data
+# ------------------------------------------------------------------------- #
+# CLUSTCHECK
+# Functions for clustering evalation metrics
+# ------------------------------------------------------------------------- #
+
+# ------------------------------------------------------------------------- #
+# Data tranformation
+# ------------------------------------------------------------------------- #
+
+#' transformdata
 #'
-#' @param object a data object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
@@ -8,7 +17,7 @@
 #' @import factoextra
 #'
 #' @examples
-Transformdata.Data <- function(object){
+transformdata <- function(object){
   # #fonction pour centrage-réduction
   # CR <- function(x){
   #   n <- length(x)
@@ -42,33 +51,25 @@ Transformdata.Data <- function(object){
   # acp.data <- ade4::dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
   # coordind = round(acp.data$li[,])
   # ind <-cbind(coordind)
-
-
-
 }
-
-
-# ------------------------------------------------------------------------- #
-# CLUSTCHECK
-# Functions for clustering evalation metrics
-# ------------------------------------------------------------------------- #
 
 # ------------------------------------------------------------------------- #
 # Silhouette
 # ------------------------------------------------------------------------- #
-#' silhouette.Data
+
+#' silhouette
 #'
-#' @param object an object of class Data
+#' @param object an object of class ccdata
 #' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
 #' @export
 #'
 #' @examples
-silhouette.data <- function(data, clusters) {
+silhouette <- function(data, clusters) {
   print(data$vartype)
   if(data$vartype== "CAT" | data$vartype == "MIX"){
-    data <- Transformdata.Data(data)
+    data <- transformdata(data)
   }else{
     data <- data$active_data
   }
@@ -108,15 +109,13 @@ silhouette.data <- function(data, clusters) {
 }
 
 
-
-
-
 # ------------------------------------------------------------------------- #
 # Davies-Bouldin Index
 # ------------------------------------------------------------------------- #
+
 #' davies_bouldin
 #'
-#' @param data an object of class Data
+#' @param data an object of class ccdata
 #' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
@@ -162,9 +161,10 @@ davies_bouldin <- function(data, clusters) {
 # ------------------------------------------------------------------------- #
 # Dunn Index
 # ------------------------------------------------------------------------- #
+
 #' dunn_index
 #'
-#' @param data an object of class Data
+#' @param data an object of class ccdata
 #' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
@@ -211,16 +211,17 @@ dunn_index <- function(data, clusters) {
 # ------------------------------------------------------------------------- #
 # Validation
 # ------------------------------------------------------------------------- #
-#' Validation.Data
+
+#' validation
 #'
-#' @param object a dataset object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #'
 #' @examples
-Validation.Data <-function(object){
-  table <- CalcTable.Data(object, object$TrueCluster)
+validation <-function(object){
+  table <- contingency(object, object$true_clusters)
   tab <- table[[1]]
   ConfMat <- table[[2]]
   nli <- table[[5]]
@@ -257,25 +258,26 @@ Validation.Data <-function(object){
 # ------------------------------------------------------------------------- #
 # Statistical Test
 # ------------------------------------------------------------------------- #
-#' TestStatistique.Data
+
+#' statistical_test
 #'
-#' @param object a data object
+#' @param object an object of class ccdata
 #' @param varexp a string
 #'
 #' @return
 #' @export
 #' @importFrom stats aov reorder t.test var
 #' @examples
-TestStatistique.Data <- function(object, varexp){
+statistical_test <- function(object, varexp){
   k <- length(object$cluster_names)
   if(is.numeric(object$all_data[[varexp]])){
     if (k == 1){
       stop("Vous n'avez qu'un seul groupe")
     }else if(k == 2){
-      groupe <- unique(object$clusters_data)
-      cluster1 <- data[object$clusters_data==groupe[1],]
+      groupe <- unique(object$pred_clusters)
+      cluster1 <- data[object$pred_clusters==groupe[1],]
       moy1 <- mean(cluster1[[varexp]])
-      cluster2 <- data[object$clusters_data==groupe[2],]
+      cluster2 <- data[object$pred_clusters==groupe[2],]
       moy2 <- mean(cluster2[[varexp]])
       if (moy1>moy2){
         test <- t.test(cluster1[[varexp]], cluster2[[varexp]], alternative = "greater")
@@ -299,8 +301,8 @@ TestStatistique.Data <- function(object, varexp){
       }
 
     }else{
-      boxplot(object$all_data[[varexp]]~object$clusters_data)
-      mod=aov(object$all_data[[varexp]]~object$clusters_data)
+      boxplot(object$all_data[[varexp]]~object$pred_clusters)
+      mod=aov(object$all_data[[varexp]]~object$pred_clusters)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
         cat("Le groupe a un lien significatif sur", varexp)

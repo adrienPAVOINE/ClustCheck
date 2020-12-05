@@ -9,17 +9,16 @@
 
 #' plottvalue
 #'
-#' @param obj an object of class Data
-#' @param var name of categorical variable of interest to plot t-values
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #' @import ggplot2
 #' @examples
-#library(ggplot2)
-plottvalue <- function(obj, var=NULL){
-  if(obj$vartype== "NUM"){
-    table <- TValueTable.NumDataset(obj)
+plottvalue <- function(object, var=NULL){
+  if(object$vartype== "NUM"){
+    table <- tvalue_num(object)
     p <- ncol(table)
     variables <- rownames(table)
     Tvalue_table <- stack(as.data.frame(table))
@@ -33,8 +32,11 @@ plottvalue <- function(obj, var=NULL){
       facet_wrap(vars(ind)) +
       labs(title = "t-values")
   }
-  if(obj$vartype== "CAT"){
-    table <- TValueTable.Data(obj, var)
+  if(object$vartype== "CAT"){
+    # if(var==NULL){
+    #   stop("Please enter a variable for the t-value table.")
+    # }
+    table <- tvalue_cat(object, var)
     m <- ncol(table)
     levels <- colnames(table)
     Tvalue_table <- as.data.frame(table)
@@ -55,16 +57,16 @@ plottvalue <- function(obj, var=NULL){
 
 #' plotsizeeff
 #'
-#' @param obj an object of class Data
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #' @import ggplot2
 #' @examples
 #library(ggplot2)
-plotsizeeff <- function(obj){
-  if(obj$vartype== "NUM"){
-    table <- EffectSizeTable.Data(obj)
+plotsizeeff <- function(object){
+  if(object$vartype== "NUM"){
+    table <- effectsize(object)
     p <- ncol(table)
     variables <- rownames(table)
     SE_table <- stack(as.data.frame(table))
@@ -87,16 +89,16 @@ plotsizeeff <- function(obj){
 
 #' plotcorr
 #'
-#' @param obj an object of class Data
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #' @import ggplot2
 #' @examples
 
-plotcorr <- function(obj){
-  if(obj$vartype== "NUM"){
-    table <- sort(Corr_ratios.Data(obj), decreasing=T)
+plotcorr <- function(object){
+  if(object$vartype== "NUM"){
+    table <- sort(corr_ratios(object), decreasing=T)
   p <- min(12,length(table))
   corr <- as.data.frame(table[1:p])
   colnames(corr) <- "values"
@@ -119,7 +121,7 @@ plotcorr <- function(obj){
 
 #' plotVCramer
 #'
-#' @param obj an object of class Data
+#' @param object an object of class ccdata
 #' @param limit number of categorical variables to display by descending value (default=10)
 #' 
 #' @return
@@ -127,9 +129,9 @@ plotcorr <- function(obj){
 #' @import ggplot2
 #' @examples
 #library(ggplot2)
-plotVCramer <- function(obj, limit=10){
-  if(obj$vartype== "CAT"){
-    table <- Vcramer.Data(obj)
+plotVCramer <- function(object, limit=10){
+  if(object$vartype== "CAT"){
+    table <- vcramer(object)
     p <- length(table)
     if (limit<p){
       VCramer <- as.data.frame(table[1:limit,])
@@ -150,22 +152,21 @@ plotVCramer <- function(obj, limit=10){
 
 
 # ------------------------------------------------------------------------- #
-# Plot of Phi values (categorical variables) (à terminer)
+# Plot of Phi values (categorical variables)
 # ------------------------------------------------------------------------- #
-
 
 #' Title
 #'
-#' @param obj an object of class Data
-#' @param var name of variable of interest to plot phi-values
+#' @param object an object of class ccdata
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plotphi <- function(obj, var){
-  if(obj$vartype== "CAT"){
-    table <- PhiValueTable.Data(obj, var)
+plotphi <- function(object, var){
+  if(object$vartype== "CAT"){
+    table <- phivalue(object, var)
     m <- ncol(table)
     levels <- colnames(table)
     phivalue_table <- as.data.frame(table)

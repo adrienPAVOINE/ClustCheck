@@ -1,13 +1,22 @@
-#' Corr_ratios.Data
+# ------------------------------------------------------------------------- #
+# CLUSTCHECK
+# Functions for numerical variables
+# ------------------------------------------------------------------------- #
+
+# ------------------------------------------------------------------------- #
+# Correlations ratios
+# ------------------------------------------------------------------------- #
+
+#' corr_ratios
 #'
-#' @param object a NumDataset object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #'
 #' @examples
-Corr_ratios.Data <-function(object){
-  classes <- object$clusters_data
+corr_ratios <-function(object){
+  classes <- object$pred_clusters
   cl <- object$cluster_names
   n_clusters <- length(cl)
 
@@ -56,20 +65,21 @@ Corr_ratios.Data <-function(object){
   return(corr)
 }
 
+# ------------------------------------------------------------------------- #
+# t-values for numerical variables
+# ------------------------------------------------------------------------- #
 
-
-
-#' TValueTable.NumDataset
+#' tvalue_num
 #'
-#' @param object a object object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #'
 #' @examples
-TValueTable.NumDataset <-function(object){
+tvalue_num <-function(object){
   data <- object$num_data
-  classes <- object$clusters_data
+  classes <- object$pred_clusters
   n <- object$n
   var_names <- object$num_var_names
   len_col<- object$num_p
@@ -94,17 +104,21 @@ TValueTable.NumDataset <-function(object){
   return(tvalue_table)
 }
 
-#' EffectSizeTable.NumDataset
+# ------------------------------------------------------------------------- #
+# effect size
+# ------------------------------------------------------------------------- #
+
+#' effectsize
 #'
-#' @param object a NumDataset object
+#' @param object an object of class ccdata
 #'
 #' @return
 #' @export
 #'
 #' @examples
-EffectSizeTable.Data <-function(object){
+effectsize <-function(object){
   data <- object$num_data
-  classes <- object$clusters_data
+  classes <- object$pred_clusters
   n <- object$n
   var_names <- object$num_var_names
   len_col<- object$num_p
@@ -137,11 +151,14 @@ EffectSizeTable.Data <-function(object){
   return(effect_size_table)
 }
 
+# ------------------------------------------------------------------------- #
+# PCA
+# ------------------------------------------------------------------------- #
 
 
-#' Get_PCA.Data
+#' get_PCA
 #'
-#' @param object a data object
+#' @param object an object of class ccdata
 #' @param index_names optional vector of the index to use
 #'
 #' @return
@@ -153,10 +170,10 @@ EffectSizeTable.Data <-function(object){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
-Get_PCA.Data<- function(object,index_names){
+get_PCA <- function(object,index_names=NULL){
   num_data <-object$num_data
   varname_classes <- "Clusters"
-  classes <- object$clusters_data
+  classes <- object$pred_clusters
 
 
   label_to_show<-"var"
@@ -224,88 +241,88 @@ Get_PCA.Data<- function(object,index_names){
 
 
 
-#' Get_PCA.Data
-#'
-#' @param object a data object
-#' @param index_names optional vector of the index to use
-#'
-#' @return
-#' @export
-#' @import PerformanceAnalytics
-#' @import FactoMineR
-#' @import factoextra
-#' @import ggplot2
-#' @import corrplot
-#' @import ggpubr
-#' @examples
-Get_PCA.Data<- function(object,index_names){
-  num_data <-object$num_data
-  varname_classes <- "Clusters"
-  classes <- object$clusters_data
-
-
-  label_to_show<-"var"
-  # #if index specified, use index for labels in plots
-  # if(missing(index_names)) {
-  #   label_to_show<-"var"
-  # } else {
-  #   rownames(num_data) <- index_names
-  #   label_to_show<-"all"
-  # }
-
-  #Variable correlation
-  correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
-
-  #PCA
-  res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
-
-  eig.val <- factoextra::get_eigenvalue(res.pca)
-  eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
-
-  #keep values where eigenvalue > 1
-  # dims<-which(eig.val[,1]>1)
-  # n_dim <- length(dims)
-  # eig.val.kept <- eig.val[dims,]
-
-  #keep values explaining 85% of total variance
-  dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
-  n_dim <- length(dims)
-  eig.val.kept <- eig.val[dims,]
-
-  #keep values where eigenvalue > 1
-  if(n_dim==1){
-    n_dim<-2
-  }
-
-  for (i in seq(1,n_dim, by=2)){
-    if(i==n_dim){
-      dim_axes<-c(i-1,i)
-    }else{
-      dim_axes<-c(i,i+1)
-    }
-
-
-    #correlation circle
-    corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
-                                            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                                            repel = TRUE)
-
-    #biplot simple des individus et des variables selon les clusters
-    biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
-                                           col.ind = classes, palette = "jco",
-                                           addEllipses = TRUE,
-                                           label = label_to_show,
-                                           ellipse.type = "convex",
-                                           #ellipse.type = "confidence",
-                                           col.var = "black", repel = TRUE,
-                                           legend.title = varname_classes, mean.point = FALSE)
-
-
-    plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
-
-    print(plt)
-  }
-}
+#' #' get_PCA
+#' #'
+#' #' @param object an object of class ccdata
+#' #' @param index_names optional vector of the index to use
+#' #'
+#' #' @return
+#' #' @export
+#' #' @import PerformanceAnalytics
+#' #' @import FactoMineR
+#' #' @import factoextra
+#' #' @import ggplot2
+#' #' @import corrplot
+#' #' @import ggpubr
+#' #' @examples
+#' get_PCA <- function(object,index_names=NULL){
+#'   num_data <-object$num_data
+#'   varname_classes <- "Clusters"
+#'   classes <- object$pred_clusters
+#' 
+#' 
+#'   label_to_show<-"var"
+#'   # #if index specified, use index for labels in plots
+#'   # if(missing(index_names)) {
+#'   #   label_to_show<-"var"
+#'   # } else {
+#'   #   rownames(num_data) <- index_names
+#'   #   label_to_show<-"all"
+#'   # }
+#' 
+#'   #Variable correlation
+#'   correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
+#' 
+#'   #PCA
+#'   res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
+#' 
+#'   eig.val <- factoextra::get_eigenvalue(res.pca)
+#'   eig_plot <- factoextra::fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+#' 
+#'   #keep values where eigenvalue > 1
+#'   # dims<-which(eig.val[,1]>1)
+#'   # n_dim <- length(dims)
+#'   # eig.val.kept <- eig.val[dims,]
+#' 
+#'   #keep values explaining 85% of total variance
+#'   dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+#'   n_dim <- length(dims)
+#'   eig.val.kept <- eig.val[dims,]
+#' 
+#'   #keep values where eigenvalue > 1
+#'   if(n_dim==1){
+#'     n_dim<-2
+#'   }
+#' 
+#'   for (i in seq(1,n_dim, by=2)){
+#'     if(i==n_dim){
+#'       dim_axes<-c(i-1,i)
+#'     }else{
+#'       dim_axes<-c(i,i+1)
+#'     }
+#' 
+#' 
+#'     #correlation circle
+#'     corr_circle <- factoextra::fviz_pca_var(res.pca, col.var = "cos2", axes=dim_axes,
+#'                                             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+#'                                             repel = TRUE)
+#' 
+#'     #biplot simple des individus et des variables selon les clusters
+#'     biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
+#'                                            col.ind = classes, palette = "jco",
+#'                                            addEllipses = TRUE,
+#'                                            label = label_to_show,
+#'                                            ellipse.type = "convex",
+#'                                            #ellipse.type = "confidence",
+#'                                            col.var = "black", repel = TRUE,
+#'                                            legend.title = varname_classes, mean.point = FALSE)
+#' 
+#' 
+#'     plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
+#' 
+#'     print(plt)
+#'   }
+#' }
 
 
 
