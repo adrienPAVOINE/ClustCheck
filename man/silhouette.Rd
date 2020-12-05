@@ -2,18 +2,23 @@
 % Please edit documentation in R/functions_metrics.R
 \name{silhouette}
 \alias{silhouette}
-\title{silhouette}
+\title{Silhouette}
 \usage{
-silhouette(data, clusters)
+silhouette(object, clusters = object$pred_clusters)
 }
 \arguments{
-\item{clusters}{a vector corresponding to the dataset clustering results}
+\item{object}{An object of class ccdata}
 
-\item{object}{an object of class ccdata}
+\item{clusters}{A vector corresponding to the dataset clustering results. Automatically equal of the cluster vector entered as a Dataset parameter.}
 }
 \value{
-
+The silouhette value for all the cluster groups and a mean silouhette.
 }
 \description{
-silhouette
+Silhouette
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+silhouette(obj)
 }

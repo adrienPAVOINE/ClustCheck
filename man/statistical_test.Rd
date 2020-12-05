@@ -2,18 +2,24 @@
 % Please edit documentation in R/functions_metrics.R
 \name{statistical_test}
 \alias{statistical_test}
-\title{statistical_test}
+\title{Statistical Test}
 \usage{
-statistical_test(object, varexp)
+statistical_test(object, var)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{varexp}{a string}
+\item{var}{The string of the variable name}
 }
 \value{
-
+A sentence indicating whether the two variables are significantly different
 }
 \description{
-statistical_test
+Statistical Test
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+statistical_test(obj,"profession") #To know if the cluster have significantly the same job or not
+statistical_test(obj,"revenu") #To know if the cluster have significantly the same salary
 }

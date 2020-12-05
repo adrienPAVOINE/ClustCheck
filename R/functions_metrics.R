@@ -2,21 +2,21 @@
 # CLUSTCHECK
 # Functions for clustering evalation metrics
 # ------------------------------------------------------------------------- #
-
-# ------------------------------------------------------------------------- #
-# Data tranformation for categorical and mixed variables
-# ------------------------------------------------------------------------- #
-
 #' transformdata
 #'
-#' @param object an object of class ccdata
+#'Data tranformation for categorical and mixed variables
 #'
-#' @return
+#' @param object An object of class ccdata
+#'
+#' @return A new dataset for the metrics function, create with the new coord based on a AFDM.
 #' @export
 #' @import FactoMineR
 #' @import factoextra
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' transformdata(obj)
 transformdata <- function(object){
   if(object$vartype=="NUM"){
     stop("The variables are numerical and don't need factorial transformation")
@@ -25,20 +25,18 @@ transformdata <- function(object){
   ind <- factoextra::get_famd_ind(res.famd)
   return(as.data.frame(ind$coord))
 }
-
-# ------------------------------------------------------------------------- #
-# Silhouette
-# ------------------------------------------------------------------------- #
-
-#' silhouette
+#' Silhouette
 #'
-#' @param object an object of class ccdata
-#' @param clusters a vector corresponding to the dataset clustering results
+#' @param object An object of class ccdata
+#' @param clusters A vector corresponding to the dataset clustering results. Automatically equal of the cluster vector entered as a Dataset parameter.
 #'
-#' @return
+#' @return The silouhette value for all the cluster groups and a mean silouhette.
 #' @export
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' silhouette(obj)
 silhouette <- function(object, clusters=object$pred_clusters) {
   if(object$vartype!= "NUM"){
     data <- transformdata(object)
@@ -79,26 +77,21 @@ silhouette <- function(object, clusters=object$pred_clusters) {
   }
   return(list(cluster_silhouette=sk, mean_silhouette=mean(s)))
 }
-
-
-# ------------------------------------------------------------------------- #
-# Davies-Bouldin Index
-# ------------------------------------------------------------------------- #
-
-#' davies_bouldin
+#' Davies-Bouldin Index
 #'
-#' @param object an object of class ccdata
-#' @param clusters a vector corresponding to the dataset clustering results
+#' @param object An object of class ccdata
+#' @param clusters A vector corresponding to the dataset clustering results
 #'
-#' @return
+#' @return The Davies-Bouldin index for all the cluster groups.
 #' @export
 #'
 #' @examples
-
-# s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
-# d : the distance between cluster centroids
-
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' davies_bouldin(obj)
 davies_bouldin <- function(object, clusters=object$pred_clusters) {
+  # s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
+  # d : the distance between cluster centroids
   if(object$vartype!= "NUM"){
     data <- transformdata(object)
   }else{
@@ -133,29 +126,23 @@ davies_bouldin <- function(object, clusters=object$pred_clusters) {
   DB <- sum(maxR)/k
   return(DB)
 }
-
-
-# ------------------------------------------------------------------------- #
-# Dunn Index
-# ------------------------------------------------------------------------- #
-
-#' dunn_index
+#' Dunn Index
 #'
-#' @param object an object of class ccdata
-#' @param clusters a vector corresponding to the dataset clustering results
+#' @param object An object of class ccdata
+#' @param clusters A vector corresponding to the dataset clustering results
 #'
-#' @return
+#' @return The Dunn Index for all the cluster groups
 #' @export
 #'
 #' @examples
-
-# Calculated using the following:
-# d1 : distance of samples to their centroids
-# d2 : distance betwewen centroids
-# Dunn Index is the ratio between the d2 min and the d1 max
-
-
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' dunn_index(obj)
 dunn_index <- function(object, clusters=object$pred_clusters) {
+  # Calculated using the following:
+  # d1 : distance of samples to their centroids
+  # d2 : distance betwewen centroids
+  # Dunn Index is the ratio between the d2 min and the d1 max
   if(object$vartype!= "NUM"){
     data <- transformdata(object)
   }else{
@@ -189,72 +176,89 @@ dunn_index <- function(object, clusters=object$pred_clusters) {
   DI <- min(d2[d2>0])/max(d1)
   return(DI)
 }
-
-# ------------------------------------------------------------------------- #
-# Validation
-# ------------------------------------------------------------------------- #
-
 #' validation
 #'
-#' @param object an object of class ccdata
+#' @param object An object of class ccdata
+#' @param true_clusters Vector of the true cluster, it's automatically the same as the one enter in the Dataset constructor
 #'
-#' @return
+#'Evaluate the quality of the predict cluster, for that, it's calcule the error rate, precision and recall.
+#'Attention, you have to enter the true cluster here or in Dataset constructor.
+#'
+#' @return The error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
 #' @export
 #'
 #' @examples
-validation <-function(object){
-  table <- contingency(object, object$true_clusters)
-  tab <- table[[1]]
-  ConfMat <- table[[2]]
-  nli <- table[[5]]
-  nco <- table[[4]]
-  n <- object$n
-  if(nli != nco){
-    stop("You don't have the same numbers of clustes between predicted and true values")
-  }else{
-    if(nli ==2){
-    Errorrate <- 1-((ConfMat[1,2]+ConfMat[2,1])/n)
-    Recall <- ConfMat[1,1]/(ConfMat[1,3])
-    Precision <- ConfMat[1,1]/ConfMat[3,1]
-    matrix = matrix(Errorrate,Recall,Precision, nrow=3,ncol=1, dimnames = list(c("Errorrate","Recall","Precision"), c("Valeurs")))
-    print(matrix)
-    }else if(nli>2){
-      print(ConfMat)
-      Errorrate <- 1-((sum(diag(tab)))/n)
-      print(sum(diag(tab)))
-      cat("Error Rate :", Errorrate,"\n")
-      print(nli)
-      for(i in 1:nli){
-        group <- object$cluster_names[i]
-        cat("cluster:", group,"\n")
-        Recall <- ConfMat[i,i]/ConfMat[i,nli+1]
-        Precision <- ConfMat[i,i]/ConfMat[nli+1,i]
-        matrix = matrix(c(Recall,Precision), nrow=2,ncol=1, dimnames = list(c("Recall","Precision"), c( "Valeurs")))
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' validation(obj, BankCustomer$Cluster)
+validation <- function(object, true_clusters = object$true_clusters) {
+  if (is.null(true_clusters) == FALSE) {
+    table <- contingency(object, true_clusters)
+    tab <- table[[1]]
+    ConfMat <- table[[2]]
+    nli <- table[[5]]
+    nco <- table[[4]]
+    n <- object$n
+    if (nli != nco) {
+      stop("You don't have the same numbers of clustes between predicted and true values")
+    } else{
+      if (nli == 2) {
+        Errorrate <- 1 - ((ConfMat[1, 2] + ConfMat[2, 1]) / n)
+        Recall <- ConfMat[1, 1] / (ConfMat[1, 3])
+        Precision <- ConfMat[1, 1] / ConfMat[3, 1]
+        matrix = matrix(
+          Errorrate,
+          Recall,
+          Precision,
+          nrow = 3,
+          ncol = 1,
+          dimnames = list(c(
+            "Errorrate", "Recall", "Precision"
+          ), c("Valeurs"))
+        )
         print(matrix)
+      } else if (nli > 2) {
+        print(ConfMat)
+        Errorrate <- 1 - ((sum(diag(tab))) / n)
+        cat("Error Rate :", Errorrate, "\n")
+        for (i in 1:nli) {
+          group <- object$cluster_names[i]
+          cat("cluster:", group, "\n")
+          Recall <- ConfMat[i, i] / ConfMat[i, nli + 1]
+          Precision <- ConfMat[i, i] / ConfMat[nli + 1, i]
+          matrix = matrix(
+            c(Recall, Precision),
+            nrow = 2,
+            ncol = 1,
+            dimnames = list(c("Recall", "Precision"), c("Valeurs"))
+          )
+          print(matrix)
+        }
       }
-    }
 
+    }
+  } else{
+    stop("You didn't enter a true cluster vector")
   }
 }
-
-# ------------------------------------------------------------------------- #
-# Statistical Test
-# ------------------------------------------------------------------------- #
-
-#' statistical_test
+#' Statistical Test
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#' @param object An object of class ccdata
+#' @param var The string of the variable name
 #'
-#' @return
+#' @return A sentence indicating whether the two variables are significantly different
 #' @export
 #' @importFrom stats aov reorder t.test var
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' statistical_test(obj,"profession") #To know if the cluster have significantly the same job or not
+#' statistical_test(obj,"revenu") #To know if the cluster have significantly the same salary
 statistical_test <- function(object, var){
   k <- length(object$cluster_names)
   if(is.numeric(object$all_data[[var]])){
     if (k == 1){
-      stop("Vous n'avez qu'un seul groupe")
+      stop("You have only one cluster group")
     }else if(k == 2){
       groupe <- unique(object$pred_clusters)
       cluster1 <- data[object$pred_clusters==groupe[1],]
@@ -264,42 +268,38 @@ statistical_test <- function(object, var){
       if (moy1>moy2){
         test <- t.test(cluster1[[var]], cluster2[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Le moyenne du", var, "est superieur chez le groupe", groupe[1], "que chez le groupe", groupe[2])
+          cat("mean of", var, "is signifantly higher in", groupe[1], "than in", groupe[2])
         }else{
           test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
-            cat("La moyenne du", var, "est significativement differente entre les deux groupes")
+            cat("Mean of", var, "is significantly different between the two cluster groups")
           }}
       }else{
         test <- t.test(cluster2[[var]], cluster1[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Le moyenne du", var, "est superieur chez le groupe", groupe[2], "que chez le groupe", groupe[])
+          cat("mean of", var, "is signifantly higher in", groupe[2], "than in", groupe[])
         }else{
           test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
-            cat("Le moyenne du", var, "est significativement differente entre les deux groupes")
+            cat("Mean of", var, "is significantly different between the two cluster groups")
           }
         }
       }
-
     }else{
       boxplot(object$all_data[[var]]~object$pred_clusters)
       mod=aov(object$all_data[[var]]~object$pred_clusters)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
-        cat("Le groupe a un lien significatif sur", var)
+        cat("The cluster group have a significant impact on", var)
       }else{
-        cat("il n'y a pas de lien significatif entre groupe et", var)
+        cat("There are not significant impact of the cluster on", var)
       }
-
     }
   }else{
-    khi2 <- chisq.test(table(object$clusters_data, object$all_data[[var]]))
+    khi2 <- chisq.test(table(object$pred_clusters, object$all_data[[var]]))
     if (khi2$p.value < 0.05){
-      #cat("Les groupes n'ont significativement pas la ou le meme", var)
+      cat("The cluster significantly don't have the same ", var)
     }else
-      cat("Il n'y a pas de lien significatif entre le groupe et", var)
+      cat("There are not significant impact of the cluster on", var)
   }
 }
-
-

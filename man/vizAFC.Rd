@@ -18,3 +18,8 @@ A CA factor map which compare the cluster class and the modalities of the chosen
 \description{
 Two graphs to illustrate the cluster with a specific category chosen variable.
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+vizAFC(obj, BankCustomer$profession)
+}

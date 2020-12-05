@@ -7,11 +7,16 @@
 transformdata(object)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 }
 \value{
-
+A new dataset for the metrics function, create with the new coord based on a AFDM.
 }
 \description{
-transformdata
+Data tranformation for categorical and mixed variables
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+transformdata(obj)
 }

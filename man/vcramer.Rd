@@ -18,3 +18,9 @@ If you don't choose a specif variable, it's return a matrix with all the categor
 \description{
 Calul the cramer values between two category variables
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+vcramer(obj) #for all the cramer value by variables
+vcramer(obj, BankCustomer$profession) #For one category variable
+}

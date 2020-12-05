@@ -17,3 +17,8 @@ A cross table between the cluster variable and the chosen variable with test val
 \description{
 Calcul the test value for all cluster*modalities of one chosen variable.
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+tvalue_cat(obj, BankCustomer$profession)
+}

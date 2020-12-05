@@ -4,14 +4,24 @@
 \alias{validation}
 \title{validation}
 \usage{
-validation(object)
+validation(object, true_clusters = object$true_clusters)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
+
+\item{true_clusters}{Vector of the true cluster, it's automatically the same as the one enter in the Dataset constructor
+
+Evaluate the quality of the predict cluster, for that, it's calcule the error rate, precision and recall.
+Attention, you have to enter the true cluster here or in Dataset constructor.}
 }
 \value{
-
+The error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
 }
 \description{
 validation
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+validation(obj, BankCustomer$Cluster)
 }

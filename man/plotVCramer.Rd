@@ -2,18 +2,23 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotVCramer}
 \alias{plotVCramer}
-\title{plotVCramer}
+\title{Plot of Cramer's V (categorical variables)}
 \usage{
 plotVCramer(object, limit = 10)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{limit}{number of categorical variables to display by descending value (default=10)}
+\item{limit}{Number of categorical variables to display by descending value (default=10)}
 }
 \value{
-
+A bar plot with the Cramer values between the category variables and the cluster vector.
 }
 \description{
-plotVCramer
+Plot of Cramer's V (categorical variables)
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+plotVCramer(obj)
 }

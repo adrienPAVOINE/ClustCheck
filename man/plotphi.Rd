@@ -2,18 +2,23 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotphi}
 \alias{plotphi}
-\title{Title}
+\title{Plot of Phi values (categorical variables)}
 \usage{
 plotphi(object, var)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{var}{a data vector of an active variable}
+\item{var}{A data vector of an active variable}
 }
 \value{
-
+A plot for all the phi values between cluster group and modalities of the chosen variables.
 }
 \description{
-Title
+Plot of Phi values (categorical variables)
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+plotphi(obj, BankCustomer$profession)
 }

@@ -7,11 +7,15 @@
 #' @param object An object of class ccdata
 #' @param var A data vector of an active variable
 #'
-#' @return the plot of the
+#' @return the plot of the tests value by all the numeric variables and all the cluster or the plot of tests vlues by modalities of a chosen category variable for all cluster.
 #'
 #' @export
 #' @import ggplot2
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' plottvalue(obj) #for all the numeric variables
+#' plottvalue(obj, BankCustomer$profession) #for only one category variable
 plottvalue <- function(object, var = NULL) {
   #if(object$vartype== "NUM"){
   table <- tvalue_num(object)
@@ -57,22 +61,20 @@ plottvalue <- function(object, var = NULL) {
     }
   }
 }
-
-# ------------------------------------------------------------------------- #
-# Plot of size effect (numeric variables)
-# ------------------------------------------------------------------------- #
-
-#' plotsizeeff
+#' Plot of size effect (numeric variables)
 #'
-#' @param object an object of class ccdata
+#' @param object An object of class ccdata
 #'
-#' @return
+#' @return A plot of the effect size for all numeric variables by cluster.
+#'
 #' @export
 #' @import ggplot2
 #' @examples
-#library(ggplot2)
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' plotsizeeff(obj)
 plotsizeeff <- function(object){
-  if(is.numeric(var) == TRUE|is.double(var) == TRUE){
+  if(object$num_p > 0){
     table <- effectsize(object)
     p <- ncol(table)
     variables <- rownames(table)
@@ -89,55 +91,48 @@ plotsizeeff <- function(object){
     cat("Size effect calculations are for numerical variables only.")
   }
 }
-
-# ------------------------------------------------------------------------- #
-# Plot of correlations (numeric variables)
-# ------------------------------------------------------------------------- #
-
-#' plotcorr
+#' Plot of correlations (numeric variables)
 #'
-#' @param object an object of class ccdata
+#' @param object An object of class ccdata
 #'
-#' @return
+#' @return A bar plot of the correlations between numeric variables and the cluster vector.
 #' @export
 #' @import ggplot2
 #' @examples
-
-plotcorr <- function(object){
-  if(is.numeric(var) == TRUE|is.double(var) == TRUE){
-    table <- sort(corr_ratios(object), decreasing=T)
-  p <- min(12,length(table))
-  corr <- as.data.frame(table[1:p])
-  colnames(corr) <- "values"
-  # Visualisation
-  ggplot(corr, aes(x=reorder(rownames(corr), -values), y=values)) +
-    geom_col() +
-    labs(title = "Correlations") +
-    xlab("Variables") +
-    ylab("Value")
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' plotcorr(obj)
+plotcorr <- function(object) {
+  if (object$num_p > 0) {
+    table <- sort(corr_ratios(object), decreasing = T)
+    p <- min(12, length(table))
+    corr <- as.data.frame(table[1:p])
+    colnames(corr) <- "values"
+    # Visualisation
+    ggplot(corr, aes(x = reorder(rownames(corr),-values), y = values)) +
+      geom_col() +
+      labs(title = "Correlations") +
+      xlab("Variables") +
+      ylab("Value")
   }
   else {
     cat("Correlations calculations are for numerical variables only.")
   }
 }
-
-
-# ------------------------------------------------------------------------- #
-# Plot of Cramer's V (categorical variables)
-# ------------------------------------------------------------------------- #
-
-#' plotVCramer
+#' Plot of Cramer's V (categorical variables)
 #'
-#' @param object an object of class ccdata
-#' @param limit number of categorical variables to display by descending value (default=10)
+#' @param object An object of class ccdata
+#' @param limit Number of categorical variables to display by descending value (default=10)
 #'
-#' @return
+#' @return A bar plot with the Cramer values between the category variables and the cluster vector.
 #' @export
 #' @import ggplot2
 #' @examples
-#library(ggplot2)
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' plotVCramer(obj)
 plotVCramer <- function(object, limit=10){
-  if(is.factor(var) == TRUE|is.character(var) == TRUE){
+  if (object$cat_p > 0) {
     table <- vcramer(object)
     p <- length(table)
     if (limit<p){
@@ -156,21 +151,18 @@ plotVCramer <- function(object, limit=10){
     cat("Cramer's V calculations are for categorical variables only.")
   }
 }
-
-
-# ------------------------------------------------------------------------- #
-# Plot of Phi values (categorical variables)
-# ------------------------------------------------------------------------- #
-
-#' Title
+#' Plot of Phi values (categorical variables)
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#' @param object An object of class ccdata
+#' @param var A data vector of an active variable
 #'
-#' @return
+#' @return A plot for all the phi values between cluster group and modalities of the chosen variables.
 #' @export
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' plotphi(obj, BankCustomer$profession)
 plotphi <- function(object, var){
   if(is.factor(var) == TRUE|is.character(var) == TRUE){
     table <- phivalue(object, var)
@@ -190,5 +182,3 @@ plotphi <- function(object, var){
     cat("Phi values calculations are for categorical variables only.")
   }
 }
-
-

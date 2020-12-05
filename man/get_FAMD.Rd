@@ -18,3 +18,8 @@ A. Plot with all the individuals colored by their cluster group and illustrate b
 \description{
 FAMD
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+get_FAMD(obj)
+}

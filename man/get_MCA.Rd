@@ -20,3 +20,8 @@ A biplot whho illustrate the cluster group with all the modalities of category v
 \description{
 MCA
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+get_MCA(obj)
+}

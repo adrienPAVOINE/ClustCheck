@@ -17,3 +17,8 @@ A cross table between the cluster variable and the chosen variable with phi valu
 \description{
 Calcul the Phi value for all cluster*modalities of one chosen variable.
 }
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+phivalue(obj, BankCustomer$profession)
+}

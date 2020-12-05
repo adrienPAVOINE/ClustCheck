@@ -15,7 +15,6 @@
 #' Number of lines (which means number of cluster)
 #' Number of column (which means number of modalities in the other variables)
 #'
-#'
 #' @importFrom stats addmargins
 #' @examples
 #' data(BankCustomer)
@@ -44,6 +43,10 @@ contingency <- function(object, var){
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' vcramer(obj) #for all the cramer value by variables
+#' vcramer(obj, BankCustomer$profession) #For one category variable
 vcramer <- function(object, var = FALSE){
   nameVar <- deparse(substitute(var)) #to get the name of the vector
   if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
@@ -88,6 +91,9 @@ vcramer <- function(object, var = FALSE){
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' phivalue(obj, BankCustomer$profession)
 phivalue <- function(object, var){
   table <- contingency(object, var) #call the CalcTable to get cross table between the two variables
   tableau <- table[[1]]
@@ -123,6 +129,9 @@ phivalue <- function(object, var){
 #' @export
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' tvalue_cat(obj, BankCustomer$profession)
 tvalue_cat <-function(object, var){
   table <- contingency(object, var) #call the CalcTable to get the info of the cross table
   tableau <- table[[1]]
@@ -162,18 +171,39 @@ tvalue_cat <-function(object, var){
 #' @importFrom stats addmargins chisq.test
 #' @importFrom utils data stack
 #' @importFrom graphics boxplot
+#' @import ggpubr
 #' @examples
-vizAFC <-function(object, var){
-  tableau <- table(object$pred_clusters,var)
-  questionr::lprop(tableau, digits=1)
-  questionr::cprop(tableau, digits=2)
-  mydf <- as.data.frame(tableau)
-  ggplot2::ggplot(mydf, ggplot2::aes(fill=var, y=Freq, x=Var1)) + ggplot2::geom_bar(position="stack", stat="identity")
-  #data$groupe = factor(data$groupe)
-  #ggplot2::ggplot(data = data) + geom_mosaic(aes(x = product(groupe, région), fill=groupe), na.rm=TRUE) +
-   # labs(x = "Is it rude recline? ", title='f(DoYouRecline | RudeToRecline) f(RudeToRecline)')
-  res.ca <- FactoMineR::CA(tableau, graph = TRUE)
-  return(res.ca)
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' vizAFC(obj, BankCustomer$profession)
+vizAFC <- function(object, var) {
+  if(is.factor(var) == TRUE|is.character(var) == TRUE){
+    tableau <- table(object$pred_clusters, var)
+    questionr::lprop(tableau, digits = 1)
+    questionr::cprop(tableau, digits = 2)
+    mydf <- as.data.frame(tableau)
+    plotbar <-
+      ggplot2::ggplot(mydf, aes(fill = var, y = Freq, x = Var1)) + geom_bar(position =
+                                                                              "stack", stat = "identity")
+    if (length(unique(var)) > 2) {
+    res.ca <- FactoMineR::CA(tableau, graph = FALSE)
+    biplot <- factoextra::fviz_ca_biplot(res.ca, repel = TRUE)
+    plt <-
+      ggpubr::ggarrange(
+        plotbar,
+        biplot,
+        labels = c('b', 'a'),
+        widths = c(1, 2),
+        ncol = 2,
+        nrow = 1
+      )
+    print(plt)
+  } else{
+    print(plotbar)
+  }
+  }else{
+    stop("Attention, var must be a category variable")
+  }
 }
 #' MCA
 #'
@@ -192,6 +222,9 @@ vizAFC <-function(object, var){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' get_MCA(obj)
 get_MCA <- function(object,index_names){
   data.quali <-object$cat_data
   varname_classes <- "Clusters"
@@ -248,6 +281,9 @@ get_MCA <- function(object,index_names){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' get_FAMD(obj)
 get_FAMD <- function(object){
   #loop to concate name of variable + modality (to avoid error in the AFDM)
   nb = 0

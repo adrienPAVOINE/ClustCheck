@@ -2,16 +2,21 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotsizeeff}
 \alias{plotsizeeff}
-\title{plotsizeeff}
+\title{Plot of size effect (numeric variables)}
 \usage{
 plotsizeeff(object)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 }
 \value{
-
+A plot of the effect size for all numeric variables by cluster.
 }
 \description{
-plotsizeeff
+Plot of size effect (numeric variables)
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+plotsizeeff(obj)
 }

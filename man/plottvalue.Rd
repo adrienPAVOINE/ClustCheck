@@ -2,18 +2,24 @@
 % Please edit documentation in R/functions_eval.R
 \name{plottvalue}
 \alias{plottvalue}
-\title{plottvalue}
+\title{Plot of t-values}
 \usage{
 plottvalue(object, var = NULL)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{var}{a data vector of an active variable}
+\item{var}{A data vector of an active variable}
 }
 \value{
-
+the plot of the tests value by all the numeric variables and all the cluster or the plot of tests vlues by modalities of a chosen category variable for all cluster.
 }
 \description{
-plottvalue
+Plot of t-values
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+plottvalue(obj) #for all the numeric variables
+plottvalue(obj, BankCustomer$profession) #for only one category variable
 }

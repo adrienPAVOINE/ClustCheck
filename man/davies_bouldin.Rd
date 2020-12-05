@@ -2,18 +2,23 @@
 % Please edit documentation in R/functions_metrics.R
 \name{davies_bouldin}
 \alias{davies_bouldin}
-\title{davies_bouldin}
+\title{Davies-Bouldin Index}
 \usage{
-davies_bouldin(data, clusters)
+davies_bouldin(object, clusters = object$pred_clusters)
 }
 \arguments{
-\item{data}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{clusters}{a vector corresponding to the dataset clustering results}
+\item{clusters}{A vector corresponding to the dataset clustering results}
 }
 \value{
-
+The Davies-Bouldin index for all the cluster groups.
 }
 \description{
-davies_bouldin
+Davies-Bouldin Index
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+davies_bouldin(obj)
 }

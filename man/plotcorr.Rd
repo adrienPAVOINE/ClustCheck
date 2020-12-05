@@ -2,16 +2,21 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotcorr}
 \alias{plotcorr}
-\title{plotcorr}
+\title{Plot of correlations (numeric variables)}
 \usage{
 plotcorr(object)
 }
 \arguments{
-\item{object}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 }
 \value{
-
+A bar plot of the correlations between numeric variables and the cluster vector.
 }
 \description{
-plotcorr
+Plot of correlations (numeric variables)
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+plotcorr(obj)
 }

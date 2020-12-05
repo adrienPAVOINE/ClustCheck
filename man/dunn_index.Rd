@@ -2,18 +2,23 @@
 % Please edit documentation in R/functions_metrics.R
 \name{dunn_index}
 \alias{dunn_index}
-\title{dunn_index}
+\title{Dunn Index}
 \usage{
-dunn_index(data, clusters)
+dunn_index(object, clusters = object$pred_clusters)
 }
 \arguments{
-\item{data}{an object of class ccdata}
+\item{object}{An object of class ccdata}
 
-\item{clusters}{a vector corresponding to the dataset clustering results}
+\item{clusters}{A vector corresponding to the dataset clustering results}
 }
 \value{
-
+The Dunn Index for all the cluster groups
 }
 \description{
-dunn_index
+Dunn Index
+}
+\examples{
+data(BankCustomer)
+obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+dunn_index(obj)
 }
