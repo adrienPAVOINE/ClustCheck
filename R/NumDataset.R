@@ -174,6 +174,7 @@ get_PCA <- function(object,index_names=NULL){
   num_data <-object$num_data
   varname_classes <- "Clusters"
   classes <- object$pred_clusters
+  nb_quanti <- object$num_p
 
 
   label_to_show<-"var"
@@ -199,8 +200,14 @@ get_PCA <- function(object,index_names=NULL){
   # n_dim <- length(dims)
   # eig.val.kept <- eig.val[dims,]
 
-  #keep values explaining 85% of total variance
-  dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+  # #keep values explaining 85% of total variance
+  # dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
+  # n_dim <- length(dims)
+  # eig.val.kept <- eig.val[dims,]
+  
+  #Kaiser Rule
+  I<- sum(eig.val[1:nb_quanti,1])
+  dims<-c(which(eig.val[,1]>(I/nb_quanti)))
   n_dim <- length(dims)
   eig.val.kept <- eig.val[dims,]
 
