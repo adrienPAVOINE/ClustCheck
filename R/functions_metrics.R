@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------- #
 
 # ------------------------------------------------------------------------- #
-# Data tranformation
+# Data tranformation for categorical and mixed variables
 # ------------------------------------------------------------------------- #
 
 #' transformdata
@@ -18,39 +18,12 @@
 #'
 #' @examples
 transformdata <- function(object){
-  # #fonction pour centrage-réduction
-  # CR <- function(x){
-  #   n <- length(x)
-  #   m <- mean(x)
-  #   v <- (n-1)/n*var(x)
-  #   return((x-m)/sqrt(v))
-  # }
-  # #appliquer la fonction sur les variables continues
-  # varcont <- data.frame(lapply(subset(object$active_data,select=object$num_ind),CR))
-  # #codage disjonctif complet
-  # #library(ade4)
-  # varquali <- ade4::acm.disjonctif(subset(object$active_data,select=object$cat_ind))
-  # #fonction pour pondération des indicatrices
-  # PF <- function(x){
-  #   m <- mean(x)
-  #   return(x/sqrt(m))
-  # }
-  # #appliquer la pondération sur les indicatrices
-  # varquali.pond <- data.frame(lapply(varquali,PF))
-  # #données transformées envoyées ?l'ACP
-  # data.pour.acp <- cbind(varcont,varquali.pond)
-  # nbcol.tot <- ncol(data.pour.acp)
-  # print(nbcol.tot)
-  # rownames(data.pour.acp) <- rownames(object$all_data)
+  if(object$vartype=="NUM"){
+    stop("The variables are numerical and don't need factorial transformation")
+  }
   res.famd <- FactoMineR::FAMD(object$active_data, graph = FALSE)
   ind <- factoextra::get_famd_ind(res.famd)
-  return(ind$coord)
-
-  #
-  #
-  # acp.data <- ade4::dudi.pca(data.pour.acp,center=T,scale=F,scannf=F, nf=nbcol.tot)
-  # coordind = round(acp.data$li[,])
-  # ind <-cbind(coordind)
+  return(as.data.frame(ind$coord))
 }
 
 # ------------------------------------------------------------------------- #
@@ -66,46 +39,45 @@ transformdata <- function(object){
 #' @export
 #'
 #' @examples
-silhouette <- function(data, clusters) {
-  print(data$vartype)
-  if(data$vartype== "CAT" | data$vartype == "MIX"){
-    data <- transformdata(data)
+silhouette <- function(object, clusters=object$pred_clusters) {
+  if(object$vartype!= "NUM"){
+    data <- transformdata(object)
   }else{
-    data <- data$active_data
+    data <- object$active_data
   }
-  print(data)
   # a: The mean distance between a sample and all other points in the same class.
   # b: The mean distance between a sample and all other points in the next nearest cluster.
-  if (nrow(data)!=length(Clusters)){
-    stop("Feature data and cluster data don't have the same length")
-  }
+  # if (nrow(object)!=length(clusters)){
+  #   stop("Feature data and cluster data don't have the same length")
+  # }
   d <- as.matrix(dist(data))
   n <- ncol(d)
   a <- NULL; b <- NULL
   for (col in 1:n){
-    cluster <- Clusters[col]
+    cluster <- clusters[col]
     # calculation for a
-    same_class <- which(Clusters==cluster) # identification of the class samples
+    same_class <- which(clusters==cluster) # identification of the class samples
     same_class_wo_sample <- same_class[which(same_class!=col)] # we remove the sample here
     a <- c(a,mean(d[same_class_wo_sample,col]))
     # calculation for b
-    all_different_class <- which(Clusters!=cluster) # identification of all the other samples
+    all_different_class <- which(clusters!=cluster) # identification of all the other samples
     w <- as.integer(names(which.min(d[all_different_class,col]))) # identification of the closest sample in an other sample
-    nearest_cluster <- Clusters[w] # identification of the next nearest cluster
-    different_class <- which(Clusters==nearest_cluster)
+    nearest_cluster <- clusters[w] # identification of the next nearest cluster
+    different_class <- which(clusters==nearest_cluster)
     b <- c(b,mean(d[different_class,col]))
   }
   s <- (b - a)/pmax(a,b) # silhouette formula
 
-
-  for (k in unique(Clusters)){
-    ind = which(Clusters == k)
-    nbk <- sum(Clusters == k)
-    sk <- 1/nbk * (sum(s[ind]))
-    cat("Silhouette du groupe" , k )
-    print(sk)
+  # Cluster silhouette
+  sk <- NULL
+  for (k in unique(clusters)){
+    ind = which(clusters == k)
+    nbk <- sum(clusters == k)
+    #sk <- 1/nbk * (sum(s[ind]))
+    #cat("Silhouette for cluster" , k )
+    sk <- c(sk, 1/nbk * (sum(s[ind])))
   }
-  return(mean(s))
+  return(list(cluster_silhouette=sk, mean_silhouette=mean(s)))
 }
 
 
@@ -115,7 +87,7 @@ silhouette <- function(data, clusters) {
 
 #' davies_bouldin
 #'
-#' @param data an object of class ccdata
+#' @param object an object of class ccdata
 #' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
@@ -126,7 +98,12 @@ silhouette <- function(data, clusters) {
 # s : the average distance between each point of cluster and the centroid of that cluster – also know as cluster diameter
 # d : the distance between cluster centroids
 
-davies_bouldin <- function(data, clusters) {
+davies_bouldin <- function(object, clusters=object$pred_clusters) {
+  if(object$vartype!= "NUM"){
+    data <- transformdata(object)
+  }else{
+    data <- object$active_data
+  }
   k <- length(unique(clusters))
   p <- ncol(data)
   centroids <- matrix(nrow=k, ncol=p)
@@ -164,7 +141,7 @@ davies_bouldin <- function(data, clusters) {
 
 #' dunn_index
 #'
-#' @param data an object of class ccdata
+#' @param object an object of class ccdata
 #' @param clusters a vector corresponding to the dataset clustering results
 #'
 #' @return
@@ -178,7 +155,12 @@ davies_bouldin <- function(data, clusters) {
 # Dunn Index is the ratio between the d2 min and the d1 max
 
 
-dunn_index <- function(data, clusters) {
+dunn_index <- function(object, clusters=object$pred_clusters) {
+  if(object$vartype!= "NUM"){
+    data <- transformdata(object)
+  }else{
+    data <- object$active_data
+  }
   k <- length(unique(clusters))
   p <- ncol(data)
   centroids <- matrix(nrow=k, ncol=p)
@@ -228,7 +210,7 @@ validation <-function(object){
   nco <- table[[4]]
   n <- object$n
   if(nli != nco){
-    stop("Vous n'avez pas le meme nombre de groupes dans les deux classes")
+    stop("You don't have the same numbers of clustes between predicted and true values")
   }else{
     if(nli ==2){
     Errorrate <- 1-((ConfMat[1,2]+ConfMat[2,1])/n)
@@ -243,7 +225,7 @@ validation <-function(object){
       cat("Error Rate :", Errorrate,"\n")
       print(nli)
       for(i in 1:nli){
-        group <- obje$cluster_names[i]
+        group <- object$cluster_names[i]
         cat("cluster:", group,"\n")
         Recall <- ConfMat[i,i]/ConfMat[i,nli+1]
         Precision <- ConfMat[i,i]/ConfMat[nli+1,i]
@@ -262,61 +244,61 @@ validation <-function(object){
 #' statistical_test
 #'
 #' @param object an object of class ccdata
-#' @param varexp a string
+#' @param var a data vector of an active variable
 #'
 #' @return
 #' @export
 #' @importFrom stats aov reorder t.test var
 #' @examples
-statistical_test <- function(object, varexp){
+statistical_test <- function(object, var){
   k <- length(object$cluster_names)
-  if(is.numeric(object$all_data[[varexp]])){
+  if(is.numeric(object$all_data[[var]])){
     if (k == 1){
       stop("Vous n'avez qu'un seul groupe")
     }else if(k == 2){
       groupe <- unique(object$pred_clusters)
       cluster1 <- data[object$pred_clusters==groupe[1],]
-      moy1 <- mean(cluster1[[varexp]])
+      moy1 <- mean(cluster1[[var]])
       cluster2 <- data[object$pred_clusters==groupe[2],]
-      moy2 <- mean(cluster2[[varexp]])
+      moy2 <- mean(cluster2[[var]])
       if (moy1>moy2){
-        test <- t.test(cluster1[[varexp]], cluster2[[varexp]], alternative = "greater")
+        test <- t.test(cluster1[[var]], cluster2[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Le moyenne du", varexp, "est superieur chez le groupe", groupe[1], "que chez le groupe", groupe[2])
+          cat("Le moyenne du", var, "est superieur chez le groupe", groupe[1], "que chez le groupe", groupe[2])
         }else{
-          test <- t.test(cluster1[[varexp]], cluster2[[varexp]])
+          test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
-            cat("La moyenne du", varexp, "est significativement differente entre les deux groupes")
+            cat("La moyenne du", var, "est significativement differente entre les deux groupes")
           }}
       }else{
-        test <- t.test(cluster2[[varexp]], cluster1[[varexp]], alternative = "greater")
+        test <- t.test(cluster2[[var]], cluster1[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Le moyenne du", varexp, "est superieur chez le groupe", groupe[2], "que chez le groupe", groupe[])
+          cat("Le moyenne du", var, "est superieur chez le groupe", groupe[2], "que chez le groupe", groupe[])
         }else{
-          test <- t.test(cluster1[[varexp]], cluster2[[varexp]])
+          test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
-            cat("Le moyenne du", varexp, "est significativement differente entre les deux groupes")
+            cat("Le moyenne du", var, "est significativement differente entre les deux groupes")
           }
         }
       }
 
     }else{
-      boxplot(object$all_data[[varexp]]~object$pred_clusters)
-      mod=aov(object$all_data[[varexp]]~object$pred_clusters)
+      boxplot(object$all_data[[var]]~object$pred_clusters)
+      mod=aov(object$all_data[[var]]~object$pred_clusters)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
-        cat("Le groupe a un lien significatif sur", varexp)
+        cat("Le groupe a un lien significatif sur", var)
       }else{
-        cat("il n'y a pas de lien significatif entre groupe et", varexp)
+        cat("il n'y a pas de lien significatif entre groupe et", var)
       }
 
     }
   }else{
-    khi2 <- chisq.test(table(object$clusters_data, object$all_data[[varexp]]))
+    khi2 <- chisq.test(table(object$clusters_data, object$all_data[[var]]))
     if (khi2$p.value < 0.05){
-      #cat("Les groupes n'ont significativement pas la ou le meme", varexp)
+      #cat("Les groupes n'ont significativement pas la ou le meme", var)
     }else
-      cat("Il n'y a pas de lien significatif entre le groupe et", varexp)
+      cat("Il n'y a pas de lien significatif entre le groupe et", var)
   }
 }
 
