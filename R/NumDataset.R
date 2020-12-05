@@ -4,11 +4,11 @@
 # ------------------------------------------------------------------------- #
 #' Correlation ratios
 #'
-#' Calculate the correlation ratios,taken individually, in the construction of the clustering structure
+#' Calculate the correlation ratios,taken individually, in the build-up of the clustering structure
 #'
 #' @param object an object of class ccdata
 #'
-#' @return A matrix of correlations. Each column value represents the square of the correlation ratio η² for each variable (individually) with the characterizing variable (the entered clustering).
+#' @return A matrix of correlations. Each column value represents the square of the correlation ratio η² for each variable (individually) with the feature variable (the entered clustering).
 #' η² corresponds to the proportion of the variance explained.
 #'
 #' @examples
@@ -67,11 +67,11 @@ corr_ratios <-function(object){
 }
 #' Test Value for numerical variables
 #'
-#' Calculates the test value table for each variable per cluster
+#' Calculates the test values table for each variable per cluster
 #'
 #' @param object an object of class ccdata
 #'
-#' @return A matrix representing the value test of every variable for each cluster.
+#' @return A matrix consisting of the test values of every variable for each cluster.
 #' The rows represent the variables. The columns represent the clusters.
 #'
 #' @examples
@@ -154,13 +154,13 @@ effectsize <-function(object){
 }
 #' PCA visualisation
 #'
-#' Applying a principal component analysis (PCA) to the data variables
+#' Applying a principal component analysis (PCA) to the feature variables
 #'
 #' @param object an object of class ccdata
 #'
-#' @return Display three graphs to illustrate allows a synthetic view of the data, ideally in a two
-#' First: Represents the correlation chart between all the variables
-#' Second: Is split into two graphs. On the right; the correlation circle and on the right; the biplot of the individuals and variables grouped by their clusters
+#' @return Displays three graphs to allow a synthetic view of the data
+#' A. Represents the correlation chart between all the variables
+#' B. split into two graphs. On the left: the correlation circle and on the right: the biplot of the individuals and variables grouped by their clusters
 #'
 #' @export
 #' @import PerformanceAnalytics

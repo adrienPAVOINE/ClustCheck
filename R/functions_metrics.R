@@ -8,7 +8,7 @@
 #'
 #' @param object An object of class ccdata
 #'
-#' @return A new dataset for the metrics function, create with the new coord based on a AFDM.
+#' @return A new dataset for the metrics function, created with the new coordinates based on a FAMD.
 #' @export
 #' @import FactoMineR
 #' @import factoextra
@@ -25,10 +25,10 @@ transformdata <- function(object){
   ind <- factoextra::get_famd_ind(res.famd)
   return(as.data.frame(ind$coord))
 }
-#' Silhouette
+#' Silhouette coefficient
 #'
 #' @param object An object of class ccdata
-#' @param clusters A vector corresponding to the dataset clustering results. Automatically equal of the cluster vector entered as a Dataset parameter.
+#' @param clusters A vector corresponding to the dataset clustering results (predicted clusters with ccdata class object by default)
 #'
 #' @return The silouhette value for all the cluster groups and a mean silouhette.
 #' @export
@@ -80,7 +80,7 @@ silhouetteC <- function(object, clusters=object$pred_clusters) {
 #' Davies-Bouldin Index
 #'
 #' @param object An object of class ccdata
-#' @param clusters A vector corresponding to the dataset clustering results
+#' @param clusters A vector corresponding to the dataset clustering results (predicted clusters with ccdata class object by default)
 #'
 #' @return The Davies-Bouldin index for all the cluster groups.
 #' @export
@@ -129,7 +129,7 @@ davies_bouldinC <- function(object, clusters=object$pred_clusters) {
 #' Dunn Index
 #'
 #' @param object An object of class ccdata
-#' @param clusters A vector corresponding to the dataset clustering results
+#' @param clusters A vector corresponding to the dataset clustering results (predicted clusters with ccdata class object by default)
 #'
 #' @return The Dunn Index for all the cluster groups
 #' @export
@@ -176,15 +176,14 @@ dunn_indexC <- function(object, clusters=object$pred_clusters) {
   DI <- min(d2[d2>0])/max(d1)
   return(DI)
 }
-#' validation
+#' Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)
 #'
 #' @param object An object of class ccdata
-#' @param true_clusters Vector of the true cluster, it's automatically the same as the one enter in the Dataset constructor
+#' 
+#' @param true_clusters Vector of the true clusters (true clusters with ccdata class object by default)
 #'
-#'Evaluate the quality of the predict cluster, for that, it's calcule the error rate, precision and recall.
-#'Attention, you have to enter the true cluster here or in Dataset constructor.
 #'
-#' @return The error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
+#' @return Confusion matrix, error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
 #' @export
 #'
 #' @examples
@@ -268,7 +267,7 @@ statistical_test <- function(object, var){
       if (moy1>moy2){
         test <- t.test(cluster1[[var]], cluster2[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("mean of", var, "is signifantly higher in", groupe[1], "than in", groupe[2])
+          cat("Mean of", var, "is signifantly higher in", groupe[1], "than in", groupe[2])
         }else{
           test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
@@ -277,7 +276,7 @@ statistical_test <- function(object, var){
       }else{
         test <- t.test(cluster2[[var]], cluster1[[var]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("mean of", var, "is signifantly higher in", groupe[2], "than in", groupe[])
+          cat("Mean of", var, "is signifantly higher in", groupe[2], "than in", groupe[])
         }else{
           test <- t.test(cluster1[[var]], cluster2[[var]])
           if (test$p.value < 0.05){
@@ -290,7 +289,7 @@ statistical_test <- function(object, var){
       mod=aov(object$all_data[[var]]~object$pred_clusters)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
-        cat("The cluster group have a significant impact on", var)
+        cat("The cluster group has a significant impact on", var)
       }else{
         cat("There are not significant impact of the cluster on", var)
       }
@@ -298,7 +297,7 @@ statistical_test <- function(object, var){
   }else{
     khi2 <- chisq.test(table(object$pred_clusters, object$all_data[[var]]))
     if (khi2$p.value < 0.05){
-      cat("The cluster significantly don't have the same ", var)
+      cat("The cluster significantly doesn't have the same ", var)
     }else
       cat("There are not significant impact of the cluster on", var)
   }

@@ -67,7 +67,7 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
     instance$cat_p <- nb_qual #number of categorical variables
     instance$cat_var_names <- names(which(cat_ind == TRUE)) #names of the categorical variables
     instance$cat_ind <- cat_ind
-    instance$vcramer <- vcramer(instance) #return the cramer V value for all the category variables
+    instance$vcramer <- vcramer(instance) #return the cramer V value for all the categoricalvariables
     }
   num_ind = sapply(active_data,function(x)is.numeric(x)|is.double(x))#To get all the numerical variables data
   nb_quanti <- sum(num_ind)

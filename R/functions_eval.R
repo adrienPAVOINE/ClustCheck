@@ -7,15 +7,15 @@
 #' @param object An object of class ccdata
 #' @param var A data vector of an active variable
 #'
-#' @return the plot of the tests value by all the numeric variables and all the cluster or the plot of tests vlues by modalities of a chosen category variable for all cluster.
+#' @return plot of the tests value for all numerical variables and all clusters or plot of tests values by modes of a selected categorical variable for all clusters.
 #'
 #' @export
 #' @import ggplot2
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' plottvalue(obj) #for all the numeric variables
-#' plottvalue(obj, BankCustomer$profession) #for only one category variable
+#' plottvalue(obj) #for all the numerical variables
+#' plottvalue(obj, BankCustomer$profession) #for only one categorical variable
 plottvalue <- function(object, var = NULL) {
   #if(object$vartype== "NUM"){
   table <- tvalue_num(object)
@@ -61,11 +61,11 @@ plottvalue <- function(object, var = NULL) {
     }
   }
 }
-#' Plot of size effect (numeric variables)
+#' Plot of size effect (numerical variables)
 #'
 #' @param object An object of class ccdata
 #'
-#' @return A plot of the effect size for all numeric variables by cluster.
+#' @return A plot of the effect size for all numerical variables by cluster.
 #'
 #' @export
 #' @import ggplot2
@@ -91,11 +91,11 @@ plotsizeeff <- function(object){
     cat("Size effect calculations are for numerical variables only.")
   }
 }
-#' Plot of correlations (numeric variables)
+#' Plot of correlations (numerical variables)
 #'
 #' @param object An object of class ccdata
 #'
-#' @return A bar plot of the correlations between numeric variables and the cluster vector.
+#' @return A bar plot of the correlations between numerical variables and the cluster vector.
 #' @export
 #' @import ggplot2
 #' @examples
@@ -124,7 +124,7 @@ plotcorr <- function(object) {
 #' @param object An object of class ccdata
 #' @param limit Number of categorical variables to display by descending value (default=10)
 #'
-#' @return A bar plot with the Cramer values between the category variables and the cluster vector.
+#' @return A bar plot with the Cramer values between the categorical variables and the cluster vector.
 #' @export
 #' @import ggplot2
 #' @examples
@@ -156,7 +156,7 @@ plotVCramer <- function(object, limit=10){
 #' @param object An object of class ccdata
 #' @param var A data vector of an active variable
 #'
-#' @return A plot for all the phi values between cluster group and modalities of the chosen variables.
+#' @return A plot for all the phi values between cluster group and modes of the selected variables.
 #' @export
 #'
 #' @examples

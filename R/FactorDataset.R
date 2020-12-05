@@ -4,16 +4,16 @@
 # ------------------------------------------------------------------------- #
 #' Contingency table
 #'
-#' Create a cross table between a cluster variable and a chosen category variable.
+#' Create a cross table between a cluster variable and a selected categorical variable.
 #'
 #' @param object An object of class ccdata
-#' @param var A data vector of an active category variable
+#' @param var A data vector of an active categorical variable
 #'
-#' @return A cross table between the two variables.
+#' @return A cross table between two variables.
 #' The same table with margins and sum
-#' The table with percentage by lines
-#' Number of lines (which means number of cluster)
-#' Number of column (which means number of modalities in the other variables)
+#' The table with percentages by lines
+#' Number of lines (i.e. number of clusters)
+#' Number of columns (i.e. number of modes in the other variables)
 #'
 #' @importFrom stats addmargins
 #' @examples
@@ -23,33 +23,33 @@
 #' effectiveTable <- table[[2]]
 #' @export
 contingency <- function(object, var){
-  #creation of the cross table between the cluster data and an other category variable
+  #creation of the cross table between the cluster data and an other categorical variable
   tableau <- table(object$pred_clusters,var)
   nli <- nrow(tableau) #number of cluster
-  nco <- ncol(tableau) #number of modality in the other category variable
-  eff <- addmargins(tableau) #to add Sum and names of the modalities
+  nco <- ncol(tableau) #number of modality in the other categorical variable
+  eff <- addmargins(tableau) #to add Sum and names of the modes
   pourc <- addmargins(prop.table(addmargins(tableau,1),1),2) #prop.table to have the percentage by lines
   return(list(tableau, eff, pourc, nco, nli))
 }
 #' Cramer Values
 #'
-#' Calul the cramer values between two category variables
+#' Calulates the cramer's V values between two categorical variables
 #'
 #' @param object An object of class ccdata
-#' @param var A data vector of an active category variable
+#' @param var A data vector of an active categorical variable
 #'
-#' @return If you choose a specific variable, it's return a short sentence with the cramer value.
-#' If you don't choose a specif variable, it's return a matrix with all the category variables of your dataset in lines with the cramer values in the first column.
+#' @return table of Cramer'V values for all categorical variables or only selected one
+#' 
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' vcramer(obj) #for all the cramer value by variables
-#' vcramer(obj, BankCustomer$profession) #For one category variable
+#' vcramer(obj, BankCustomer$profession) #For one categorical variable
 vcramer <- function(object, var = FALSE){
   nameVar <- deparse(substitute(var)) #to get the name of the vector
-  if(nameVar == FALSE){ #if we want all the cramer values for all the category variables
+  if(nameVar == FALSE){ #if we want all the cramer values for all the categorical variables
     l<-c() #a list to the futur cramer values
     for (i in object$cat_var_names){
       table <- contingency(object, object$all_data[[i]]) #call the CalcTable function to get the cross table
@@ -82,12 +82,12 @@ vcramer <- function(object, var = FALSE){
 }
 #' Value Phi
 #'
-#'Calcul the Phi value for all cluster*modalities of one chosen variable.
+#'Calculate the Phi value for all cluster*mode of one selected variable.
 #'
 #' @param object An object of class ccdata
-#' @param var A data vector of an active category variable
+#' @param var A data vector of an active categorical variable
 #'
-#' @return A cross table between the cluster variable and the chosen variable with phi values for all cluster*modality pairs.
+#' @return A cross table between the cluster variable and the selected variable with phi values for all cluster*mode pairs.
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
@@ -105,12 +105,12 @@ phivalue <- function(object, var){
   for (i in 1:nli){
     for (j in 1:nco){
       plg = eff[i,j]/eff[i,nco+1] #number of sample in the i cluster and the j modality (of the other variable) / number of total sample in the i cluster
-      #creation of a i*j matrix : matrix to cross all the cluster group by all the modalities -> use to calculate the pla (proportion in the others groups)
+      #creation of a i*j matrix : matrix to cross all the cluster group by all the modes -> use to calculate the pla (proportion in the others groups)
       liste <- c(eff[i,j],(eff[nli+1,j]-eff[i,j]), (eff[i,nco+1]-eff[i,j]),eff[nli+1,nco+1]-(eff[i,j]+(eff[nli+1]-eff[i,j])+(eff[i,nco+1]-eff[i,j])) )
       matri <- matrix(liste,2,2)
       #for all the group*modalitiy we calcule the Khi2
       suppressWarnings(khi2 <- chisq.test(matri)) #remove the warnings wich tell us that n is to small
-      pla = (matri[2,1])/(matri[2,1]+matri[2,2]) #pla calculate for all the group*modalities (important to see the proportion of the modality in the others cluster group)
+      pla = (matri[2,1])/(matri[2,1]+matri[2,2]) #pla calculate for all the group*modes (important to see the proportion of the modality in the others cluster group)
       tab_phi[i,j] <- round(sign(plg-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4) #get all the phi values in one table
       #get the signed phi value with (plg-pla)
     }
@@ -120,12 +120,12 @@ phivalue <- function(object, var){
 }
 #' t-value for categorical variables
 #'
-#'Calcul the test value for all cluster*modalities of one chosen variable.
+#'Calculates the test values for all cluster*modes of one selected variable.
 #'
 #' @param object An object of class ccdata
-#' @param var A data vector of an active category variable
+#' @param var A data vector of an active categorical variable
 #'
-#' @return A cross table between the cluster variable and the chosen variable with test values for all cluster*modality pairs.
+#' @return A cross table between the cluster variable and the selected variable with test values for all cluster*modality pairs.
 #' @export
 #'
 #' @examples
@@ -142,7 +142,7 @@ tvalue_cat <-function(object, var){
   tab_vtest <- tableau #creation of a table to put the futur values
   for (i in 1:nli){
     for (j in 1:nco){
-      #for all the group and all the modalities
+      #for all the group and all the modes
       v = (sqrt(eff[nli+1,j]))*((pourc[i,j] - pourc[nli+1,j])/(sqrt(((eff[nli+1,nco+1]-eff[nli+1,j])/(eff[nli+1,nco+1] - 1))*pourc[nli+1,j]* (1-pourc[nli+1,j]))))
       #calcul of v
       tab_vtest[i,j] <- v
@@ -152,15 +152,14 @@ tvalue_cat <-function(object, var){
   #print(tab_vtest)
   return(tab_vtest)
 }
-#' AFC visualisation
-#'
-#'Two graphs to illustrate the cluster with a specific category chosen variable.
+#' Correspondence Analysis visualisation
+#' (two graphs to illustrate the cluster with a specific categorical selected variable)
 #'
 #' @param object An object of class ccdata
 #' @param var A data vector of an active variable
 #'
-#' @return A stack barplot with cluster in abscissa and modalities in stack.
-#' A CA factor map which compare the cluster class and the modalities of the chosen variable.
+#' @return A stack barplot with cluster in abscissa and modes in stack and a CA factor map which compare the cluster class and the modes of the selected variable.
+#'
 #' @export
 #' @import questionr
 #' @import FactoMineR
@@ -202,18 +201,18 @@ vizAFC <- function(object, var) {
     print(plotbar)
   }
   }else{
-    stop("Attention, var must be a category variable")
+    stop("Attention, var must be a categorical variable")
   }
 }
-#' MCA
+#' Multiple Component Analysis
+#' Show two graphs to illustrate the cluster with all the categorical variables of your dataset.
 #'
 #' @param object An object of class ccdata
 #' @param index_names Optional vector of the index to use
 #'
-#'Show two graphs to illustrate the cluster with all the category variables of your dataset.
 #'
-#' @return A first plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
-#' A biplot whho illustrate the cluster group with all the modalities of category variables.
+#' @return A first plot with all the modes of the categorical variables placed by importance of contribution with the two first axes.
+#' A biplot whho illustrate the cluster group with all the modes of categorical variables.
 #' @export
 #' @import ExPosition
 #' @import FactoMineR
@@ -265,15 +264,15 @@ get_MCA <- function(object,index_names){
     print(plt)
   }
 }
-#' FAMD
+#' Factorial Analysis of Mixed Data
 #'
 #' @param object An object of class ccdata
-#'Show three graphs to illustrate the cluster with all the variables of your dataset.
 #'
 #'
-#' @return B. The plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
-#' C. Correlation circle with all the numeric variables
-#' A. Plot with all the individuals colored by their cluster group and illustrate by category and numeric variables
+#' @return three graphs to illustrate the cluster with all the variables of your dataset.
+#' A. Plot with all the individuals colored by their cluster group and illustrated by categorical and numerical variables
+#' B. Plot with all the modes of the categorical variables placed by importance of contribution with the first two axes.
+#' C. Correlation circle with all the numerical variables
 #' @export
 #' @import FactoMineR
 #' @import factoextra
@@ -303,7 +302,7 @@ get_FAMD <- function(object){
   #to get variable
   var <- factoextra::get_famd_var(res.famd)
 
-  #Contrib of the category variables
+  #Contrib of the categorical variables
   qual <- factoextra::fviz_famd_var(res.famd, "quali.var", col.var = "contrib",
                             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
   )
