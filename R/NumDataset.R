@@ -7,14 +7,20 @@
 # Correlations ratios
 # ------------------------------------------------------------------------- #
 
-#' corr_ratios
+#' Correlation ratios
+#'
+#' Calculate the correlation ratios,taken individually, in the construction of the clustering structure
 #'
 #' @param object an object of class ccdata
 #'
-#' @return
-#' @export
+#' @return A matrix of correlations. Each column value represents the square of the correlation ratio η² for each variable (individually) with the characterizing variable (the entered clustering).
+#' η² corresponds to the proportion of the variance explained.
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' corr_ratios(obj)
+#' @export
 corr_ratios <-function(object){
   classes <- object$pred_clusters
   cl <- object$cluster_names
@@ -69,14 +75,20 @@ corr_ratios <-function(object){
 # t-values for numerical variables
 # ------------------------------------------------------------------------- #
 
-#' tvalue_num
+#' Test Value for numerical variables
+#'
+#' Calculates the test value table for each variable per cluster
 #'
 #' @param object an object of class ccdata
 #'
-#' @return
-#' @export
+#' @return A matrix representing the value test of every variable for each cluster.
+#' The rows represent the variables. The columns represent the clusters.
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' tvalue_num(obj)
+#' @export
 tvalue_num <-function(object){
   data <- object$num_data
   classes <- object$pred_clusters
@@ -108,14 +120,19 @@ tvalue_num <-function(object){
 # effect size
 # ------------------------------------------------------------------------- #
 
-#' effectsize
+#' Effect Size for numerical variables
 #'
 #' @param object an object of class ccdata
 #'
-#' @return
-#' @export
+#' @return An effect size table
+#' matrix representing the effect size of every variable for each cluster.
+#' The rows represent the variables. The columns represent the clusters.
 #'
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' effectsize(obj)
+#' @export
 effectsize <-function(object){
   data <- object$num_data
   classes <- object$pred_clusters
@@ -156,12 +173,17 @@ effectsize <-function(object){
 # ------------------------------------------------------------------------- #
 
 
-#' get_PCA
+#' PCA visualisation
+#'
+#' Applying a principal component analysis (PCA) to the data variables
 #'
 #' @param object an object of class ccdata
 #' @param index_names optional vector of the index to use
 #'
-#' @return
+#' @return Display three graphs to illustrate allows a synthetic view of the data, ideally in a two
+#' First: Represents the correlation chart between all the variables
+#' Second: Is split into two graphs. On the right; the correlation circle and on the right; the biplot of the individuals and variables grouped by their clusters
+#'
 #' @export
 #' @import PerformanceAnalytics
 #' @import FactoMineR
@@ -170,12 +192,14 @@ effectsize <-function(object){
 #' @import corrplot
 #' @import ggpubr
 #' @examples
+#' data(BankCustomer)
+#' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
+#' get_PCA(obj)
 get_PCA <- function(object,index_names=NULL){
   num_data <-object$num_data
   varname_classes <- "Clusters"
   classes <- object$pred_clusters
   nb_quanti <- object$num_p
-
 
   label_to_show<-"var"
   # #if index specified, use index for labels in plots
@@ -188,7 +212,7 @@ get_PCA <- function(object,index_names=NULL){
 
   #Variable correlation
   correlation_chart <- PerformanceAnalytics::chart.Correlation(num_data, histogram=FALSE, pch=19)
-
+  correlation_chart
   #PCA
   res.pca <- FactoMineR::PCA(num_data, graph = FALSE)
 
@@ -204,7 +228,7 @@ get_PCA <- function(object,index_names=NULL){
   # dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
   # n_dim <- length(dims)
   # eig.val.kept <- eig.val[dims,]
-  
+
   #Kaiser Rule
   I<- sum(eig.val[1:nb_quanti,1])
   dims<-c(which(eig.val[,1]>(I/nb_quanti)))
@@ -229,7 +253,7 @@ get_PCA <- function(object,index_names=NULL){
                                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                                 repel = TRUE)
 
-    #biplot simple des individus et des variables selon les clusters
+    #biplot individuals and variables grouped by clusters
     biplot <- factoextra::fviz_pca_biplot (res.pca, axes=dim_axes,
                                col.ind = classes, palette = "jco",
                                addEllipses = TRUE,
@@ -245,4 +269,3 @@ get_PCA <- function(object,index_names=NULL){
     print(plt)
   }
 }
-
