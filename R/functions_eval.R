@@ -2,52 +2,59 @@
 # CLUSTCHECK
 # Functions for variables evaluation
 # ------------------------------------------------------------------------- #
-
-# ------------------------------------------------------------------------- #
-# Plot of t-values
-# ------------------------------------------------------------------------- #
-
-#' plottvalue
+#' Plot of t-values
 #'
-#' @param object an object of class ccdata
-#' @param var a data vector of an active variable
+#' @param object An object of class ccdata
+#' @param var A data vector of an active variable
 #'
-#' @return
+#' @return the plot of the
+#'
 #' @export
 #' @import ggplot2
 #' @examples
-plottvalue <- function(object, var=NULL){
-  if(object$vartype== "NUM"){
-    table <- tvalue_num(object)
-    p <- ncol(table)
-    variables <- rownames(table)
-    Tvalue_table <- stack(as.data.frame(table))
-    Tvalue_table$variables <- rep(variables,p)
-    # Visualisation
-    ggplot2::ggplot(Tvalue_table, aes(x=variables, y=values)) +
-      geom_col() +
-      geom_hline(yintercept = -2, linetype="dashed", size=0.5, color="red") +
-      geom_hline(yintercept = 2, linetype="dashed", size=0.5, color="red") +
-      coord_flip() +
-      facet_wrap(vars(ind)) +
-      labs(title = "t-values")
-  }
-  if(object$vartype== "CAT"){
-    # if(var==NULL){
-    #   stop("Please enter a variable for the t-value table.")
-    # }
-    table <- tvalue_cat(object, var)
-    m <- ncol(table)
-    levels <- colnames(table)
-    Tvalue_table <- as.data.frame(table)
-    Tvalue_table$Freq
-    colnames(Tvalue_table) <- c('clusters','levels','values')
-    # Visualisation
-    ggplot2::ggplot(Tvalue_table, aes(x=levels, y=values)) +
-      geom_col() +
-      coord_flip() +
-      facet_wrap(vars(clusters)) +
-      labs(title = "t-values")
+plottvalue <- function(object, var = NULL) {
+  #if(object$vartype== "NUM"){
+  table <- tvalue_num(object)
+  p <- ncol(table)
+  variables <- rownames(table)
+  Tvalue_table <- stack(as.data.frame(table))
+  Tvalue_table$variables <- rep(variables, p)
+  # Visualisation
+  plot <-ggplot2::ggplot(Tvalue_table, aes(x = variables, y = values)) +
+    geom_col() +
+    geom_hline(
+      yintercept = -2,
+      linetype = "dashed",
+      size = 0.5,
+      color = "red"
+    ) +
+    geom_hline(
+      yintercept = 2,
+      linetype = "dashed",
+      size = 0.5,
+      color = "red"
+    ) +
+    coord_flip() +
+    facet_wrap(vars(ind)) +
+    labs(title = "t-values")
+  print(plot)
+  #}
+  #if(object$vartype== "CAT"){
+  if (is.null(var) == FALSE) {
+    if (is.character(var) == TRUE | is.factor(var) == TRUE) {
+      table <- tvalue_cat(object, var)
+      m <- ncol(table)
+      levels <- colnames(table)
+      Tvalue_table <- as.data.frame(table)
+      Tvalue_table$Freq
+      colnames(Tvalue_table) <- c('clusters', 'levels', 'values')
+      # Visualisation
+      ggplot2::ggplot(Tvalue_table, aes(x = levels, y = values)) +
+        geom_col() +
+        coord_flip() +
+        facet_wrap(vars(clusters)) +
+        labs(title = "t-values")
+    }
   }
 }
 
@@ -65,7 +72,7 @@ plottvalue <- function(object, var=NULL){
 #' @examples
 #library(ggplot2)
 plotsizeeff <- function(object){
-  if(object$vartype== "NUM"){
+  if(is.numeric(var) == TRUE|is.double(var) == TRUE){
     table <- effectsize(object)
     p <- ncol(table)
     variables <- rownames(table)
@@ -97,7 +104,7 @@ plotsizeeff <- function(object){
 #' @examples
 
 plotcorr <- function(object){
-  if(object$vartype== "NUM"){
+  if(is.numeric(var) == TRUE|is.double(var) == TRUE){
     table <- sort(corr_ratios(object), decreasing=T)
   p <- min(12,length(table))
   corr <- as.data.frame(table[1:p])
@@ -123,14 +130,14 @@ plotcorr <- function(object){
 #'
 #' @param object an object of class ccdata
 #' @param limit number of categorical variables to display by descending value (default=10)
-#' 
+#'
 #' @return
 #' @export
 #' @import ggplot2
 #' @examples
 #library(ggplot2)
 plotVCramer <- function(object, limit=10){
-  if(object$vartype== "CAT"){
+  if(is.factor(var) == TRUE|is.character(var) == TRUE){
     table <- vcramer(object)
     p <- length(table)
     if (limit<p){
@@ -165,7 +172,7 @@ plotVCramer <- function(object, limit=10){
 #'
 #' @examples
 plotphi <- function(object, var){
-  if(object$vartype== "CAT"){
+  if(is.factor(var) == TRUE|is.character(var) == TRUE){
     table <- phivalue(object, var)
     m <- ncol(table)
     levels <- colnames(table)
@@ -183,9 +190,5 @@ plotphi <- function(object, var){
     cat("Phi values calculations are for categorical variables only.")
   }
 }
-
-
-
-
 
 
