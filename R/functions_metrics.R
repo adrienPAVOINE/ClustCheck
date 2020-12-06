@@ -45,9 +45,6 @@ silhouetteC <- function(object, clusters=object$pred_clusters) {
   }
   # a: The mean distance between a sample and all other points in the same class.
   # b: The mean distance between a sample and all other points in the next nearest cluster.
-  # if (nrow(object)!=length(clusters)){
-  #   stop("Feature data and cluster data don't have the same length")
-  # }
   d <- as.matrix(dist(data))
   n <- ncol(d)
   a <- NULL; b <- NULL
@@ -71,8 +68,6 @@ silhouetteC <- function(object, clusters=object$pred_clusters) {
   for (k in unique(clusters)){
     ind = which(clusters == k)
     nbk <- sum(clusters == k)
-    #sk <- 1/nbk * (sum(s[ind]))
-    #cat("Silhouette for cluster" , k )
     sk <- c(sk, 1/nbk * (sum(s[ind])))
   }
   return(list(cluster_silhouette=sk, mean_silhouette=mean(s)))

@@ -60,6 +60,9 @@ plottvalue <- function(object, var = NULL) {
           labs(title = "t-values")
       }
     }
+    else {
+      stop("Error : input var is missing and required for categorical or mixed data.")
+    }
   }
 }
 #' Plot of size effect (numerical variables)
@@ -95,6 +98,7 @@ plotsizeeff <- function(object){
 #' Plot of correlations (numerical variables)
 #'
 #' @param object An object of class ccdata
+#' @param limit Number of variables to display by descending value (default=10)
 #'
 #' @return A bar plot of the correlations between numerical variables and the cluster vector.
 #' @export
@@ -103,16 +107,23 @@ plotsizeeff <- function(object){
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotcorr(obj)
-plotcorr <- function(object) {
+plotcorr <- function(object, limit=10) {
   if(object$vartype=="NUM"| object$vartype=="MIX"){
     table <- sort(corr_ratios(object), decreasing = T)
-    p <- min(12, length(table))
-    corr <- as.data.frame(table[1:p])
+    p <- length(table)
+    if (limit<p){
+      corr <- as.data.frame(table[1:limit])
+      title2=paste("Correlation values - Top",limit,"out of",p,"variables")
+    }else{
+      corr <- as.data.frame(table[1:p])
+      title2=paste("Correlation values - ",p,"variables")
+    }
     colnames(corr) <- "values"
     # Visualisation
     ggplot(corr, aes(x = reorder(rownames(corr),-values), y = values)) +
       geom_col() +
-      labs(title = "Correlations") +
+      geom_text(aes(label=format(values, digits=3), vjust=-0.5)) +
+      labs(title = title2) +
       xlab("Variables") +
       ylab("Value")
   }
@@ -147,7 +158,7 @@ plotVCramer <- function(object, limit=10){
     # Visualisation
     ggplot2::ggplot(VCramer, ggplot2::aes(x=reorder(rownames(VCramer), -values), y=values)) +
       ggplot2::geom_col() +
-      #ggplot2::geom_text(aes(label=values, position=position_dodge(width=0.9), vjust=0.25)) +
+      geom_text(aes(label=format(values, digits=2), vjust=-0.5)) +
       ggplot2::labs(title = title2) +xlab("Variables") +ylab("Value")
   }
   else {
