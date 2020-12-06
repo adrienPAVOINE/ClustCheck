@@ -10,11 +10,11 @@ tvalue_num(object)
 \item{object}{an object of class ccdata}
 }
 \value{
-A matrix representing the value test of every variable for each cluster.
+A matrix consisting of the test values of every variable for each cluster.
 The rows represent the variables. The columns represent the clusters.
 }
 \description{
-Calculates the test value table for each variable per cluster
+Calculates the test values table for each variable per cluster
 }
 \examples{
 data(BankCustomer)

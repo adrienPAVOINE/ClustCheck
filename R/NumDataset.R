@@ -16,8 +16,8 @@
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' corr_ratios(obj)
 #' @export
-corr_ratios <-function(object){
-  if(object$vartype!="NUM"){
+corr_ratios <- function(object) {
+  if (is.null(object$num_p) == TRUE) {
     stop("Error : Correlations ratios can only be calculated on numerical variables.")
   }
   classes <- object$pred_clusters
@@ -25,45 +25,46 @@ corr_ratios <-function(object){
   n_clusters <- length(cl)
 
   #SCT------------
-  sct_f<- function(x){
-    m<-mean(x)
-    sct<-0
-    for (i in 1:length(x)){#check if x or data
-      sct<-(x[i]- m)**2 + sct
+  sct_f <- function(x) {
+    m <- mean(x)
+    sct <- 0
+    for (i in 1:length(x)) {
+      #check if x or data
+      sct <- (x[i] - m) ** 2 + sct
     }
     return(sct)
   }
-  sct_l<-sapply(object$num_data,sct_f)
+  sct_l <- sapply(object$num_data, sct_f)
 
   #SCE-----------
-  sce_f<- function(x){
+  sce_f <- function(x) {
     m <- mean(x)
     sce <- 0
-    for (i in cl){
-      ind_g<-which(classes==i)
-      ng<-length(ind_g)
-      sce<-sce + (ng*(mean(x[ind_g])-m)**2)
+    for (i in cl) {
+      ind_g <- which(classes == i)
+      ng <- length(ind_g)
+      sce <- sce + (ng * (mean(x[ind_g]) - m) ** 2)
     }
     return(sce)
   }
-  sce_l<-sapply(object$num_data,sce_f)
+  sce_l <- sapply(object$num_data, sce_f)
 
   #SCR------------
-  scr_f<- function(x){
-    m<-mean(x)
-    scr<-0
-    for (i in cl){
-      ind_g <- which(classes==i)
+  scr_f <- function(x) {
+    m <- mean(x)
+    scr <- 0
+    for (i in cl) {
+      ind_g <- which(classes == i)
       ng <- length(ind_g)
-      for (j in ind_g){
-        scr<-scr+ (x[j]-mean(x[ind_g]))**2
+      for (j in ind_g) {
+        scr <- scr + (x[j] - mean(x[ind_g])) ** 2
       }
     }
     return(scr)
   }
-  scr_l<-sapply(object$num_data,scr_f)
+  scr_l <- sapply(object$num_data, scr_f)
 
-  corr <- sce_l/sct_l
+  corr <- sce_l / sct_l
   #print("Correlation matrix")
   #print(corr)
   return(corr)
@@ -83,6 +84,9 @@ corr_ratios <-function(object){
 #' tvalue_num(obj)
 #' @export
 tvalue_num <-function(object){
+  if (object$vartype == "CAT") {
+    stop("Error : Correlations ratios can only be calculated on numerical variables.")
+  }
   data <- object$num_data
   classes <- object$pred_clusters
   n <- object$n
@@ -122,6 +126,9 @@ tvalue_num <-function(object){
 #' effectsize(obj)
 #' @export
 effectsize <-function(object){
+  if (object$vartype == "CAT") {
+    stop("Error : Correlations ratios can only be calculated on numerical variables.")
+  }
   data <- object$num_data
   classes <- object$pred_clusters
   n <- object$n
@@ -177,7 +184,7 @@ effectsize <-function(object){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_PCA(obj)
 get_PCA <- function(object){
-  if(object$vartype=="NUM"){
+  if(object$vartype=="NUM" |object$vartype=="MIX"){
     num_data <-object$num_data
     varname_classes <- "Clusters"
     classes <- object$pred_clusters
@@ -218,15 +225,15 @@ get_PCA <- function(object){
                                  #ellipse.type = "confidence",
                                  col.var = "black", repel = TRUE,
                                  legend.title = varname_classes, mean.point = FALSE)
-  
-  
+
+
       plt <- ggpubr::ggarrange(corr_circle, biplot,labels = c('b', 'a'), widths = c(1,2),ncol = 2, nrow = 1)
-  
+
       print(plt)
     }
   }
   else {
     cat("Error : PCA is intended to numerical variables only.")
   }
-  
+
 }

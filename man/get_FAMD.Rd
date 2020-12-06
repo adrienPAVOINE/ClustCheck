@@ -2,21 +2,21 @@
 % Please edit documentation in R/FactorDataset.R
 \name{get_FAMD}
 \alias{get_FAMD}
-\title{FAMD}
+\title{Factorial Analysis of Mixed Data}
 \usage{
 get_FAMD(object)
 }
 \arguments{
-\item{object}{An object of class ccdata
-Show three graphs to illustrate the cluster with all the variables of your dataset.}
+\item{object}{An object of class ccdata}
 }
 \value{
-B. The plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
-C. Correlation circle with all the numeric variables
-A. Plot with all the individuals colored by their cluster group and illustrate by category and numeric variables
+three graphs to illustrate the cluster with all the variables of your dataset.
+A. Plot with all the individuals colored by their cluster group and illustrated by categorical and numerical variables
+B. Plot with all the modes of the categorical variables placed by importance of contribution with the first two axes.
+C. Correlation circle with all the numerical variables
 }
 \description{
-FAMD
+Factorial Analysis of Mixed Data
 }
 \examples{
 data(BankCustomer)

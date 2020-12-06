@@ -12,7 +12,7 @@ plotphi(object, var)
 \item{var}{A data vector of an active variable}
 }
 \value{
-A plot for all the phi values between cluster group and modalities of the chosen variables.
+A plot for all the phi values between cluster group and modes of the selected variables.
 }
 \description{
 Plot of Phi values (categorical variables)

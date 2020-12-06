@@ -9,17 +9,17 @@ contingency(object, var)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{var}{A data vector of an active category variable}
+\item{var}{A data vector of an active categorical variable}
 }
 \value{
-A cross table between the two variables.
+A cross table between two variables.
 The same table with margins and sum
-The table with percentage by lines
-Number of lines (which means number of cluster)
-Number of column (which means number of modalities in the other variables)
+The table with percentages by lines
+Number of lines (i.e. number of clusters)
+Number of columns (i.e. number of modes in the other variables)
 }
 \description{
-Create a cross table between a cluster variable and a chosen category variable.
+Create a cross table between a cluster variable and a selected categorical variable.
 }
 \examples{
 data(BankCustomer)

@@ -2,23 +2,21 @@
 % Please edit documentation in R/FactorDataset.R
 \name{get_MCA}
 \alias{get_MCA}
-\title{MCA}
+\title{Multiple Component Analysis
+Show two graphs to illustrate the cluster with all the categorical variables of your dataset.}
 \usage{
-get_MCA(object, index_names)
+get_MCA(object)
 }
 \arguments{
 \item{object}{An object of class ccdata}
-
-\item{index_names}{Optional vector of the index to use
-
-Show two graphs to illustrate the cluster with all the category variables of your dataset.}
 }
 \value{
-A first plot with all the modalities of the category variables placed by importance of contribution with the two first axes.
-A biplot whho illustrate the cluster group with all the modalities of category variables.
+A first plot with all the modes of the categorical variables placed by importance of contribution with the two first axes.
+A biplot whho illustrate the cluster group with all the modes of categorical variables.
 }
 \description{
-MCA
+Multiple Component Analysis
+Show two graphs to illustrate the cluster with all the categorical variables of your dataset.
 }
 \examples{
 data(BankCustomer)

@@ -9,7 +9,7 @@ dunn_indexC(object, clusters = object$pred_clusters)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{clusters}{A vector corresponding to the dataset clustering results}
+\item{clusters}{A vector corresponding to the dataset clustering results (predicted clusters with ccdata class object by default)}
 }
 \value{
 The Dunn Index for all the cluster groups

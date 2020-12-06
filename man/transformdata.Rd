@@ -10,7 +10,7 @@ transformdata(object)
 \item{object}{An object of class ccdata}
 }
 \value{
-A new dataset for the metrics function, create with the new coord based on a AFDM.
+A new dataset for the metrics function, created with the new coordinates based on a FAMD.
 }
 \description{
 Data tranformation for categorical and mixed variables

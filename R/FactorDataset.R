@@ -39,7 +39,7 @@ contingency <- function(object, var){
 #' @param var A data vector of an active categorical variable
 #'
 #' @return table of Cramer'V values for all categorical variables or only selected one
-#' 
+#'
 #' @export
 #' @importFrom stats addmargins chisq.test
 #' @examples
@@ -48,7 +48,7 @@ contingency <- function(object, var){
 #' vcramer(obj) #for all the cramer value by variables
 #' vcramer(obj, BankCustomer$profession) #For one categorical variable
 vcramer <- function(object, var = FALSE){
-  if(object$vartype=="CAT"){
+  if(is.null(object$cat_p) == FALSE){
     nameVar <- deparse(substitute(var)) #to get the name of the vector
     if(nameVar == FALSE){ #if we want all the cramer values for all the categorical variables
       l<-c() #a list to the futur cramer values
@@ -97,33 +97,43 @@ vcramer <- function(object, var = FALSE){
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' phivalue(obj, BankCustomer$profession)
-phivalue <- function(object, var){
-  if(object$vartype=="NUM"){
-    table <- contingency(object, var) #call the CalcTable to get cross table between the two variables
-    tableau <- table[[1]]
-    nli <- table[[5]]
-    nco <- table[[4]] #we get all the information (effective table, nli, nco and the line percentage)
-    eff = table[[2]]
-    pourc = table[[3]]
-    tab_phi <- tableau #creation of the same table where we will put the news informations
-    for (i in 1:nli){
-      for (j in 1:nco){
-        plg = eff[i,j]/eff[i,nco+1] #number of sample in the i cluster and the j modality (of the other variable) / number of total sample in the i cluster
-        #creation of a i*j matrix : matrix to cross all the cluster group by all the modes -> use to calculate the pla (proportion in the others groups)
-        liste <- c(eff[i,j],(eff[nli+1,j]-eff[i,j]), (eff[i,nco+1]-eff[i,j]),eff[nli+1,nco+1]-(eff[i,j]+(eff[nli+1]-eff[i,j])+(eff[i,nco+1]-eff[i,j])) )
-        matri <- matrix(liste,2,2)
-        #for all the group*modalitiy we calcule the Khi2
-        suppressWarnings(khi2 <- chisq.test(matri)) #remove the warnings wich tell us that n is to small
-        pla = (matri[2,1])/(matri[2,1]+matri[2,2]) #pla calculate for all the group*modes (important to see the proportion of the modality in the others cluster group)
-        tab_phi[i,j] <- round(sign(plg-pla) * sqrt(khi2$statistic/eff[nli+1,nco+1]),4) #get all the phi values in one table
-        #get the signed phi value with (plg-pla)
+phivalue <- function(object, var) {
+  if (object$vartype == "CAT" | object$vartype == "MIX") {
+    if (is.factor(var) == TRUE | is.character(var) == TRUE) {
+      table <-
+        contingency(object, var) #call the CalcTable to get cross table between the two variables
+      tableau <- table[[1]]
+      nli <- table[[5]]
+      nco <-
+        table[[4]] #we get all the information (effective table, nli, nco and the line percentage)
+      eff = table[[2]]
+      pourc = table[[3]]
+      tab_phi <-
+        tableau #creation of the same table where we will put the news informations
+      for (i in 1:nli) {
+        for (j in 1:nco) {
+          plg = eff[i, j] / eff[i, nco + 1] #number of sample in the i cluster and the j modality (of the other variable) / number of total sample in the i cluster
+          #creation of a i*j matrix : matrix to cross all the cluster group by all the modes -> use to calculate the pla (proportion in the others groups)
+          liste <-
+            c(eff[i, j], (eff[nli + 1, j] - eff[i, j]), (eff[i, nco + 1] - eff[i, j]), eff[nli +
+                                                                                             1, nco + 1] - (eff[i, j] + (eff[nli + 1] - eff[i, j]) + (eff[i, nco + 1] -
+                                                                                                                                                        eff[i, j])))
+          matri <- matrix(liste, 2, 2)
+          #for all the group*modalitiy we calcule the Khi2
+          suppressWarnings(khi2 <-
+                             chisq.test(matri)) #remove the warnings wich tell us that n is to small
+          pla = (matri[2, 1]) / (matri[2, 1] + matri[2, 2]) #pla calculate for all the group*modes (important to see the proportion of the modality in the others cluster group)
+          tab_phi[i, j] <-
+            round(sign(plg - pla) * sqrt(khi2$statistic / eff[nli + 1, nco + 1]), 4) #get all the phi values in one table
+          #get the signed phi value with (plg-pla)
         }
       }
-    #print(tab_phi)
-    return(tab_phi)
-  }
-  else {
-    cat("Error : Phi values cannot be calculated on numerical variables.")
+      return(tab_phi)
+    } else{
+      stop("Error : var must be a categorical variable")
+    }
+  } else {
+    stop("Error : There are no categorical variable in your dataset.")
   }
 }
 #' t-value for categorical variables
@@ -140,25 +150,32 @@ phivalue <- function(object, var){
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' tvalue_cat(obj, BankCustomer$profession)
-tvalue_cat <-function(object, var){
-  table <- contingency(object, var) #call the CalcTable to get the info of the cross table
-  tableau <- table[[1]]
-  nli <- table[[5]]
-  nco <- table[[4]]
-  eff = table[[2]]
-  pourc = table[[3]]
-  tab_vtest <- tableau #creation of a table to put the futur values
-  for (i in 1:nli){
-    for (j in 1:nco){
-      #for all the group and all the modes
-      v = (sqrt(eff[nli+1,j]))*((pourc[i,j] - pourc[nli+1,j])/(sqrt(((eff[nli+1,nco+1]-eff[nli+1,j])/(eff[nli+1,nco+1] - 1))*pourc[nli+1,j]* (1-pourc[nli+1,j]))))
-      #calcul of v
-      tab_vtest[i,j] <- v
+tvalue_cat <- function(object, var) {
+  if (is.factor(var) == TRUE | is.character(var) == TRUE) {
+    table <-
+      contingency(object, var) #call the CalcTable to get the info of the cross table
+    tableau <- table[[1]]
+    nli <- table[[5]]
+    nco <- table[[4]]
+    eff = table[[2]]
+    pourc = table[[3]]
+    tab_vtest <- tableau #creation of a table to put the futur values
+    for (i in 1:nli) {
+      for (j in 1:nco) {
+        #for all the group and all the modes
+        v = (sqrt(eff[nli + 1, j])) * ((pourc[i, j] - pourc[nli + 1, j]) /
+                                         (sqrt(((eff[nli + 1, nco + 1] - eff[nli + 1, j]) / (eff[nli + 1, nco + 1] - 1)
+                                         ) * pourc[nli + 1, j] * (1 - pourc[nli + 1, j]))))
+        #calcul of v
+        tab_vtest[i, j] <- v
+      }
     }
+    #print("ci dessous tableau des valeurs tests")
+    #print(tab_vtest)
+    return(tab_vtest)
+  } else{
+    stop("Error : var must be a categorical variable")
   }
-  #print("ci dessous tableau des valeurs tests")
-  #print(tab_vtest)
-  return(tab_vtest)
 }
 #' Correspondence Analysis visualisation
 #' (two graphs to illustrate the cluster with a specific categorical selected variable)
@@ -184,7 +201,7 @@ tvalue_cat <-function(object, var){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' vizAFC(obj, BankCustomer$profession)
 vizAFC <- function(object, var) {
-  if(object$vartype=="CAT"){
+  if(object$vartype=="CAT" | object$vartype == "MIX"){
     if(is.factor(var) == TRUE|is.character(var) == TRUE){
     tableau <- table(object$pred_clusters, var)
     questionr::lprop(tableau, digits = 1)
@@ -216,13 +233,12 @@ vizAFC <- function(object, var) {
   else {
     cat("Error : AFC is intended to categorical variables.")
   }
-  
+
 }
 #' Multiple Component Analysis
 #' Show two graphs to illustrate the cluster with all the categorical variables of your dataset.
 #'
 #' @param object An object of class ccdata
-#' @param index_names Optional vector of the index to use
 #'
 #'
 #' @return A first plot with all the modes of the categorical variables placed by importance of contribution with the two first axes.
@@ -238,8 +254,8 @@ vizAFC <- function(object, var) {
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_MCA(obj)
-get_MCA <- function(object,index_names){
-  if(object$vartype=="CAT"){
+get_MCA <- function(object){
+  if(object$vartype=="CAT" | object$vartype =="MIX"){
     data.quali <-object$cat_data
     varname_classes <- "Clusters"
     classes <- object$pred_clusters
@@ -282,7 +298,7 @@ get_MCA <- function(object,index_names){
   else {
     cat("Error : MCA is intended to categorical variables only.")
   }
-  
+
 }
 #' Factorial Analysis of Mixed Data
 #'
@@ -312,7 +328,7 @@ get_FAMD <- function(object){
       names = object$cat_var_names[nb]
       i <- paste(names,i)
       object$cat_data[nb] <- i
-  
+
     }
     #first data with new exp variables
     data <- cbind(object$num_data, object$cat_data)
@@ -322,12 +338,12 @@ get_FAMD <- function(object){
     res.famd <- FactoMineR::FAMD(data, graph = FALSE)
     #to get variable
     var <- factoextra::get_famd_var(res.famd)
-  
+
     #Contrib of the categorical variables
     qual <- factoextra::fviz_famd_var(res.famd, "quali.var", col.var = "contrib",
                               gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
     )
-  
+
     #contrib of the numeric variables
     quanti <- factoextra::fviz_famd_var(res.famd, "quanti.var", col.var = "contrib",
                               gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
@@ -357,5 +373,5 @@ get_FAMD <- function(object){
   else {
     cat("Error : this factorial analysis function is intended to mixed data only.")
   }
-  
+
 }

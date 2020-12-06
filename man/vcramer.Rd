@@ -9,18 +9,17 @@ vcramer(object, var = FALSE)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{var}{A data vector of an active category variable}
+\item{var}{A data vector of an active categorical variable}
 }
 \value{
-If you choose a specific variable, it's return a short sentence with the cramer value.
-If you don't choose a specif variable, it's return a matrix with all the category variables of your dataset in lines with the cramer values in the first column.
+table of Cramer'V values for all categorical variables or only selected one
 }
 \description{
-Calul the cramer values between two category variables
+Calulates the cramer's V values between two categorical variables
 }
 \examples{
 data(BankCustomer)
 obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 vcramer(obj) #for all the cramer value by variables
-vcramer(obj, BankCustomer$profession) #For one category variable
+vcramer(obj, BankCustomer$profession) #For one categorical variable
 }

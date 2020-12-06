@@ -2,23 +2,20 @@
 % Please edit documentation in R/functions_metrics.R
 \name{validation}
 \alias{validation}
-\title{validation}
+\title{Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)}
 \usage{
 validation(object, true_clusters = object$true_clusters)
 }
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{true_clusters}{Vector of the true cluster, it's automatically the same as the one enter in the Dataset constructor
-
-Evaluate the quality of the predict cluster, for that, it's calcule the error rate, precision and recall.
-Attention, you have to enter the true cluster here or in Dataset constructor.}
+\item{true_clusters}{Vector of the true clusters (true clusters with ccdata class object by default)}
 }
 \value{
-The error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
+Confusion matrix, error rate, recall and precision. A matrix of recall and precision for all the cluster groups.
 }
 \description{
-validation
+Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)
 }
 \examples{
 data(BankCustomer)

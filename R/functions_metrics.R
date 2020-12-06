@@ -179,7 +179,7 @@ dunn_indexC <- function(object, clusters=object$pred_clusters) {
 #' Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)
 #'
 #' @param object An object of class ccdata
-#' 
+#'
 #' @param true_clusters Vector of the true clusters (true clusters with ccdata class object by default)
 #'
 #'

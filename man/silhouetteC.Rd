@@ -2,20 +2,20 @@
 % Please edit documentation in R/functions_metrics.R
 \name{silhouetteC}
 \alias{silhouetteC}
-\title{Silhouette}
+\title{Silhouette coefficient}
 \usage{
 silhouetteC(object, clusters = object$pred_clusters)
 }
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{clusters}{A vector corresponding to the dataset clustering results. Automatically equal of the cluster vector entered as a Dataset parameter.}
+\item{clusters}{A vector corresponding to the dataset clustering results (predicted clusters with ccdata class object by default)}
 }
 \value{
 The silouhette value for all the cluster groups and a mean silouhette.
 }
 \description{
-Silhouette
+Silhouette coefficient
 }
 \examples{
 data(BankCustomer)

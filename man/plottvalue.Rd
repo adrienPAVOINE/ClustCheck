@@ -12,7 +12,7 @@ plottvalue(object, var = NULL)
 \item{var}{A data vector of an active variable}
 }
 \value{
-the plot of the tests value by all the numeric variables and all the cluster or the plot of tests vlues by modalities of a chosen category variable for all cluster.
+plot of the tests value for all numerical variables and all clusters or plot of tests values by modes of a selected categorical variable for all clusters.
 }
 \description{
 Plot of t-values
@@ -20,6 +20,6 @@ Plot of t-values
 \examples{
 data(BankCustomer)
 obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-plottvalue(obj) #for all the numeric variables
-plottvalue(obj, BankCustomer$profession) #for only one category variable
+plottvalue(obj) #for all the numerical variables
+plottvalue(obj, BankCustomer$profession) #for only one categorical variable
 }

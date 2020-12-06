@@ -2,7 +2,8 @@
 % Please edit documentation in R/FactorDataset.R
 \name{vizAFC}
 \alias{vizAFC}
-\title{AFC visualisation}
+\title{Correspondence Analysis visualisation
+(two graphs to illustrate the cluster with a specific categorical selected variable)}
 \usage{
 vizAFC(object, var)
 }
@@ -12,11 +13,11 @@ vizAFC(object, var)
 \item{var}{A data vector of an active variable}
 }
 \value{
-A stack barplot with cluster in abscissa and modalities in stack.
-A CA factor map which compare the cluster class and the modalities of the chosen variable.
+A stack barplot with cluster in abscissa and modes in stack and a CA factor map which compare the cluster class and the modes of the selected variable.
 }
 \description{
-Two graphs to illustrate the cluster with a specific category chosen variable.
+Correspondence Analysis visualisation
+(two graphs to illustrate the cluster with a specific categorical selected variable)
 }
 \examples{
 data(BankCustomer)

@@ -10,12 +10,12 @@ get_PCA(object)
 \item{object}{an object of class ccdata}
 }
 \value{
-Display three graphs to illustrate allows a synthetic view of the data, ideally in a two
-First: Represents the correlation chart between all the variables
-Second: Is split into two graphs. On the right; the correlation circle and on the right; the biplot of the individuals and variables grouped by their clusters
+Displays three graphs to allow a synthetic view of the data
+A. Represents the correlation chart between all the variables
+B. split into two graphs. On the left: the correlation circle and on the right: the biplot of the individuals and variables grouped by their clusters
 }
 \description{
-Applying a principal component analysis (PCA) to the data variables
+Applying a principal component analysis (PCA) to the feature variables
 }
 \examples{
 data(BankCustomer)

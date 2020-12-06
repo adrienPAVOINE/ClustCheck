@@ -9,13 +9,13 @@ tvalue_cat(object, var)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{var}{A data vector of an active category variable}
+\item{var}{A data vector of an active categorical variable}
 }
 \value{
-A cross table between the cluster variable and the chosen variable with test values for all cluster*modality pairs.
+A cross table between the cluster variable and the selected variable with test values for all cluster*modality pairs.
 }
 \description{
-Calcul the test value for all cluster*modalities of one chosen variable.
+Calculates the test values for all cluster*modes of one selected variable.
 }
 \examples{
 data(BankCustomer)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotsizeeff}
 \alias{plotsizeeff}
-\title{Plot of size effect (numeric variables)}
+\title{Plot of size effect (numerical variables)}
 \usage{
 plotsizeeff(object)
 }
@@ -10,10 +10,10 @@ plotsizeeff(object)
 \item{object}{An object of class ccdata}
 }
 \value{
-A plot of the effect size for all numeric variables by cluster.
+A plot of the effect size for all numerical variables by cluster.
 }
 \description{
-Plot of size effect (numeric variables)
+Plot of size effect (numerical variables)
 }
 \examples{
 data(BankCustomer)

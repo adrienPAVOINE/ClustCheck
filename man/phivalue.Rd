@@ -9,13 +9,13 @@ phivalue(object, var)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{var}{A data vector of an active category variable}
+\item{var}{A data vector of an active categorical variable}
 }
 \value{
-A cross table between the cluster variable and the chosen variable with phi values for all cluster*modality pairs.
+A cross table between the cluster variable and the selected variable with phi values for all cluster*mode pairs.
 }
 \description{
-Calcul the Phi value for all cluster*modalities of one chosen variable.
+Calculate the Phi value for all cluster*mode of one selected variable.
 }
 \examples{
 data(BankCustomer)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions_eval.R
 \name{plotcorr}
 \alias{plotcorr}
-\title{Plot of correlations (numeric variables)}
+\title{Plot of correlations (numerical variables)}
 \usage{
 plotcorr(object)
 }
@@ -10,10 +10,10 @@ plotcorr(object)
 \item{object}{An object of class ccdata}
 }
 \value{
-A bar plot of the correlations between numeric variables and the cluster vector.
+A bar plot of the correlations between numerical variables and the cluster vector.
 }
 \description{
-Plot of correlations (numeric variables)
+Plot of correlations (numerical variables)
 }
 \examples{
 data(BankCustomer)

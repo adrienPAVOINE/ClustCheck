@@ -17,7 +17,7 @@
 #' plottvalue(obj) #for all the numerical variables
 #' plottvalue(obj, BankCustomer$profession) #for only one categorical variable
 plottvalue <- function(object, var = NULL) {
-  if(object$vartype== "NUM"){
+  if(object$vartype== "NUM" | object$vartype =="MIX"){
     table <- tvalue_num(object)
     p <- ncol(table)
     variables <- rownames(table)
@@ -43,7 +43,7 @@ plottvalue <- function(object, var = NULL) {
       labs(title = "t-values")
     print(plot)
   }
-  if(object$vartype== "CAT"){
+  if(object$vartype== "CAT" | object$vartype=="MIX"){
     if (is.null(var) == FALSE) {
       if (is.character(var) == TRUE | is.factor(var) == TRUE) {
         table <- tvalue_cat(object, var)
@@ -75,7 +75,7 @@ plottvalue <- function(object, var = NULL) {
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotsizeeff(obj)
 plotsizeeff <- function(object){
-  if(object$vartype=="NUM"){
+  if(object$vartype=="NUM" | object$vartype=="MIX"){
     table <- effectsize(object)
     p <- ncol(table)
     variables <- rownames(table)
@@ -104,7 +104,7 @@ plotsizeeff <- function(object){
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotcorr(obj)
 plotcorr <- function(object) {
-  if(object$vartype=="NUM"){
+  if(object$vartype=="NUM"| object$vartype=="MIX"){
     table <- sort(corr_ratios(object), decreasing = T)
     p <- min(12, length(table))
     corr <- as.data.frame(table[1:p])
@@ -133,7 +133,7 @@ plotcorr <- function(object) {
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' plotVCramer(obj)
 plotVCramer <- function(object, limit=10){
-  if(object$vartype=="CAT"){
+  if(object$vartype=="CAT" | object$vartype=="MIX"){
     table <- vcramer(object)
     p <- length(table)
     if (limit<p){
