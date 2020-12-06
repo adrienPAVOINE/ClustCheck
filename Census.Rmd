@@ -1,0 +1,263 @@
+---
+title: "Remise à niveau M2 SISE - Census"
+author: "Fabrice PETITFRERE"
+date: "7 June 2020"
+output:
+  word_document: 
+    fig_height: 9
+    fig_width: 12
+  html_document:
+    fig_height: 7
+    fig_width: 10
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+##### Si ce n’est pas déjà fait, installer le package « xlsx ». Le charger par la suite (library).
+```{r q01}
+library(xlsx)
+```
+
+## Question 2
+##### Charger le fichier « census.xlsx » sous R (read.xlsx)
+```{r q02}
+#c <- read.xlsx(file="Census.xlsx",sheetIndex=1,header=TRUE,encoding="UTF-8")
+```
+Le code semble figé et n'arrive pas à lire le fichier Census.xlsx. Le fichier semble trop gros pour être lu avec la fonction read.xlsx. On l'exporte donc au format txt avec Excel.
+
+## Question 3
+##### Charger le fichier « census.txt » sous R (read.table, attention aux options)
+```{r q03}
+c <- read.table("Census.txt", header=TRUE, sep="\t")
+head(c)
+```
+
+## Question 4
+##### Combien y a-t-il de variables dans le fichier ? Combien y a-t-il d’observations ? (ncol, nrow)
+```{r q04}
+print(ncol(c))
+print(nrow(c))
+```
+Il y a 11 variables dans le fichier et 48842 observations.
+
+## Question 5
+##### Afficher le résumé des données (summary)
+```{r q05}
+summary(c)
+```
+
+## Question 6
+##### Essayer de répondre aux différentes questions suivantes : quelle est la proportion des hommes (sex = male) ? celle des « classe = more » ? (table ou filtrage + calcul)
+```{r q06}
+#1ère méthode
+c_male <- c[c$sex == 'Male',]
+male_pct <- nrow(c_male) / nrow(c)
+c_classe_more <- c[c$classe == 'more',]
+classe_more_pct <- nrow(c_classe_more) / nrow(c)
+male_pct
+classe_more_pct
+#2ème méthode
+t <- table(c$sex,c$classe)
+male_pct <- sum(t[2,])/nrow(c)
+classe_more_pct <- sum(t[,2]/nrow(c))
+male_pct
+classe_more_pct
+
+```
+La proportion des hommes est de 66,8% et celle des classe = more est de 23,9%.
+
+## Question 7
+##### Quelle est le nombre de personnes travaillant pour le gouvernement (workclass contenant le terme ‘’gov’’) ? (grep + table)
+```{r q07}
+gov_workers_nb <- length(grep(pattern="*gov*",x=c$workclass))
+gov_workers_pct <- gov_workers_nb/nrow(c)
+gov_workers_nb
+gov_workers_pct
+```
+Le nombre de personnes travaillant pour le gouvernement est 6549 dans la base de données, soit 13,4% du total.
+
+## Question 8
+##### Construire le diagramme à bandes pour les variables « marital_status » et « relationship » (http://www.statmethods.net/graphs/bar.html).
+```{r q08}
+#barplot(table(c$marital_status),main="Marital status",cex.axis=0.7,cex.names=0.7,las=2)
+#barplot(table(c$relationship),main="Relationship",cex.axis=0.7,cex.names=0.7)
+barplot(table(c$marital_status),main="Marital status",cex.axis=0.9, las=2)
+barplot(table(c$relationship),main="Relationship",cex.axis=0.9)
+```
+
+## Question 9
+##### Pour les mêmes variables, construire les diagrammes à secteurs (http://www.statmethods.net/graphs/pie.html).
+```{r q09}
+pie(table(c$marital_status),main="Marital status")
+pie(table(c$relationship),main="Relationship")
+```
+
+## Question 10
+##### « Education » correspond en réalité à un niveau d’éducation atteint. C’est donc une variable qualitative ordinale avec les modalités suivantes {Preschool, 1st-4th, 5th-6th, 7th-8th, 9th, 10th, 11th, 12th, HS-grad, Some-college, Assoc-voc, Assoc-acdm, Bachelors, Masters, Prof-school, Doctorate}. Quelle est la proportion des personnes qui ont uniquement le niveau « Preschool » ? (table)
+```{r q10}
+t <- table(c$education)
+preschool_pct <- t["Preschool"]/nrow(c)
+preschool_pct
+```
+La proportion des personnes qui ont uniquement le niveau Preschool est de  0,17%.
+
+## Question 11
+##### Quelle est la proportion de personnes qui ont au moins le niveau « Bachelors » ? (table + astuce)
+```{r q11}
+t <- table(c$education)
+bachelors_plus_pct <- (t["Bachelors"]+t["Masters"]+t["Prof-school"]+t["Doctorate"])/nrow(c)
+bachelors_plus_pct
+```
+La proportion des personnes qui ont au moins le niveau "Bachelors" est de 24,79%.
+
+## Question 12
+##### Croiser les variables « classe » et « sex ». Quelle est la proportion des « more » dans l’échantillon global ? Parmi les hommes ? Parmi les femmes ? Est-ce que ce résultat nous permet de conclure que le niveau de revenu est différent selon que l’on est un homme ou une femme ? (table permet de croiser deux variables, on a une matrice – type matrix - qu’on peut indicer de différentes manières, on peut aussi effectuer des calculs récapitulatifs)
+```{r q12}
+t <- table(c$sex,c$classe)
+t
+classe_more_male_pct <- t[2,2]/sum(t[2,])
+classe_more_male_pct
+classe_more_female_pct <- t[1,2]/sum(t[1,])
+classe_more_female_pct
+```
+La proportion des "more" dans l'échantillon global a été calculé en question 6 et est de 23,9%. La table constituée ici nous permet de vérifier ce résultat, c'est-à-dire (1769+9918)/48842 = 23,9%.<br>
+La proportion des "more" est de 30,4% parmi les hommes et 10,9% parmi les femmes.<br>
+Ce résultat semble donc montrer que les hommes sont plus nombreux que les femmes en proportion à atteindre un certain seuil de niveau de revenu. Un test Chi2 permettra de confirmer ce résultat.
+
+## Question 13
+##### Calculer le KHI-2 du tableau croisé entre « classe » et « sex » (chisq.test, pas de correction de continuité). Puis en déduire le v de Cramer (ex. http://www.r-bloggers.com/example-8-39-calculating-cramers-v/ ; l’objet généré par chisq.test possède la propriété statistic que l’on peut exploiter).
+```{r q13}
+X2 <- chisq.test(t,correct=FALSE)$statistic
+V <- as.numeric(sqrt(X2 / (nrow(c) * (min(nrow(t),ncol(t)) - 1))))
+X2
+cat("V de Cramer:", V)
+```
+
+## Question 14
+##### Confronter le résultat obtenu avec ce que fournit le package « lsr » (fonction cramersV) (https://cran.r-project.org/web/packages/lsr/lsr.pdf). Vos résultats concordent-ils ?
+```{r q14}
+#install.packages("lsr")
+library(lsr)
+cramersV(t,correct=FALSE)
+```
+Les résultats sont concordants entre les 2 méthodes de calcul du V de Cramer.
+
+## Question 15
+##### Croiser maintenant « relationship » et « marital status ». Pour chaque valeur de « relationship », quelle est la modalité de « marital status » qui lui est le plus associé ? Et inversement ? Est-ce que la relation est symétrique ? (il faut appliquer un which.max pour chaque modalité ligne (et colonne pour la 2ème partie de la question) ; avant de se lancer dans une boucle, voir du côté de apply – (https://eric.univlyon2.fr/~ricco/cours/slides/tableaux%20et%20matrices%20avec%20r.pdf pages 12 et 13).
+```{r q15}
+t <- table(c$relationship,c$marital_status)
+t
+# Modalité de "marital status" la plus associée pour chaque valeur de "relationship"
+marital_status_mod <- apply(t,1,which.max)
+relationship <- colnames(t)[marital_status_mod]
+marital_status_mod <- rbind(marital_status_mod,relationship)
+marital_status_mod <- marital_status_mod[2,]
+marital_status_mod
+# Modalité de "relationship" la plus associée pour chaque valeur de "marital_status"
+relationship_mod <- apply(t,2,which.max)
+marital_status <- rownames(t)[relationship_mod]
+relationship_mod <- rbind(relationship_mod,marital_status)
+relationship_mod <- relationship_mod[2,]
+relationship_mod
+```
+La relation entre "relationship" et "marital status" n'est pas symétrique.
+
+## Question 16
+##### Penchons-nous maintenant sur la variable « age ». Calculer sa moyenne et son écart-type (mean,sd).
+```{r q16}
+cat("mean :",mean(c$age))
+cat("sd :",sd(c$age))
+```
+La moyenne de la variable "age" est 38,6 et l'écart-type est 13,7.
+
+## Question 17
+##### Centrer et réduire « age » (scale).
+```{r q17}
+cat(" centered mean :",mean(scale(c$age)))
+cat("reduced sd :",sd(scale(c$age)))
+```
+Moyenne et écart-type prennent les valeurs attendues d'une loi centrée réduite, c'est à dire une moyenne nulle et un écart-type égal à 1.
+
+## Question 18
+##### Calculer la médiane et les quartiles d'ordre 1 et 3 des variables (median, quantile).
+```{r q18}
+#Variable age
+median(c$age)
+quantile(c$age,0.25)
+quantile(c$age,0.75)
+#Variable hours_per_week
+median(c$hours_per_week)
+quantile(c$hours_per_week,0.25)
+quantile(c$hours_per_week,0.75)
+```
+La médiane de la variable "age" est 37. Q1 est égal à 28 et Q2 à 48.
+La médiane de la variable "hours_per_week" est 40. Q1 est égal à 40 et Q2 à 45.
+
+## Question 19
+##### Contruire le graphique BOXPLOT (boîte de Tukey) pour la variable « âge » (boxplot). Que remarque-t-on ?
+```{r q19}
+boxplot(c$age,main="Distribution de l'âge des individus")
+```
+L'âge des personnes est relativement concentré entre Q1 et Q3, soit 28 et 48 ans.
+
+## Question 20
+##### Produire l'histogramme de la variable « âge ».
+```{r q20}
+hist(c$age, main="Histogramme de la variable age", xlab="Age")
+```
+
+## Question 21
+##### Calculer la corrélation entre « age » et « hours per week » (cor). Peut-on dire que ces deux variables sont liées ? Réaliser le graphique nuage de points entre ces deux variables pour affiner votre réponse. Que conclure ?
+```{r q21}
+cor(c$age,c$hours_per_week)
+plot(c$age,c$hours_per_week, xlab="Age", ylab="Hours per week")
+```
+Le coefficient de corrélation r est égal à 0,072 ce qui démontre qu'il n'y a quasiment aucune liaison entre l'âge et le nombre d'heures travaillées par semaine. En traçant le nuage de points, on voit clairement qu'il n'y aucune relation linéaire entre les 2 variables.
+
+
+## Question 22
+##### Construire le boxplot de « âge » selon « relationship ». Il y a des choses à remarquer dans ce graphique ? (http://www.statmethods.net/graphs/boxplot.html)
+```{r q22}
+boxplot(age~relationship, data=c)
+```
+De nettes différences d'âge apparaissent en fonction des catégories de relation sociale (relationship) des individus. La médiane la plus haute est celle des maris (husband) suivie de près par les personnes non-marriées (unmarried) et les femmes (wife). Il semble que les personnes en mariage (maris et femmes) sont en moyenne plus âgées. La catégorie avec un âge le moins élevé sont les enfants indépendants (own-child).
+
+
+## Question 23
+##### Calculer la moyenne de l'âge pour chaque valeur de « relationship » (tapply). Le calcul confirme l'impression laissée par le graphioque précédent ?
+```{r q23}
+#Moyenne de la variable âge par categorie de "relationship"
+age_moy_relationship <- tapply(X=c$age,INDEX=c$relationship,mean)
+age_moy_relationship
+```
+Ce calcul confirme l'impression laissé par le graphique précédent. Les maris représentent la catégorie d'âge la plus élevée en moyenne à 43,9 ans. Les personnes non-marriées et les femmes ont sensiblement la même moyenne d'âge, environ 40 ans tandis que les enfants indépendants (own-child) ont la moyenne d'âge la plus basse (24,8 ans). Médiane et moyenne sont ici relativement similaires ce qui démontre une répartition relativement homogène autour de la médiane pour chaque catégorie.
+
+
+## Question 24
+##### Calculer le rapport de corrélation entre « age » et « relationship ».
+```{r q24}
+# Variance de la variable âge par categorie de "relationship"
+age_var_relationship <- tapply(X=c$age,INDEX=c$relationship,var)
+age_var_relationship
+# Décompte des individus par categorie de "relationship"
+count_relationship <- table(c$relationship)
+count_relationship
+# Création d'une table regroupant moyenne, variance et décompte par catégorie de "relationship"
+tt <- rbind(age_moy_relationship,age_var_relationship,count_relationship)
+tt
+# Calcul de la variance inter-groupes ou expliquée
+s2E <- sum(tt[3,]*(tt[1,]-mean(c$age))^2)/nrow(c)
+s2E
+# Calcul de la variance résiduelle
+s2R <- sum(tt[3,]*tt[2,])/nrow(c)
+s2R
+# Calcul du rapport de corrélation
+n2 <- sqrt(s2E/(s2E+s2R))
+n2
+```
+Le rapport de corrélation entre « âge » et « relationship » est de 0,47, ce qui démontre une liaison certaine entre ces 2 variables.
