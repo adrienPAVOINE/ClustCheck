@@ -218,7 +218,6 @@ Component Analysis on the categorical variables of the dataset.
 
     ClustCheck::get_MCA(cbank)
 
-    ## [1] 1 2
 
 ![](Tutorial_files/figure-markdown_strict/unnamed-chunk-18-1.png)
 
