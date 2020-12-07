@@ -2,7 +2,6 @@
 # CLUSTCHECK
 # Class constructor
 # ------------------------------------------------------------------------- #
-
 #' Constructor
 #'
 #' @param data a dataset that contains all the active variables
@@ -61,7 +60,7 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
     instance$cat_p <- nb_qual #number of categorical variables
     instance$cat_var_names <- names(which(cat_ind == TRUE)) #names of the categorical variables
     instance$cat_ind <- cat_ind
-    instance$vcramer <- vcramer(instance) #return the cramer V value for all the categoricalvariables
+    #instance$vcramer <- vcramer(instance) #return the cramer V value for all the categoricalvariables
     }
   num_ind = sapply(active_data,function(x)is.numeric(x)|is.double(x))#To get all the numerical variables data
   nb_quanti <- sum(num_ind)
@@ -72,7 +71,7 @@ Dataset <- function(data,pred_clusters,true_clusters=FALSE){
     instance$num_p <- nb_quanti #number of numerical variables
     instance$num_var_names <- names(num_data) #names of the numerical variables
     instance$num_ind <- num_ind #index of the numerical variables
-    instance$corr.ratio <- corr_ratios(instance)#return the corr ratio values for all the numerical variables
+    #instance$corr.ratio <- corr_ratios(instance)#return the corr ratio values for all the numerical variables
   }
   if (nb_qual>0){
     if (nb_quanti>0){

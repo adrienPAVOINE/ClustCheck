@@ -184,8 +184,8 @@ dunn_indexC <- function(object, clusters=object$pred_clusters) {
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' validation(obj, BankCustomer$Cluster)
-validation <- function(object, true_clusters = object$true_clusters) {
+#' EvaluateC(obj, BankCustomer$Cluster)
+EvaluateC <- function(object, true_clusters = object$true_clusters) {
   if (is.null(true_clusters) == FALSE) {
     table <- contingency(object, true_clusters)
     tab <- table[[1]]

@@ -4,10 +4,12 @@
 \alias{plotcorr}
 \title{Plot of correlations (numerical variables)}
 \usage{
-plotcorr(object)
+plotcorr(object, limit = 10)
 }
 \arguments{
 \item{object}{An object of class ccdata}
+
+\item{limit}{Number of variables to display by descending value (default=10)}
 }
 \value{
 A bar plot of the correlations between numerical variables and the cluster vector.

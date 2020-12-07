@@ -61,7 +61,7 @@ plottvalue <- function(object, var = NULL) {
       }
     }
     else {
-      stop("Error : input var is missing and required for categorical or mixed data.")
+      print("Error : input var is missing and required for categorical or mixed data.")
     }
   }
 }
