@@ -20,9 +20,9 @@ corr_ratios <- function(object) {
   if (is.null(object$num_p) == TRUE) {
     stop("Error : Correlations ratios can only be calculated on numerical variables.")
   }
-  classes <- object$pred_clusters
-  cl <- object$cluster_names
-  n_clusters <- length(cl)
+  classes <- object$pred_clusters # clusters
+  cl <- object$cluster_names #cluster names
+  n_clusters <- length(cl) #numbers of clusters
 
   #SCT------------
   sct_f <- function(x) {
@@ -41,8 +41,8 @@ corr_ratios <- function(object) {
     m <- mean(x)
     sce <- 0
     for (i in cl) {
-      ind_g <- which(classes == i)
-      ng <- length(ind_g)
+      ind_g <- which(classes == i) #get index of rows of type i cluster
+      ng <- length(ind_g) # number of rows of type i cluster
       sce <- sce + (ng * (mean(x[ind_g]) - m) ** 2)
     }
     return(sce)
@@ -54,8 +54,8 @@ corr_ratios <- function(object) {
     m <- mean(x)
     scr <- 0
     for (i in cl) {
-      ind_g <- which(classes == i)
-      ng <- length(ind_g)
+      ind_g <- which(classes == i)  #get index of rows of type i cluster
+      ng <- length(ind_g) # number of rows of type i cluster
       for (j in ind_g) {
         scr <- scr + (x[j] - mean(x[ind_g])) ** 2
       }
@@ -87,21 +87,22 @@ tvalue_num <-function(object){
   if (object$vartype == "CAT") {
     stop("Error : Correlations ratios can only be calculated on numerical variables.")
   }
-  data <- object$num_data
-  classes <- object$pred_clusters
-  n <- object$n
-  var_names <- object$num_var_names
-  len_col<- object$num_p
-  cl <- object$cluster_names
-  n_clusters <- length(cl)
+  data <- object$num_data #numeric data
+  classes <- object$pred_clusters #clusters
+  n <- object$n #number of rows
+  var_names <- object$num_var_names #variable names
+  len_col<- object$num_p #number of numeric variables
+  cl <- object$cluster_names #cluster names
+  n_clusters <- length(cl) #numbers of clusters
+  #initialize t_value_table : matrix indexing var_names by row and cluster names by column
   tvalue_table <- matrix(nrow = length(var_names), ncol = n_clusters, dimnames = list(var_names,cl))
   for (x_col in var_names){
-    x <- data[[x_col]]
+    x <- data[[x_col]]  #values of variable x_col
     var_x <- var(x)
     m <- mean(x)
     for(i in cl){
-      ind_g <- which(classes==i)
-      ng <-length(ind_g)
+      ind_g <- which(classes==i)  #get index of rows of type i cluster
+      ng <-length(ind_g) # number of rows of type i cluster
       mean_g <- mean(x[ind_g])
       var_x <- var(x)
       vt_val <- (mean_g - m) / sqrt(((n-ng)*var_x)/((n-1)*ng))
@@ -143,16 +144,16 @@ effectsize <-function(object){
     var_x<-var(x)
     m<-mean(x)
     for(i in cl){
-      ind_g<-which(classes==i)
-      ind_a<-which(classes!=i)
-      ng<-length(ind_g)
-      na<-length(ind_a)
+      ind_g<-which(classes==i) #get index of rows of type i cluster
+      ind_a<-which(classes!=i) #get index of rows of type cluster !=i
+      ng<-length(ind_g) # number of rows of type i cluster
+      na<-length(ind_a) # number of rows where cluster type != i
 
-      mean_g<-mean(x[ind_g])
-      mean_a<-mean(x[ind_a])
+      mean_g<-mean(x[ind_g]) #mean of cluster i
+      mean_a<-mean(x[ind_a]) #mean of clusters != i
 
-      sg2<-var(x[ind_g])
-      sa2<-var(x[ind_a])
+      sg2<-var(x[ind_g])  #variance of cluster i
+      sa2<-var(x[ind_a])  #variance of clusters != i
 
       effect_size<-(mean_g - mean_a)*sqrt((ng+na)/( (ng-1)*sg2 +(na-1)*sa2 ))
       effect_size_table[x_col,i]<- effect_size
