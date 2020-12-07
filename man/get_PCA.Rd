@@ -21,4 +21,5 @@ Applying a principal component analysis (PCA) to the feature variables
 data(BankCustomer)
 obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 get_PCA(obj)
+
 }

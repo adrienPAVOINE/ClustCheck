@@ -65,6 +65,9 @@ plottvalue <- function(object, var = NULL) {
     }
   }
 }
+# ------------------------------------------------------------------------- #
+# size'effect plot
+# ------------------------------------------------------------------------- #
 #' Plot of size effect (numerical variables)
 #'
 #' @param object An object of class ccdata
@@ -95,6 +98,9 @@ plotsizeeff <- function(object){
     cat("Error : Size effect calculations are for numerical variables only.")
   }
 }
+# ------------------------------------------------------------------------- #
+# correlation numeric plot
+# ------------------------------------------------------------------------- #
 #' Plot of correlations (numerical variables)
 #'
 #' @param object An object of class ccdata
@@ -131,6 +137,9 @@ plotcorr <- function(object, limit=10) {
     cat("Error : Correlations calculations are for numerical variables only.")
   }
 }
+# ------------------------------------------------------------------------- #
+# Cramer'V plot
+# ------------------------------------------------------------------------- #
 #' Plot of Cramer's V (categorical variables)
 #'
 #' @param object An object of class ccdata
@@ -165,6 +174,9 @@ plotVCramer <- function(object, limit=10){
     cat("Error : Cramer's V calculations are for categorical variables only.")
   }
 }
+# ------------------------------------------------------------------------- #
+# phi'values plot
+# ------------------------------------------------------------------------- #
 #' Plot of Phi values (categorical variables)
 #'
 #' @param object An object of class ccdata

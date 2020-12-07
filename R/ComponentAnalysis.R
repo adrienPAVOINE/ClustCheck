@@ -23,6 +23,7 @@
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
 #' get_PCA(obj)
+#'
 get_PCA <- function(object){
   if(object$vartype=="NUM" |object$vartype=="MIX"){
     num_data <-object$num_data
@@ -77,6 +78,9 @@ get_PCA <- function(object){
   }
 
 }
+# ------------------------------------------------------------------------- #
+# MCA
+# ------------------------------------------------------------------------- #
 #' Multiple Component Analysis
 #' Show two graphs to illustrate the cluster with all the categorical variables of your dataset.
 #'
@@ -142,6 +146,9 @@ get_MCA <- function(object){
   }
 
 }
+# ------------------------------------------------------------------------- #
+# FAMD
+# ------------------------------------------------------------------------- #
 #' Factorial Analysis of Mixed Data
 #'
 #' @param object An object of class ccdata

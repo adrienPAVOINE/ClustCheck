@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions_metrics.R
 \name{EvaluateC}
 \alias{EvaluateC}
-\title{Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)}
+\title{EvaluateC}
 \usage{
 EvaluateC(object, true_clusters = object$true_clusters)
 }

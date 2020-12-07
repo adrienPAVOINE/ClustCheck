@@ -69,6 +69,9 @@ corr_ratios <- function(object) {
   #print(corr)
   return(corr)
 }
+# ------------------------------------------------------------------------- #
+# T values numeric table
+# ------------------------------------------------------------------------- #
 #' Test Value for numerical variables
 #'
 #' Calculates the test values table for each variable per cluster
@@ -113,6 +116,9 @@ tvalue_num <-function(object){
   #print(tvalue_table)
   return(tvalue_table)
 }
+# ------------------------------------------------------------------------- #
+# Effect'size table
+# ------------------------------------------------------------------------- #
 #' Effect Size for numerical variables
 #'
 #' @param object an object of class ccdata
@@ -163,4 +169,3 @@ effectsize <-function(object){
   #print(effect_size_table)
   return(effect_size_table)
 }
-

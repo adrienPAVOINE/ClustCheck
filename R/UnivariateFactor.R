@@ -31,6 +31,9 @@ contingency <- function(object, var){
   pourc <- addmargins(prop.table(addmargins(tableau,1),1),2) #prop.table to have the percentage by lines
   return(list(tableau, eff, pourc, nco, nli))
 }
+# ------------------------------------------------------------------------- #
+# Cramer'V table
+# ------------------------------------------------------------------------- #
 #' Cramer Values
 #'
 #' Calulates the cramer's V values between two categorical variables
@@ -83,6 +86,9 @@ vcramer <- function(object, var = FALSE){
     cat("Error : Cramer's V calculations are for categorical variables only.")
   }
 }
+# ------------------------------------------------------------------------- #
+# Phi's values table
+# ------------------------------------------------------------------------- #
 #' Value Phi
 #'
 #'Calculate the Phi value for all cluster*mode of one selected variable.
@@ -136,6 +142,9 @@ phivalue <- function(object, var) {
     stop("Error : There are no categorical variable in your dataset.")
   }
 }
+# ------------------------------------------------------------------------- #
+# T-values categorical table
+# ------------------------------------------------------------------------- #
 #' t-value for categorical variables
 #'
 #'Calculates the test values for all cluster*modes of one selected variable.
@@ -177,6 +186,9 @@ tvalue_cat <- function(object, var) {
     stop("Error : var must be a categorical variable")
   }
 }
+# ------------------------------------------------------------------------- #
+# AFC
+# ------------------------------------------------------------------------- #
 #' Correspondence Analysis visualisation
 #' (two graphs to illustrate the cluster with a specific categorical selected variable)
 #'

@@ -25,6 +25,9 @@ transformdata <- function(object){
   ind <- factoextra::get_famd_ind(res.famd)
   return(as.data.frame(ind$coord))
 }
+# ------------------------------------------------------------------------- #
+# Silhouette Values
+# ------------------------------------------------------------------------- #
 #' Silhouette coefficient
 #'
 #' @param object An object of class ccdata
@@ -72,6 +75,9 @@ silhouetteC <- function(object, clusters=object$pred_clusters) {
   }
   return(list(cluster_silhouette=sk, mean_silhouette=mean(s)))
 }
+# ------------------------------------------------------------------------- #
+# davies-Bouldin partition metric
+# ------------------------------------------------------------------------- #
 #' Davies-Bouldin Index
 #'
 #' @param object An object of class ccdata
@@ -121,6 +127,9 @@ davies_bouldinC <- function(object, clusters=object$pred_clusters) {
   DB <- sum(maxR)/k
   return(DB)
 }
+# ------------------------------------------------------------------------- #
+# Dunn partition metric
+# ------------------------------------------------------------------------- #
 #' Dunn Index
 #'
 #' @param object An object of class ccdata
@@ -171,6 +180,11 @@ dunn_indexC <- function(object, clusters=object$pred_clusters) {
   DI <- min(d2[d2>0])/max(d1)
   return(DI)
 }
+# ------------------------------------------------------------------------- #
+# Classification evalusation
+# ------------------------------------------------------------------------- #
+#' EvaluateC
+#'
 #' Evaluates the performance of the classifier by comparing predicted vs true clusters (true clusters required as input)
 #'
 #' @param object An object of class ccdata
@@ -235,6 +249,9 @@ EvaluateC <- function(object, true_clusters = object$true_clusters) {
     stop("Error : you didn't enter a true cluster vector")
   }
 }
+# ------------------------------------------------------------------------- #
+# Student, Anova and khi2 tests
+# ------------------------------------------------------------------------- #
 #' Statistical Test
 #'
 #' @param object An object of class ccdata
