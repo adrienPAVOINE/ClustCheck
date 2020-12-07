@@ -61,7 +61,7 @@ plottvalue <- function(object, var = NULL) {
       }
     }
     else {
-      print("Error : input var is missing and required for categorical or mixed data.")
+      print("Please enter a categorical vector if you want to observe the t value.")
     }
   }
 }
