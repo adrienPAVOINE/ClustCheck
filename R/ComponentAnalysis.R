@@ -123,7 +123,7 @@ get_MCA <- function(object){
       }
       #Importance of the variable
       VarPlot <- factoextra::fviz_mca_var (res.mca,select.var = list(cos2=0.85), repel = TRUE)
-      print(dim_axes)
+      #print(dim_axes)
       #simple biplot between sample and active variables
       biplot <- factoextra::fviz_mca_biplot(res.mca, axes=dim_axes,
                                             col.ind = classes, palette = "jco",
