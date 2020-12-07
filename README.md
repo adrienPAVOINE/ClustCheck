@@ -10,7 +10,7 @@ test the quality of the clustering.
 Installing the package
 ----------------------
 
-    #devtools::install_github("adrienPAVOINE/ClustCheck")
+    devtools::install_github("adrienPAVOINE/ClustCheck")
 
 Tutorial for package usage
 --------------------------
@@ -168,7 +168,6 @@ A bar graph of the values can be plotted with the function
 
 ![](Tutorial_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
-    ## [1] "Error : input var is missing and required for categorical or mixed data."
 
 -   Effect size Effect size is another way to measure the strength of
     the relationship between variables and cluster groups. Cohen’s
