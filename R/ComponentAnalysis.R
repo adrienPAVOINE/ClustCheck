@@ -103,15 +103,15 @@ get_MCA <- function(object){
     classes <- object$pred_clusters
     label_to_show<-"var"
     #MCA
+    res.mca = ExPosition::epMCA(data.quali, graphs = FALSE)
     #We use the Benzecri correction
-    res.mca = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
-    eig.val <- factoextra::get_eigenvalue(res.mca)
-    eig_plot <- factoextra::fviz_eig(res.mca, addlabels = TRUE, ylim = c(0, 50))
+    res.mca.benzecri = ExPosition::epMCA(data.quali, graphs = FALSE, correction = "b")
+    eig.val <- factoextra::get_eigenvalue(res.mca.benzecri)
+    eig_plot <- factoextra::fviz_eig(res.mca.benzecri, addlabels = TRUE, ylim = c(0, 50))
     #keep values explaining 85% of total variance
     dims<-c(which(eig.val[,3]<85),which(eig.val[,3]>=85)[1])
     n_dim <- length(dims)
     eig.val.kept <- eig.val[dims,]
-    #keep values where eigenvalue > 1
     if(n_dim==1){
       n_dim<-2
     }
