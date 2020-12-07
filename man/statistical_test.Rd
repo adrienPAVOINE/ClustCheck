@@ -9,7 +9,7 @@ statistical_test(object, var)
 \arguments{
 \item{object}{An object of class ccdata}
 
-\item{var}{The string of the variable name}
+\item{var}{Vector of a variable present in the dataset}
 }
 \value{
 A sentence indicating whether the two variables are significantly different
@@ -20,6 +20,6 @@ Statistical Test
 \examples{
 data(BankCustomer)
 obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-statistical_test(obj,"profession") #To know if the cluster have significantly the same job or not
-statistical_test(obj,"revenu") #To know if the cluster have significantly the same salary
+statistical_test(obj,BankCustomer$profession) #the cluster have significantly the same job?
+statistical_test(obj,BankCustomer$revenu) #The cluster have significantly the same salary?
 }

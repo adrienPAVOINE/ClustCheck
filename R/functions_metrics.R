@@ -238,7 +238,7 @@ EvaluateC <- function(object, true_clusters = object$true_clusters) {
 #' Statistical Test
 #'
 #' @param object An object of class ccdata
-#' @param var The string of the variable name
+#' @param var Vector of a variable present in the dataset
 #'
 #' @return A sentence indicating whether the two variables are significantly different
 #' @export
@@ -246,54 +246,56 @@ EvaluateC <- function(object, true_clusters = object$true_clusters) {
 #' @examples
 #' data(BankCustomer)
 #' obj <- Dataset(BankCustomer, BankCustomer$Cluster)
-#' statistical_test(obj,"profession") #To know if the cluster have significantly the same job or not
-#' statistical_test(obj,"revenu") #To know if the cluster have significantly the same salary
+#' statistical_test(obj,BankCustomer$profession) #the cluster have significantly the same job?
+#' statistical_test(obj,BankCustomer$revenu) #The cluster have significantly the same salary?
 statistical_test <- function(object, var){
+  namevar <- deparse(substitute(var))
+  varname <- strsplit(namevar,split='$', fixed = TRUE)[[1]][2]
   k <- length(object$cluster_names)
-  if(is.numeric(object$all_data[[var]])){
+  if(is.numeric(object$all_data[[varname]])){
     if (k == 1){
       stop("Error : you have only one cluster group")
     }else if(k == 2){
       groupe <- unique(object$pred_clusters)
       cluster1 <- data[object$pred_clusters==groupe[1],]
-      moy1 <- mean(cluster1[[var]])
+      moy1 <- mean(cluster1[[varname]])
       cluster2 <- data[object$pred_clusters==groupe[2],]
-      moy2 <- mean(cluster2[[var]])
+      moy2 <- mean(cluster2[[varname]])
       if (moy1>moy2){
-        test <- t.test(cluster1[[var]], cluster2[[var]], alternative = "greater")
+        test <- t.test(cluster1[[varname]], cluster2[[varname]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Mean of", var, "is signifantly higher in", groupe[1], "than in", groupe[2])
+          cat("Mean of", varname, "is signifantly higher in", groupe[1], "than in", groupe[2])
         }else{
-          test <- t.test(cluster1[[var]], cluster2[[var]])
+          test <- t.test(cluster1[[varname]], cluster2[[varname]])
           if (test$p.value < 0.05){
-            cat("Mean of", var, "is significantly different between the two cluster groups")
+            cat("Mean of", varname, "is significantly different between the two cluster groups")
           }}
       }else{
-        test <- t.test(cluster2[[var]], cluster1[[var]], alternative = "greater")
+        test <- t.test(cluster2[[varname]], cluster1[[varname]], alternative = "greater")
         if (test$p.value < 0.05){
-          cat("Mean of", var, "is signifantly higher in", groupe[2], "than in", groupe[])
+          cat("Mean of", varname, "is signifantly higher in", groupe[2], "than in", groupe[])
         }else{
-          test <- t.test(cluster1[[var]], cluster2[[var]])
+          test <- t.test(cluster1[[varname]], cluster2[[varname]])
           if (test$p.value < 0.05){
-            cat("Mean of", var, "is significantly different between the two cluster groups")
+            cat("Mean of", varname, "is significantly different between the two cluster groups")
           }
         }
       }
     }else{
-      boxplot(object$all_data[[var]]~object$pred_clusters)
-      mod=aov(object$all_data[[var]]~object$pred_clusters)
+      boxplot(object$all_data[[varname]]~object$pred_clusters)
+      mod=aov(object$all_data[[varname]]~object$pred_clusters)
       p_value <- (summary(mod)[[1]][[1,"Pr(>F)"]])
       if (p_value < 0.05){
-        cat("The cluster group has a significant impact on", var)
+        cat("The cluster group has a significant impact on", varname)
       }else{
-        cat("There are not significant impact of the cluster on", var)
+        cat("There are not significant impact of the cluster on", varname)
       }
     }
   }else{
-    khi2 <- chisq.test(table(object$pred_clusters, object$all_data[[var]]))
+    khi2 <- chisq.test(table(object$pred_clusters, object$all_data[[varname]]))
     if (khi2$p.value < 0.05){
-      cat("The cluster significantly doesn't have the same ", var)
+      cat("The cluster significantly doesn't have the same ", varname)
     }else
-      cat("There are not significant impact of the cluster on", var)
+      cat("There are not significant impact of the cluster on", varname)
   }
 }
