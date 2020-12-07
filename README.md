@@ -10,7 +10,7 @@ test the quality of the clustering.
 Installing the package
 ----------------------
 
-    devtools::install_github("adrienPAVOINE/ClustCheck")
+    #devtools::install_github("adrienPAVOINE/ClustCheck")
 
 Tutorial for package usage
 --------------------------
@@ -45,26 +45,26 @@ function).
 
 Now that our dataset has been loaded to the object *cbank*, we can
 proceed with the cluster analysis. If you have any doubt about a
-function, use **help(nom\_fonction)**, exemple : **help(Dataset)**.
+function, use **help(name\_function)**, exemple : **help(Dataset)**.
 
 **Note: In the following code, *cbank* is the object instanciated by the
 Dataset() function previously shown.**
+
+------------------------------------------------------------------------
 
 ### Analysing the clustering with single variables
 
 Let’s start our analysis by looking at how single variables influence
 the clustering. We can deal with two possible variable types ;
 categorical variables and numerical ones. We’ll be starting with the
-former. \#\#\#\# Categorical variables
+former.
 
--   Cramer’s V Here, the Cramer’s V values will be computed for the 4
-    categorical variables of our dataset. To return the Cramer’s V
-    values only between the cluster groups and the variable *profession*
-    for example, the variable needs to be entered as a function input. A
-    bar graph of the values can be plotted with the function
-    *plotVCramer()*.
+#### Categorical variables
 
-<!-- -->
+-   Cramer’s V
+
+Here, the Cramer’s V values will be computed for the 4 categorical
+variables of our dataset.
 
     ClustCheck::vcramer(cbank)
 
@@ -74,20 +74,27 @@ former. \#\#\#\# Categorical variables
     ## carte_bleue 0.06733646
     ## pea         0.14985464
 
+To return the Cramer’s V values only between the cluster groups and the
+variable *profession* for example, the variable needs to be entered as a
+function input.
+
     ClustCheck::vcramer(cbank, var = BankCustomer$profession)
 
     ## Cramer value between the cluster vector and   BankCustomer$profession  =  0.7827627
 
+A bar graph of the values can be plotted with the function
+*plotVCramer()*.
+
     ClustCheck::plotVCramer(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
--   V-Test The Test values can be computed either against the modes of a
-    categorical variable (i.e. profession) with the function
-    *tvalue\_cat* or against the numerical variables with the function
-    *tvalue\_num()*. We use *tvalue\_cat()* in our example below.
+-   V-Test
 
-<!-- -->
+The Test values can be computed either against the modes of a
+categorical variable (i.e. profession) with the function *tvalue\_cat*
+or against the numerical variables with the function *tvalue\_num()*. We
+use *tvalue\_cat()* in our example below.
 
     ClustCheck::tvalue_cat(cbank, var = BankCustomer$profession)
 
@@ -102,12 +109,10 @@ former. \#\#\#\# Categorical variables
     ##   2  1.0601473
     ##   3  0.1008806
 
--   Phi-value The Phi values can be computed against the modes of a
-    categorical variable (i.e. profession) with the function
-    *phivalue()*. Bar graphs can be plotted with the function
-    *plotphi()*.
+-   Phi-value
 
-<!-- -->
+The Phi values can be computed against the modes of a categorical
+variable (i.e. profession) with the function *phivalue()*.
 
     ClustCheck::phivalue(cbank, var = BankCustomer$profession)
 
@@ -117,44 +122,46 @@ former. \#\#\#\# Categorical variables
     ##   2 -0.1381  0.3093 -0.3404 -0.0873  0.2876  0.1440  0.1818
     ##   3  0.2580 -0.0921 -0.3670  0.4309 -0.1031  0.1864  0.0151
 
+Bar graphs can be plotted with the function *plotphi()*.
+
     ClustCheck::plotphi(cbank, var = BankCustomer$profession)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
--   Correspondance Analysis The clustering can be analysed through
-    visualisation by plotting the clusters against the modes of a
-    categorical variable (i.e. profession). It shows the frequency of
-    the modes in each cluster as well as a plot of the coordinates of
-    the clusters centers against the modes of the variable.
+-   Correspondance Analysis
 
-<!-- -->
+The clustering can be analysed through visualisation by plotting the
+clusters against the modes of a categorical variable (i.e. profession).
+It shows the frequency of the modes in each cluster as well as a plot of
+the coordinates of the clusters centers against the modes of the
+variable.
 
     ClustCheck::vizAFC(cbank, var = BankCustomer$profession)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
 #### Numerical Variables
 
 Lets’s focus now on the numerical variables of our dataset.
 
--   Correlation Correlation ratios can be computed for all numerical
-    variables. A bar graph of the ratios can be plotted with the
-    function *plotcorr()*.
+-   Correlation
 
-<!-- -->
+Correlation ratios can be computed for all numerical variables.
 
     ClustCheck::corr_ratios(cbank)
 
     ##        age anciennete     revenu      score 
     ##  0.2980303  0.3505494  0.8464643  0.1119814
 
+A bar graph of the ratios can be plotted with the function *plotcorr()*.
+
     ClustCheck::plotcorr(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-13-1.png) -
-V-Test call Similar to the categorical variables, test values can be
-computed for the numerical variables with the function *tvalue\_num()*.
-A bar graph of the values can be plotted with the function
-*plottvalue()*.
+![](README_files/figure-markdown_strict/unnamed-chunk-13-1.png) - V-Test
+call
+
+Similar to the categorical variables, test values can be computed for
+the numerical variables with the function *tvalue\_num()*.
 
     ClustCheck::tvalue_num(cbank)
 
@@ -164,20 +171,23 @@ A bar graph of the values can be plotted with the function
     ## revenu     11.150443 -4.234765 -5.898917
     ## score       4.048566 -2.232756 -1.444048
 
+A bar graph of the values can be plotted with the function
+*plottvalue()*.
+
      ClustCheck::plottvalue(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
+    ## [1] "Error : input var is missing and required for categorical or mixed data."
 
--   Effect size Effect size is another way to measure the strength of
-    the relationship between variables and cluster groups. Cohen’s
-    magnitude description can be used as a useful scale to evaluate this
-    strength. In our example below, we can see the overwhelming
-    influence of revenue in the cluster group 1. Bar graphs can be
-    plotted with the function *plotsizeeff()*.
-    <a href="https://en.wikipedia.org/wiki/Effect_size" class="uri">https://en.wikipedia.org/wiki/Effect_size</a>
+-   Effect size
 
-<!-- -->
+Effect size is another way to measure the strength of the relationship
+between variables and cluster groups. Cohen’s magnitude description can
+be used as a useful scale to evaluate this strength. In our example
+below, we can see the overwhelming influence of revenue in the cluster
+group 1.
+<a href="https://en.wikipedia.org/wiki/Effect_size" class="uri">https://en.wikipedia.org/wiki/Effect_size</a>
 
     ClustCheck::effectsize(cbank)
 
@@ -187,9 +197,13 @@ A bar graph of the values can be plotted with the function
     ## revenu      5.2245778 -0.7676589 -1.1504799
     ## score       0.8045345 -0.3859882 -0.2480678
 
+Bar graphs can be plotted with the function *plotsizeeff()*.
+
     ClustCheck::plotsizeeff(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-17-1.png)
+
+------------------------------------------------------------------------
 
 ### Analysing the clustering with multiple variables
 
@@ -207,21 +221,28 @@ Component Analysis on the categorical variables of the dataset.
 
     ## [1] 1 2
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-18-1.png)
-\#\#\#\# Numerical variables The function *get\_PCA()* offers a graphic
-visualisation of a Principal Component Analysis on the numerical
-variables of the dataset.
+![](README_files/figure-markdown_strict/unnamed-chunk-18-1.png)
+
+#### Numerical variables
+
+The function *get\_PCA()* offers a graphic visualisation of a Principal
+Component Analysis on the numerical variables of the dataset.
 
     ClustCheck::get_PCA(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-19-1.png)![](Tutorial_files/figure-markdown_strict/unnamed-chunk-19-2.png)
-\#\#\#\# Mixed variables The function *get\_FAMD()* offers a graphic
-visualisation of a Factorial Analysis of Mixed Data. This function is
-intended for datasets with mixed data only, like in our case example.
+![](README_files/figure-markdown_strict/unnamed-chunk-19-1.png)![](README_files/figure-markdown_strict/unnamed-chunk-19-2.png)
+
+#### Mixed variables
+
+The function *get\_FAMD()* offers a graphic visualisation of a Factorial
+Analysis of Mixed Data. This function is intended for datasets with
+mixed data only, like in our case example.
 
     ClustCheck::get_FAMD(cbank)
 
-![](Tutorial_files/figure-markdown_strict/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-20-1.png)
+
+------------------------------------------------------------------------
 
 ### Evaluation metrics
 
@@ -261,6 +282,8 @@ though. In this cas, the higher the score, the better the clustering.
     ClustCheck::dunn_indexC(cbank)
 
     ## [1] 0.915563
+
+------------------------------------------------------------------------
 
 ### That’s it!
 
