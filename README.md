@@ -10,7 +10,7 @@ test the quality of the clustering.
 Installing the package
 ----------------------
 
-    #devtools::install_github("adrienPAVOINE/ClustCheck")
+    devtools::install_github("adrienPAVOINE/ClustCheck")
 
 Tutorial for package usage
 --------------------------
@@ -87,7 +87,7 @@ A bar graph of the values can be plotted with the function
 
     ClustCheck::plotVCramer(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 -   V-Test
 
@@ -126,7 +126,7 @@ Bar graphs can be plotted with the function *plotphi()*.
 
     ClustCheck::plotphi(cbank, var = BankCustomer$profession)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 -   Correspondance Analysis
 
@@ -138,7 +138,7 @@ variable.
 
     ClustCheck::vizAFC(cbank, var = BankCustomer$profession)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
 #### Numerical Variables
 
@@ -157,8 +157,8 @@ A bar graph of the ratios can be plotted with the function *plotcorr()*.
 
     ClustCheck::plotcorr(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-13-1.png) - V-Test
-call
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-13-1.png) -
+V-Test call
 
 Similar to the categorical variables, test values can be computed for
 the numerical variables with the function *tvalue\_num()*.
@@ -176,9 +176,8 @@ A bar graph of the values can be plotted with the function
 
      ClustCheck::plottvalue(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
-    ## [1] "Error : input var is missing and required for categorical or mixed data."
 
 -   Effect size
 
@@ -201,7 +200,7 @@ Bar graphs can be plotted with the function *plotsizeeff()*.
 
     ClustCheck::plotsizeeff(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-17-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-17-1.png)
 
 ------------------------------------------------------------------------
 
@@ -221,7 +220,7 @@ Component Analysis on the categorical variables of the dataset.
 
     ## [1] 1 2
 
-![](README_files/figure-markdown_strict/unnamed-chunk-18-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-18-1.png)
 
 #### Numerical variables
 
@@ -230,7 +229,7 @@ Component Analysis on the numerical variables of the dataset.
 
     ClustCheck::get_PCA(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-19-1.png)![](README_files/figure-markdown_strict/unnamed-chunk-19-2.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-19-1.png)![](Tutorial_files/figure-markdown_strict/unnamed-chunk-19-2.png)
 
 #### Mixed variables
 
@@ -240,7 +239,7 @@ mixed data only, like in our case example.
 
     ClustCheck::get_FAMD(cbank)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-20-1.png)
+![](Tutorial_files/figure-markdown_strict/unnamed-chunk-20-1.png)
 
 ------------------------------------------------------------------------
 
