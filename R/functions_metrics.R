@@ -201,6 +201,12 @@ dunn_indexC <- function(object, clusters=object$pred_clusters) {
 #' EvaluateC(obj, BankCustomer$Cluster)
 EvaluateC <- function(object, true_clusters = object$true_clusters) {
   if (is.null(true_clusters) == FALSE) {
+    if (is.data.frame(true_clusters) == TRUE) {
+      if (ncol(true_clusters) != 1) {
+        stop("Error : you didn't enter a true cluster")
+      }
+      true_clusters <- unlist(true_clusters)
+    }
     table <- contingency(object, true_clusters)
     tab <- table[[1]]
     ConfMat <- table[[2]]
@@ -208,7 +214,9 @@ EvaluateC <- function(object, true_clusters = object$true_clusters) {
     nco <- table[[4]]
     n <- object$n
     if (nli != nco) {
-      stop("Error : you don't have the same numbers of clusters between predicted and true values")
+      stop(
+        "Error : you don't have the same numbers of clusters between predicted and true values"
+      )
     } else{
       if (nli == 2) {
         Errorrate <- 1 - ((ConfMat[1, 2] + ConfMat[2, 1]) / n)
