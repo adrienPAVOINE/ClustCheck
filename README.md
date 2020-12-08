@@ -285,5 +285,5 @@ though. In this cas, the higher the score, the better the clustering.
 
 ### That’s it!
 
-You’ve competed an overview of the package main functions. Hope it will
+You’ve completed an overview of the package main functions. Hope it will
 provide useful tools for happy clustering evaluation!
