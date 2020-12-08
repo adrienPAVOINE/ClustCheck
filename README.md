@@ -274,7 +274,7 @@ clustering otherwise.
 
 The Dunn index is similar to the Davis-Bouldin in its measure of
 clustering quality. The index value should be interpreted differently
-though. In this cas, the higher the score, the better the clustering.
+though. In this case, the higher the score, the better the clustering.
 <a href="https://simple.wikipedia.org/wiki/Dunn_index" class="uri">https://simple.wikipedia.org/wiki/Dunn_index</a>
 
     ClustCheck::dunn_indexC(cbank)
